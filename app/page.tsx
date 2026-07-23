@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Button from "@/components/ui/Button";
 import { CTA } from "@/lib/site";
 
 export default function HomePage() {
@@ -19,12 +19,9 @@ export default function HomePage() {
           la resistencia del metal. Diseño arquitectónico simplificado para
           proyectos exigentes.
         </p>
-        <Link
-          href={CTA.href}
-          className="inline-flex items-center justify-center rounded-sm bg-sand px-8 py-4 text-sm font-medium uppercase tracking-widest text-carbon transition-colors hover:bg-offwhite focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
-        >
+        <Button href={CTA.href} variant="primary" size="md">
           Solicitar Cotización y Plan de Proyecto
-        </Link>
+        </Button>
       </div>
     </section>
   );

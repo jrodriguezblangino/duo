@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import Button from "@/components/ui/Button";
 import { BRAND_LOGO, CTA, NAV_LINKS, SITE_NAME } from "@/lib/site";
 
 export default function Footer() {
@@ -54,12 +55,9 @@ export default function Footer() {
             Diseñamos tu proyecto con precisión. Cuéntanos qué espacio quieres
             transformar y te preparamos una propuesta a medida.
           </p>
-          <Link
-            href={CTA.href}
-            className="inline-flex items-center justify-center rounded-sm border border-sand px-6 py-3 text-sm font-medium uppercase tracking-widest text-sand transition-colors hover:bg-sand hover:text-carbon focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
-          >
+          <Button href={CTA.href} variant="outline" size="sm">
             {CTA.label}
-          </Link>
+          </Button>
         </div>
       </div>
 

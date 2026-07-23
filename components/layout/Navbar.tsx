@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import Button from "@/components/ui/Button";
 import { BRAND_LOGO, CTA, NAV_LINKS, SITE_NAME } from "@/lib/site";
 
 export default function Navbar() {
@@ -53,12 +54,9 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <Link
-            href={CTA.href}
-            className="inline-flex items-center justify-center rounded-sm bg-sand px-6 py-3 text-sm font-medium uppercase tracking-widest text-carbon transition-colors hover:bg-offwhite focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
-          >
+          <Button href={CTA.href} variant="primary" size="sm">
             {CTA.label}
-          </Link>
+          </Button>
         </div>
 
         {/* Mobile menu toggle */}
@@ -107,13 +105,15 @@ export default function Navbar() {
             </li>
           ))}
           <li className="pt-4">
-            <Link
+            <Button
               href={CTA.href}
               onClick={closeMenu}
-              className="inline-flex w-full items-center justify-center rounded-sm bg-sand px-6 py-3.5 text-sm font-medium uppercase tracking-widest text-carbon transition-colors hover:bg-offwhite focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+              variant="primary"
+              size="sm"
+              className="w-full"
             >
               {CTA.label}
-            </Link>
+            </Button>
           </li>
         </ul>
       </div>
