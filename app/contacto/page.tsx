@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ProjectForm from "@/components/ui/ProjectForm";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -8,11 +9,8 @@ export const metadata: Metadata = {
 
 export default function ContactoPage() {
   return (
-    <section
-      aria-labelledby="contacto-heading"
-      className="px-5 py-24 lg:px-10"
-    >
-      <div className="mx-auto flex max-w-4xl flex-col gap-6">
+    <section aria-labelledby="contacto-heading" className="px-5 py-24 lg:px-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-6">
         <h1
           id="contacto-heading"
           className="font-headline text-4xl leading-tight md:text-5xl"
@@ -24,6 +22,9 @@ export default function ContactoPage() {
           cotización y un plan de proyecto a medida, con la cantidad exacta de
           paneles para tus dimensiones.
         </p>
+        <div className="mt-6">
+          <ProjectForm />
+        </div>
       </div>
     </section>
   );

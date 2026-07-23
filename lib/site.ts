@@ -3,6 +3,7 @@ export const SITE_NAME = "Fill Home";
 export const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/tecnologia", label: "Tecnología" },
+  { href: "/galeria", label: "Galería" },
   { href: "/contacto", label: "Contacto" },
 ] as const;
 
