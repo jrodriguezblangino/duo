@@ -32,6 +32,15 @@ const LAYERS = [
   },
 ] as const;
 
+/** Consistent mono label style across the section */
+const MONO_MUTED =
+  "font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]";
+const MONO_ACCENT =
+  "font-mono text-xs tracking-[0.02em] text-sand lg:text-[13px]";
+
+/** Major block rhythm — mobile 48px / desktop 80px */
+const BLOCK_GAP = "mb-12 lg:mb-20";
+
 export default function AnatomySection() {
   const prefersReducedMotion = useReducedMotion();
 
@@ -41,7 +50,7 @@ export default function AnatomySection() {
       className="bg-carbon px-6 py-24 lg:px-20 lg:py-section"
     >
       <div className="mx-auto max-w-site">
-        <Reveal className="mx-auto mb-16 max-w-measure text-center lg:mb-24">
+        <Reveal className={`mx-auto max-w-measure text-center ${BLOCK_GAP}`}>
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
             Composición — tres capas
           </p>
@@ -53,9 +62,9 @@ export default function AnatomySection() {
           </h2>
         </Reveal>
 
-        {/* Hero product still — full visual authority */}
-        <Reveal className="mb-16 lg:mb-24">
-          <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate">
+        {/* Hero product still */}
+        <Reveal className={BLOCK_GAP}>
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate">
             <Image
               src="/assets/images/exploded_view_components.png"
               alt="Perfiles y panel Fill Home: cara madera-look, núcleo compuesto y piezas de encastre"
@@ -65,17 +74,17 @@ export default function AnatomySection() {
               priority
             />
           </div>
-          <p className="mt-4 font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">
+          <p className={`mt-4 ${MONO_MUTED}`}>
             Sistema de panel y perfiles — vista de taller
           </p>
         </Reveal>
 
-        {/* Layer callouts — balanced technical row */}
-        <div className="mb-16 grid gap-px bg-sand/20 lg:mb-24 lg:grid-cols-3">
+        {/* Layer callouts — elevated surfaces, equal height */}
+        <div className={`grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-6 ${BLOCK_GAP}`}>
           {LAYERS.map((layer, index) => (
             <motion.aside
               key={layer.id}
-              className="bg-slate px-6 py-8"
+              className="flex h-full flex-col border border-offwhite/[0.08] border-t-sand/50 bg-slate px-7 py-9 transition-colors duration-200 ease-out hover:border-offwhite/20 hover:border-t-sand lg:px-8 lg:py-10"
               initial={
                 prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }
               }
@@ -87,20 +96,24 @@ export default function AnatomySection() {
                   : { ...glide, delay: index * 0.15 }
               }
             >
-              <p className="mb-4 font-mono text-xs tracking-[0.02em] text-offwhite/50">
+              <p className={`mb-5 flex items-center gap-2.5 ${MONO_MUTED}`}>
+                <span
+                  aria-hidden="true"
+                  className="inline-block h-px w-4 shrink-0 bg-sand"
+                />
                 {layer.role}
               </p>
-              <p className="text-base text-offwhite">{layer.name}</p>
-              <p className="mt-2 font-mono text-xs tracking-[0.02em] text-sand lg:text-[13px]">
-                {layer.spec}
+              <p className="text-base text-offwhite lg:text-[17px]">
+                {layer.name}
               </p>
+              <p className={`mt-auto pt-4 ${MONO_ACCENT}`}>{layer.spec}</p>
             </motion.aside>
           ))}
         </div>
 
         {/* Macro edge — engineered proof */}
-        <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-16">
-          <Reveal className="relative aspect-[4/3] overflow-hidden bg-slate lg:col-span-7">
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
+          <Reveal className="relative aspect-[4/3] overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate lg:col-span-7">
             <Image
               src="/assets/images/macro_zoom_quality.png"
               alt="Macro del canto del panel: cara metálica, núcleo y acabado madera-look"
@@ -121,7 +134,7 @@ export default function AnatomySection() {
               respaldo de acero. El canto muestra las tres capas sin
               maquillaje de render.
             </p>
-            <p className="mt-6 font-mono text-xs tracking-[0.02em] text-sand lg:text-[13px]">
+            <p className={`mt-6 ${MONO_ACCENT}`}>
               0.6 mm aluminio · núcleo HD · acero galvanizado
             </p>
           </Reveal>

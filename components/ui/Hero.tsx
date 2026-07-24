@@ -91,26 +91,29 @@ export default function Hero({
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? { duration: 0 } : glide}
         >
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.14em] text-offwhite/80 md:mb-7 lg:mb-8 lg:text-[13px]">
+          {/* Tier 1 label */}
+          <p className="mb-5 text-xs font-medium uppercase tracking-[0.1em] text-offwhite/80 md:mb-6 md:tracking-[0.12em] lg:text-[13px]">
             {eyebrow}
           </p>
 
+          {/* Tier 2 + 3: dominant headline, supporting tagline */}
           <h1
             id="hero-heading"
-            className="font-headline font-normal tracking-[-0.02em] text-offwhite"
+            className="font-headline font-normal tracking-[-0.02em]"
           >
-            <span className="block text-[2.75rem] leading-[0.95] md:text-6xl lg:text-[5.25rem]">
+            <span className="block text-[3.25rem] leading-[0.95] text-offwhite md:text-7xl lg:text-[6.5rem]">
               {headline}
             </span>
             {headlineContinued && (
-              <span className="mt-2 block text-[1.375rem] leading-[1.1] md:mt-3 md:text-[1.75rem] md:leading-[1.12] lg:text-[2rem] lg:leading-[1.15]">
+              <span className="mt-3 block text-[0.9375rem] font-normal leading-[1.3] text-offwhite/70 md:mt-4 md:text-[1.375rem] md:leading-[1.3] lg:text-2xl">
                 {headlineContinued}
               </span>
             )}
           </h1>
 
+          {/* Tier 4: quiet explanation */}
           {bridgeLine && (
-            <p className="mt-4 max-w-[34rem] text-[15px] leading-[1.6] text-offwhite/70 md:mt-5 md:text-[17px] lg:text-xl">
+            <p className="mt-5 max-w-[32rem] text-sm leading-[1.6] text-offwhite/70 md:mt-6 md:max-w-[520px] md:text-[15px] lg:text-base">
               {bridgeLine}
             </p>
           )}
