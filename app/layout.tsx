@@ -10,6 +10,7 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   display: "swap",
   axes: ["opsz"],
+  style: ["normal", "italic"],
 });
 
 const generalSans = localFont({

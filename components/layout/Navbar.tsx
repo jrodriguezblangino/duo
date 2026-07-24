@@ -153,7 +153,7 @@ export default function Navbar() {
                           href={href}
                           onClick={closeMenu}
                           aria-current={isActive ? "page" : undefined}
-                          className={`group relative mx-auto block w-fit py-3 font-headline text-[28px] font-normal italic leading-none text-offwhite/60 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
+                          className={`group relative mx-auto block w-fit py-3 text-[1.125rem] font-medium uppercase tracking-[0.08em] leading-none text-offwhite/60 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
                             isActive
                               ? "text-offwhite/85"
                               : "hover:text-offwhite/75"
