@@ -3,31 +3,34 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import Reveal from "@/components/ui/Reveal";
-import { ENTRY_Y, glide } from "@/lib/motion";
+import { glide } from "@/lib/motion";
 
 /**
  * Anatomy Block — 3-layer composition (§3.3).
- * Photography-first: exploded product shot + edge macro.
+ * Exploded-diagram list: spine + numerals reinforce stacked layers.
  * Order visible → structural: Aluminum → Polyurethane → Steel.
  */
 
 const LAYERS = [
   {
     id: "aluminum",
+    index: "01",
+    role: "Cara vista",
     name: "Aluminio anodizado",
-    role: "01 · Cara vista",
     spec: "0.6 mm — wood-look / metallic",
   },
   {
     id: "polyurethane",
+    index: "02",
+    role: "Núcleo",
     name: "Poliuretano",
-    role: "02 · Núcleo",
     spec: "Alta densidad — aislamiento + adhesión",
   },
   {
     id: "steel",
+    index: "03",
+    role: "Respaldo",
     name: "Acero galvanizado",
-    role: "03 · Respaldo",
     spec: "Rigidez estructural del sistema",
   },
 ] as const;
@@ -40,6 +43,9 @@ const MONO_ACCENT =
 
 /** Major block rhythm — mobile 48px / desktop 80px */
 const BLOCK_GAP = "mb-12 lg:mb-20";
+
+/** Horizontal entry travel for layer build — within 24px motion budget */
+const ENTRY_X = 20;
 
 export default function AnatomySection() {
   const prefersReducedMotion = useReducedMotion();
@@ -62,15 +68,15 @@ export default function AnatomySection() {
           </h2>
         </Reveal>
 
-        {/* Hero product still */}
-        <Reveal className={BLOCK_GAP}>
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate">
+        {/* Hero product still — Aspecto madera (shared with Colección) */}
+        <Reveal className={`mx-auto w-full max-w-4xl ${BLOCK_GAP}`}>
+          <div className="relative aspect-[16/9] w-full max-h-[560px] overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate">
             <Image
-              src="/assets/images/exploded_view_components.png"
-              alt="Perfiles y panel Fill Home: cara madera-look, núcleo compuesto y piezas de encastre"
+              src="/assets/images/detail_internal_45deg.png"
+              alt="Detalle interno del panel Fill Home con acabado wood-look a 45°"
               fill
-              sizes="(min-width: 1440px) 1440px, 100vw"
-              className="object-cover"
+              sizes="(min-width: 1280px) 896px, (min-width: 768px) 720px, calc(100vw - 3rem)"
+              className="object-cover object-[62%_50%]"
               priority
             />
           </div>
@@ -79,37 +85,58 @@ export default function AnatomySection() {
           </p>
         </Reveal>
 
-        {/* Layer callouts — elevated surfaces, equal height */}
-        <div className={`grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-6 ${BLOCK_GAP}`}>
+        {/* Layer breakdown — vertical exploded diagram */}
+        <ol
+          className={`relative mx-auto max-w-xl list-none space-y-10 pl-0 lg:mx-0 lg:max-w-2xl lg:space-y-14 ${BLOCK_GAP}`}
+        >
+          {/* Spine / axis through numeral centers */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-3 left-[1.125rem] top-3 w-px bg-offwhite/20 lg:bottom-4 lg:left-[1.75rem] lg:top-4"
+          />
+
           {LAYERS.map((layer, index) => (
-            <motion.aside
+            <motion.li
               key={layer.id}
-              className="flex h-full flex-col border border-offwhite/[0.08] border-t-sand/50 bg-slate px-7 py-9 transition-colors duration-200 ease-out hover:border-offwhite/20 hover:border-t-sand lg:px-8 lg:py-10"
+              className="relative grid grid-cols-[2.25rem_1fr] items-start gap-x-5 lg:grid-cols-[3.5rem_1fr] lg:gap-x-8"
               initial={
-                prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }
+                prefersReducedMotion ? false : { opacity: 0, x: -ENTRY_X }
               }
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
               transition={
                 prefersReducedMotion
                   ? { duration: 0.2 }
                   : { ...glide, delay: index * 0.15 }
               }
             >
-              <p className={`mb-5 flex items-center gap-2.5 ${MONO_MUTED}`}>
-                <span
-                  aria-hidden="true"
-                  className="inline-block h-px w-4 shrink-0 bg-sand"
-                />
-                {layer.role}
-              </p>
-              <p className="text-base text-offwhite lg:text-[17px]">
-                {layer.name}
-              </p>
-              <p className={`mt-auto pt-4 ${MONO_ACCENT}`}>{layer.spec}</p>
-            </motion.aside>
+              {/* Blueprint index numeral */}
+              <span
+                aria-hidden="true"
+                className="relative z-[1] text-center font-mono text-[1.75rem] font-light leading-none tracking-tight text-offwhite/30 lg:text-[2.75rem]"
+              >
+                {layer.index}
+              </span>
+
+              {/* Tick branches from spine into the text column */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute left-[1.125rem] top-[0.55em] h-px w-5 -translate-y-1/2 bg-offwhite/30 lg:left-[1.75rem] lg:top-[0.85em] lg:w-8"
+              />
+
+              <div className="min-w-0 pt-0.5 lg:pt-1">
+                <p className={MONO_MUTED}>
+                  <span className="sr-only">{layer.index} · </span>
+                  {layer.role}
+                </p>
+                <p className="mt-2 font-headline text-xl font-normal leading-snug text-offwhite lg:text-[1.75rem]">
+                  {layer.name}
+                </p>
+                <p className={`mt-3 ${MONO_ACCENT}`}>{layer.spec}</p>
+              </div>
+            </motion.li>
           ))}
-        </div>
+        </ol>
 
         {/* Macro edge — engineered proof */}
         <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
