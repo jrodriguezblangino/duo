@@ -1,12 +1,15 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ENTRY_Y, glide } from "@/lib/motion";
 
 type HeroProps = {
   eyebrow?: string;
-  headline: string;
+  /** Primary display line (e.g. "Metal Sliding.") */
+  headline: ReactNode;
+  /** Optional second display line — sized to fit longer phrases */
+  headlineContinued?: ReactNode;
   bridgeLine?: string;
   videoSrc: string;
   poster?: string;
@@ -22,9 +25,10 @@ const heroTokens = {
  * content clipped within bounds; nav owns the sole CTA.
  */
 export default function Hero({
-  eyebrow = "Revestimiento madera-look de ingeniería",
+  eyebrow = "Revestimiento de ingeniería",
   headline,
-  bridgeLine = "Aluminio anodizado, núcleo de poliuretano y respaldo de acero — tres capas, una superficie continua.",
+  headlineContinued,
+  bridgeLine = "Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución.",
   videoSrc,
   poster = "/assets/images/exploded_view_components.png",
 }: HeroProps) {
@@ -82,7 +86,7 @@ export default function Hero({
         />
 
         <motion.div
-          className="relative w-full max-w-[560px]"
+          className="relative w-full max-w-xl md:max-w-2xl lg:max-w-3xl"
           initial={prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }}
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? { duration: 0 } : glide}
@@ -93,9 +97,16 @@ export default function Hero({
 
           <h1
             id="hero-heading"
-            className="max-w-[10ch] font-headline text-[3.5rem] font-normal leading-[0.95] tracking-[-0.02em] text-offwhite md:max-w-[12ch] md:text-7xl lg:text-[7.5rem]"
+            className="font-headline font-normal tracking-[-0.02em] text-offwhite"
           >
-            {headline}
+            <span className="block text-[2.75rem] leading-[0.95] md:text-6xl lg:text-[5.25rem]">
+              {headline}
+            </span>
+            {headlineContinued && (
+              <span className="mt-2 block text-[1.375rem] leading-[1.1] md:mt-3 md:text-[1.75rem] md:leading-[1.12] lg:text-[2rem] lg:leading-[1.15]">
+                {headlineContinued}
+              </span>
+            )}
           </h1>
 
           {bridgeLine && (
