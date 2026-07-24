@@ -100,20 +100,20 @@ export default function Navbar() {
           aria-expanded={menuOpen}
           aria-controls="menu-movil"
           aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-          className="relative z-[60] flex h-11 w-11 flex-col items-center justify-center gap-1.5 md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand"
+          className="relative z-[60] -mr-2 flex h-11 w-11 shrink-0 items-center justify-center md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand"
         >
-          <span
-            aria-hidden="true"
-            className={`h-px w-6 bg-offwhite transition-transform duration-300 ${
-              menuOpen ? "translate-y-[3.5px] rotate-45" : ""
-            }`}
-          />
-          <span
-            aria-hidden="true"
-            className={`h-px w-6 bg-offwhite transition-transform duration-300 ${
-              menuOpen ? "-translate-y-[3.5px] -rotate-45" : ""
-            }`}
-          />
+          <span className="relative block h-3 w-6" aria-hidden="true">
+            <span
+              className={`absolute left-0 top-0 h-px w-6 origin-center bg-offwhite transition-transform duration-300 ${
+                menuOpen ? "translate-y-[5.5px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`absolute left-0 bottom-0 h-px w-6 origin-center bg-offwhite transition-transform duration-300 ${
+                menuOpen ? "-translate-y-[5.5px] -rotate-45" : ""
+              }`}
+            />
+          </span>
         </button>
       </nav>
 
@@ -121,74 +121,83 @@ export default function Navbar() {
         {menuOpen && (
           <motion.div
             id="menu-movil"
-            className="fixed inset-0 z-50 flex flex-col justify-center bg-carbon px-6 pt-nav-mobile md:hidden"
+            className="fixed inset-0 z-50 bg-carbon md:hidden"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={prefersReducedMotion ? { duration: 0.2 } : glide}
           >
-            <ul className="flex flex-col">
-              {NAV_LINKS.map(({ href, label }, index) => {
-                const isActive = pathname === href;
-                return (
-                  <motion.li
-                    key={href}
-                    initial={
-                      prefersReducedMotion
-                        ? false
-                        : { opacity: 0, y: ENTRY_Y }
-                    }
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0.2 }
-                        : { ...glide, delay: index * STAGGER }
-                    }
-                  >
-                    <Link
-                      href={href}
-                      onClick={closeMenu}
-                      aria-current={isActive ? "page" : undefined}
-                      className={`group relative block py-2.5 font-headline text-[28px] font-normal italic leading-none text-offwhite/60 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
-                        isActive ? "text-offwhite/85" : "hover:text-offwhite/75"
-                      }`}
-                    >
-                      {label}
-                      <span
-                        aria-hidden="true"
-                        className={`absolute bottom-1.5 left-0 h-px w-6 bg-sand transition-opacity duration-300 ${
-                          isActive
-                            ? "opacity-100"
-                            : "opacity-0 group-hover:opacity-40"
-                        }`}
-                      />
-                    </Link>
-                  </motion.li>
-                );
-              })}
-              <motion.li
-                className="mt-12"
-                initial={
-                  prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }
-                }
-                animate={{ opacity: 1, y: 0 }}
-                transition={
-                  prefersReducedMotion
-                    ? { duration: 0.2 }
-                    : { ...glide, delay: NAV_LINKS.length * STAGGER }
-                }
-              >
-                <Button
-                  href={CTA.href}
-                  onClick={closeMenu}
-                  variant="primary"
-                  size="sm"
-                  className="!text-xs tracking-[0.12em]"
+            {/* True center of the band below the fixed header */}
+            <div className="absolute inset-x-0 bottom-0 top-nav-mobile flex items-center justify-center px-6 py-[max(1.5rem,env(safe-area-inset-bottom))]">
+              <div className="flex w-full max-w-xs flex-col items-center text-center">
+                <ul className="flex w-full flex-col items-center">
+                  {NAV_LINKS.map(({ href, label }, index) => {
+                    const isActive = pathname === href;
+                    return (
+                      <motion.li
+                        key={href}
+                        className="w-full"
+                        initial={
+                          prefersReducedMotion
+                            ? false
+                            : { opacity: 0, y: ENTRY_Y }
+                        }
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={
+                          prefersReducedMotion
+                            ? { duration: 0.2 }
+                            : { ...glide, delay: index * STAGGER }
+                        }
+                      >
+                        <Link
+                          href={href}
+                          onClick={closeMenu}
+                          aria-current={isActive ? "page" : undefined}
+                          className={`group relative mx-auto block w-fit py-3 font-headline text-[28px] font-normal italic leading-none text-offwhite/60 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
+                            isActive
+                              ? "text-offwhite/85"
+                              : "hover:text-offwhite/75"
+                          }`}
+                        >
+                          {label}
+                          <span
+                            aria-hidden="true"
+                            className={`absolute bottom-2 left-1/2 h-px w-6 -translate-x-1/2 bg-sand transition-opacity duration-300 ${
+                              isActive
+                                ? "opacity-100"
+                                : "opacity-0 group-hover:opacity-40"
+                            }`}
+                          />
+                        </Link>
+                      </motion.li>
+                    );
+                  })}
+                </ul>
+
+                <motion.div
+                  className="mt-12"
+                  initial={
+                    prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }
+                  }
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0.2 }
+                      : { ...glide, delay: NAV_LINKS.length * STAGGER }
+                  }
                 >
-                  {CTA.label}
-                </Button>
-              </motion.li>
-            </ul>
+                  <Button
+                    href={CTA.href}
+                    onClick={closeMenu}
+                    variant="primary"
+                    size="md"
+                    className="border border-sand/40 !px-6 !py-3.5 !text-[13px] tracking-[0.14em] transition-[colors,transform,filter] duration-300 hover:border-offwhite hover:brightness-105 active:scale-[0.98] active:brightness-95"
+                  >
+                    {CTA.label}
+                  </Button>
+                </motion.div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
