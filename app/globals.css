@@ -12,34 +12,25 @@
     }
   }
 
+  body {
+    text-rendering: optimizeLegibility;
+  }
+
   ::selection {
     background-color: #d4c3b3; /* sand */
     color: #0d0d0d; /* carbon */
   }
-}
 
-/* Entrance reveal for hero content (CSS-only; Framer Motion arrives in Phase 4) */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .fade-in-up {
-    animation: fade-in-up 0.9s ease-out both;
+  /* Sand 2px outline offset — keyboard focus floor (§5) */
+  :focus-visible {
+    outline: 2px solid #d4c3b3;
+    outline-offset: 4px;
   }
 
-  .fade-delay-150 {
-    animation-delay: 150ms;
-  }
-
-  .fade-delay-300 {
-    animation-delay: 300ms;
+  /* Underline inputs: suppress browser chrome that fights the design */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
   }
 }

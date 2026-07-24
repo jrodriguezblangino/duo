@@ -5,26 +5,32 @@ import Reveal from "@/components/ui/Reveal";
 export const metadata: Metadata = {
   title: "Galería",
   description:
-    "Texturas, acabados y comportamiento del panel Fill Home en detalle: aspecto madera, metálico negro y resistencia al agua.",
+    "Macro de textura, acabados aspecto madera y metálico, y comportamiento al agua del panel Fill Home.",
 };
 
 export default function GaleriaPage() {
   return (
-    <section aria-labelledby="galeria-heading" className="px-5 py-24 lg:px-10">
-      <div className="mx-auto max-w-7xl">
-        <Reveal>
+    <section
+      aria-labelledby="galeria-heading"
+      className="bg-carbon px-6 pb-24 pt-28 lg:px-20 lg:pb-section lg:pt-40"
+    >
+      <div className="mx-auto max-w-site">
+        <Reveal className="mb-12 max-w-measure lg:mb-16">
+          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
+            Material — detalle
+          </p>
           <h1
             id="galeria-heading"
-            className="mb-6 font-headline text-4xl leading-tight md:text-5xl"
+            className="mb-6 font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite lg:text-6xl"
           >
             El material, en detalle.
           </h1>
-          <p className="mb-12 max-w-2xl text-lg leading-relaxed text-offwhite/70">
-            Texturas, acabados y rendimiento real. Explora el panel Fill Home
-            de cerca y descubre por qué la calidad se percibe a primera vista.
+          <p className="max-w-measure text-base leading-[1.65] text-offwhite/70 lg:text-[17px]">
+            Textura de cara, junta oculta y rechazo de agua — el panel visto
+            de cerca.
           </p>
         </Reveal>
-        <Reveal delay={0.1}>
+        <Reveal delay={0.08}>
           <GalleryGrid />
         </Reveal>
       </div>

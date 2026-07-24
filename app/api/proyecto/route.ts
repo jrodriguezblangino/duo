@@ -1,19 +1,26 @@
 import { NextResponse } from "next/server";
-import { estimatePanels } from "@/lib/panelCalculator";
+import { estimateFromArea } from "@/lib/panelCalculator";
 
 export type ProjectSubmission = {
   nombre: string;
+  email: string;
   telefono: string;
-  tipoProyecto: "interior" | "exterior" | "comercial";
-  anchoMetros: number;
-  altoMetros: number;
+  direccion?: string;
+  tipoProyecto: "obra-nueva" | "renovacion" | "interior" | "exterior";
   estilo: "madera" | "metalico";
-  contactoPreferido: "llamada" | "whatsapp";
+  tono: string;
+  superficieM2: number;
+  timeline: string;
+  mensaje?: string;
 };
 
-const TIPOS = new Set(["interior", "exterior", "comercial"]);
+const TIPOS = new Set([
+  "obra-nueva",
+  "renovacion",
+  "interior",
+  "exterior",
+]);
 const ESTILOS = new Set(["madera", "metalico"]);
-const CONTACTOS = new Set(["llamada", "whatsapp"]);
 
 function isValidSubmission(body: unknown): body is ProjectSubmission {
   if (!body || typeof body !== "object") return false;
@@ -22,23 +29,25 @@ function isValidSubmission(body: unknown): body is ProjectSubmission {
   return (
     typeof data.nombre === "string" &&
     data.nombre.trim().length > 0 &&
+    typeof data.email === "string" &&
+    data.email.trim().length > 0 &&
     typeof data.telefono === "string" &&
     data.telefono.trim().length > 0 &&
     typeof data.tipoProyecto === "string" &&
     TIPOS.has(data.tipoProyecto) &&
     typeof data.estilo === "string" &&
     ESTILOS.has(data.estilo) &&
-    typeof data.contactoPreferido === "string" &&
-    CONTACTOS.has(data.contactoPreferido) &&
-    typeof data.anchoMetros === "number" &&
-    typeof data.altoMetros === "number"
+    typeof data.tono === "string" &&
+    data.tono.trim().length > 0 &&
+    typeof data.superficieM2 === "number" &&
+    typeof data.timeline === "string" &&
+    data.timeline.trim().length > 0
   );
 }
 
 /**
  * Endpoint de planificación de proyecto.
- * Valida el payload, calcula paneles y simula la notificación al equipo
- * (consola del servidor). Sustituible por un servicio real (email/CRM) más adelante.
+ * Valida el payload, calcula paneles y simula la notificación al equipo.
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -59,16 +68,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const estimate = estimatePanels(body.anchoMetros, body.altoMetros);
+  const estimate = estimateFromArea(body.superficieM2);
 
   if (!estimate) {
     return NextResponse.json(
-      { ok: false, error: "Las dimensiones deben ser mayores a cero." },
+      { ok: false, error: "La superficie debe ser mayor a cero." },
       { status: 400 },
     );
   }
 
-  // Simulación de notificación al equipo (sustituir por email/CRM en producción).
   console.info("[Fill Home] Nueva solicitud de proyecto", {
     ...body,
     areaM2: estimate.areaM2,
@@ -80,6 +88,5 @@ export async function POST(request: Request) {
     ok: true,
     paneles: estimate.paneles,
     areaM2: estimate.areaM2,
-    contactoPreferido: body.contactoPreferido,
   });
 }

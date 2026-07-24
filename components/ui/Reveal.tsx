@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { ENTRY_Y, glide } from "@/lib/motion";
 
 type RevealProps = {
   children: ReactNode;
@@ -12,7 +13,7 @@ type RevealProps = {
 
 /**
  * Revela su contenido al entrar en el viewport (scroll).
- * Respeta prefers-reduced-motion: si el usuario lo pide, el contenido aparece sin animación.
+ * Usa `glide` de lib/motion.ts. Respeta prefers-reduced-motion.
  */
 export default function Reveal({
   children,
@@ -28,14 +29,10 @@ export default function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: ENTRY_Y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2, margin: "0px 0px -40px 0px" }}
-      transition={{
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
-        delay,
-      }}
+      transition={{ ...glide, delay }}
     >
       {children}
     </motion.div>

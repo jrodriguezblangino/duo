@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
+import { glide, precision } from "@/lib/motion";
 
 type StyleKey = "madera" | "metalico";
 
@@ -10,86 +12,112 @@ const STYLES: Record<
   {
     label: string;
     description: string;
-    videoSrc: string;
     imageSrc: string;
     imageAlt: string;
   }
 > = {
   madera: {
-    label: "Aspecto Madera",
+    label: "Aspecto madera",
     description:
-      "La calidez natural de la madera con la resistencia estructural del acero. Ideal para interiores que buscan sofisticación atemporal.",
-    videoSrc: "/assets/videos/hero_cinematic_scan.mp4",
+      "Misma geometría de panel, misma junta oculta. Cara de aluminio con grano madera; el núcleo y el acero no cambian.",
     imageSrc: "/assets/images/detail_internal_45deg.png",
     imageAlt:
-      "Detalle interno del panel con acabado aspecto madera, visto a 45 grados",
+      "Detalle interno del panel Fill Home con acabado wood-look a 45°",
   },
   metalico: {
-    label: "Metálico Negro",
+    label: "Metálico",
     description:
-      "Presencia arquitectónica contemporánea con un acabado metálico profundo. Protagonismo absoluto en fachadas y espacios comerciales.",
-    videoSrc: "/assets/videos/motion_interlocking_sparkle.mp4",
-    imageSrc: "/assets/images/gallery_color_options.png",
-    imageAlt: "Opciones de color del panel con acabado metálico negro",
+      "La misma construcción en acabado metálico. Cambia la cara; no el sistema.",
+    imageSrc: "/assets/images/detail_internal_45deg_alt.png",
+    imageAlt:
+      "Detalle interno del panel Fill Home con acabado metálico a 45°",
   },
 };
 
+/**
+ * Style Toggle — Aspecto madera ⇄ Metálico (§3.4).
+ * Split-label + stacked opacity cross-dissolve. Never a wipe/slider.
+ */
 export default function StyleToggle() {
   const [active, setActive] = useState<StyleKey>("madera");
-  const style = STYLES[active];
+  const prefersReducedMotion = useReducedMotion();
+  const keys = Object.keys(STYLES) as StyleKey[];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       <div
         role="group"
-        aria-label="Selección de estilo"
-        className="flex flex-wrap gap-3"
+        aria-label="Acabado del panel"
+        className="flex flex-wrap items-center gap-6"
       >
-        {(Object.keys(STYLES) as StyleKey[]).map((key) => (
-          <button
-            key={key}
-            type="button"
-            aria-pressed={active === key}
-            onClick={() => setActive(key)}
-            className={`rounded-sm border px-6 py-3 text-sm uppercase tracking-widest transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
-              active === key
-                ? "border-sand bg-sand text-carbon"
-                : "border-offwhite/20 text-offwhite/70 hover:border-sand hover:text-sand"
-            }`}
-          >
-            {STYLES[key].label}
-          </button>
+        {keys.map((key, index) => (
+          <div key={key} className="flex items-center gap-6">
+            {index > 0 && (
+              <span aria-hidden="true" className="h-4 w-px bg-offwhite/30" />
+            )}
+            <button
+              type="button"
+              aria-pressed={active === key}
+              onClick={() => setActive(key)}
+              className="relative pb-2 text-sm font-medium uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+            >
+              <span
+                className={
+                  active === key ? "text-offwhite" : "text-offwhite/40"
+                }
+              >
+                {STYLES[key].label}
+              </span>
+              {active === key && (
+                <motion.span
+                  layoutId="style-toggle-underline"
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-px bg-sand"
+                  transition={
+                    prefersReducedMotion ? { duration: 0.15 } : precision
+                  }
+                />
+              )}
+            </button>
+          </div>
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <video
-          key={style.videoSrc}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-          tabIndex={-1}
-          className="aspect-video w-full rounded-sm object-cover"
-        >
-          <source src={style.videoSrc} type="video/mp4" />
-        </video>
-        <figure className="flex flex-col gap-4">
-          <div className="relative aspect-video w-full overflow-hidden rounded-sm">
-            <Image
-              src={style.imageSrc}
-              alt={style.imageAlt}
-              fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="object-cover"
-            />
-          </div>
-          <figcaption className="text-sm leading-relaxed text-offwhite/60">
-            {style.description}
-          </figcaption>
-        </figure>
+      <div className="grid gap-8 lg:grid-cols-12 lg:gap-16">
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-carbon lg:col-span-7">
+          {keys.map((key) => (
+            <motion.div
+              key={key}
+              className="absolute inset-0"
+              initial={false}
+              animate={{ opacity: active === key ? 1 : 0 }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0.25 }
+                  : { ...glide, duration: 0.9 }
+              }
+              aria-hidden={active !== key}
+            >
+              <Image
+                src={STYLES[key].imageSrc}
+                alt={active === key ? STYLES[key].imageAlt : ""}
+                fill
+                sizes="(min-width: 1024px) 58vw, 100vw"
+                className="object-cover"
+                priority={key === "madera"}
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="flex flex-col justify-end gap-8 lg:col-span-5">
+          <p className="max-w-measure text-base leading-[1.65] text-offwhite/70 lg:text-[17px]">
+            {STYLES[active].description}
+          </p>
+          <p className="font-mono text-xs tracking-[0.02em] text-offwhite/45 lg:text-[13px]">
+            Misma estructura de tres capas · solo cambia la cara
+          </p>
+        </div>
       </div>
     </div>
   );

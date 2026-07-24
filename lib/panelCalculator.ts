@@ -10,6 +10,17 @@ export type PanelEstimate = {
  * Calcula la cantidad de paneles necesarios a partir del área de la pared.
  * Se redondea hacia arriba para cubrir el espacio completo.
  */
+export function estimateFromArea(areaM2: number): PanelEstimate | null {
+  if (!Number.isFinite(areaM2) || areaM2 <= 0) {
+    return null;
+  }
+
+  return {
+    areaM2: Math.round(areaM2 * 100) / 100,
+    paneles: Math.ceil(areaM2 / PANEL_COVERAGE_M2),
+  };
+}
+
 export function estimatePanels(
   anchoMetros: number,
   altoMetros: number,
@@ -23,13 +34,7 @@ export function estimatePanels(
     return null;
   }
 
-  const areaM2 = anchoMetros * altoMetros;
-  const paneles = Math.ceil(areaM2 / PANEL_COVERAGE_M2);
-
-  return {
-    areaM2: Math.round(areaM2 * 100) / 100,
-    paneles,
-  };
+  return estimateFromArea(anchoMetros * altoMetros);
 }
 
 export function formatArea(areaM2: number): string {

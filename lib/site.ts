@@ -12,4 +12,5 @@ export const CTA = {
   href: "/contacto",
 } as const;
 
+/** Legacy stamp asset — not used in chrome; kept for reference until a clean mark exists */
 export const BRAND_LOGO = "/assets/logos/brand_logo.png";

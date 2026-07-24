@@ -5,27 +5,32 @@ import Reveal from "@/components/ui/Reveal";
 export const metadata: Metadata = {
   title: "Contacto",
   description:
-    "Diseñamos tu proyecto con precisión. Solicita una cotización y un plan a medida para tu espacio.",
+    "Solicitá cotización: tipo de proyecto, acabado wood-look o metálico, y superficie aproximada.",
 };
 
 export default function ContactoPage() {
   return (
-    <section aria-labelledby="contacto-heading" className="px-5 py-24 lg:px-10">
-      <div className="mx-auto flex max-w-3xl flex-col gap-6">
+    <section
+      aria-labelledby="contacto-heading"
+      className="bg-offwhite px-6 pb-24 pt-28 text-carbon lg:px-20 lg:pb-section lg:pt-40"
+    >
+      <div className="mx-auto flex max-w-[640px] flex-col gap-6">
         <Reveal>
+          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60 lg:text-[13px]">
+            Solicitud de cotización
+          </p>
           <h1
             id="contacto-heading"
-            className="font-headline text-4xl leading-tight md:text-5xl"
+            className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-carbon lg:text-6xl"
           >
-            Diseñamos tu proyecto con precisión.
+            Planificá el proyecto.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-offwhite/70">
-            Cuéntanos sobre tu espacio y nuestro equipo te preparará una
-            cotización y un plan de proyecto a medida, con la cantidad exacta de
-            paneles para tus dimensiones.
+          <p className="mt-6 max-w-measure text-base leading-[1.65] text-carbon/70 lg:text-[17px]">
+            Tipo de obra, dirección de material y datos de contacto. Sin
+            formularios genéricos: tres pasos de consulta.
           </p>
         </Reveal>
-        <Reveal delay={0.1} className="mt-6">
+        <Reveal delay={0.08} className="mt-6">
           <ProjectForm />
         </Reveal>
       </div>

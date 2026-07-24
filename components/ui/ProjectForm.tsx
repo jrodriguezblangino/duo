@@ -1,88 +1,118 @@
 "use client";
 
 import { useId, useState } from "react";
+import Image from "next/image";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import {
-  estimatePanels,
+  estimateFromArea,
   formatArea,
   PANEL_COVERAGE_M2,
-  type PanelEstimate,
 } from "@/lib/panelCalculator";
+import { FINISH_TONES, type FinishTone } from "@/lib/finishes";
+import { ENTRY_Y, glide, precision } from "@/lib/motion";
 
-export type ProjectFormData = {
+type ProjectType = "obra-nueva" | "renovacion" | "interior" | "exterior";
+type StyleKey = "madera" | "metalico";
+
+type FormState = {
+  tipoProyecto: ProjectType | null;
+  estilo: StyleKey;
+  tono: FinishTone;
   nombre: string;
+  email: string;
   telefono: string;
-  tipoProyecto: "interior" | "exterior" | "comercial";
-  anchoMetros: number;
-  altoMetros: number;
-  estilo: "madera" | "metalico";
-  contactoPreferido: "llamada" | "whatsapp";
+  direccion: string;
+  superficieM2: string;
+  timeline: string;
+  mensaje: string;
 };
 
-type ProjectFormProps = {
-  onSubmit?: (data: ProjectFormData & PanelEstimate) => void;
-};
+const PROJECT_TYPES: { key: ProjectType; label: string }[] = [
+  { key: "obra-nueva", label: "Obra nueva" },
+  { key: "renovacion", label: "Renovación" },
+  { key: "interior", label: "Interior" },
+  { key: "exterior", label: "Exterior" },
+];
+
+const TIMELINES = [
+  { value: "0-3", label: "0–3 meses" },
+  { value: "3-6", label: "3–6 meses" },
+  { value: "6-12", label: "6–12 meses" },
+  { value: "12+", label: "Más de 12 meses" },
+];
+
+const STEPS = [
+  { id: 1, label: "01 Proyecto" },
+  { id: 2, label: "02 Material" },
+  { id: 3, label: "03 Detalles" },
+] as const;
+
+const INPUT_UNDERLINE =
+  "w-full border-0 border-b border-carbon/30 bg-transparent px-0 py-3 text-base text-carbon placeholder:text-carbon/40 transition-[border-color] duration-300 focus:border-sand focus:outline-none focus-visible:outline-none disabled:opacity-50";
 
 type SubmitState =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "error"; message: string }
-  | {
-      status: "success";
-      paneles: number;
-      areaM2: number;
-      contactoPreferido: ProjectFormData["contactoPreferido"];
-    };
+  | { status: "success" };
 
-const INPUT_CLASSES =
-  "w-full rounded-sm border border-offwhite/15 bg-carbon px-4 py-3 text-base text-offwhite placeholder:text-offwhite/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand disabled:opacity-50";
-
-const LABEL_CLASSES =
-  "mb-2 block text-xs uppercase tracking-widest text-offwhite/70";
-
-function parsePositiveNumber(value: string): number | null {
-  if (value.trim() === "") return null;
-  const n = Number(value);
-  return Number.isFinite(n) && n > 0 ? n : null;
-}
-
-export default function ProjectForm({ onSubmit }: ProjectFormProps) {
+/**
+ * Multi-step Request a Quote form (§3.5).
+ * Underline inputs, invert selection cards, Sand progress line — no modal/toast.
+ */
+export default function ProjectForm() {
   const formId = useId();
-  const [ancho, setAncho] = useState("");
-  const [alto, setAlto] = useState("");
+  const prefersReducedMotion = useReducedMotion();
+  const [step, setStep] = useState(1);
   const [submitState, setSubmitState] = useState<SubmitState>({
     status: "idle",
   });
+  const [form, setForm] = useState<FormState>({
+    tipoProyecto: null,
+    estilo: "madera",
+    tono: "roble",
+    nombre: "",
+    email: "",
+    telefono: "",
+    direccion: "",
+    superficieM2: "",
+    timeline: "",
+    mensaje: "",
+  });
 
-  const estimate = estimatePanels(
-    parsePositiveNumber(ancho) ?? 0,
-    parsePositiveNumber(alto) ?? 0,
-  );
+  const progress = step / STEPS.length;
+  const isLoading = submitState.status === "loading";
+
+  const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const canAdvance = () => {
+    if (step === 1) return form.tipoProyecto !== null;
+    if (step === 2) return Boolean(form.estilo && form.tono);
+    return true;
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
+    if (step < 3) {
+      if (canAdvance()) setStep((s) => s + 1);
+      return;
+    }
 
-    const data: ProjectFormData = {
-      nombre: String(formData.get("nombre")).trim(),
-      telefono: String(formData.get("telefono")).trim(),
-      tipoProyecto: formData.get(
-        "tipoProyecto",
-      ) as ProjectFormData["tipoProyecto"],
-      anchoMetros: Number(formData.get("anchoMetros")),
-      altoMetros: Number(formData.get("altoMetros")),
-      estilo: formData.get("estilo") as ProjectFormData["estilo"],
-      contactoPreferido: formData.get(
-        "contactoPreferido",
-      ) as ProjectFormData["contactoPreferido"],
-    };
-
-    const calculated = estimatePanels(data.anchoMetros, data.altoMetros);
-    if (!calculated) {
+    const area = Number(form.superficieM2);
+    if (!form.nombre.trim() || !form.email.trim() || !form.telefono.trim()) {
       setSubmitState({
         status: "error",
-        message: "Ingresá dimensiones válidas mayores a cero.",
+        message: "Completá nombre, email y teléfono para continuar.",
+      });
+      return;
+    }
+    if (!Number.isFinite(area) || area <= 0) {
+      setSubmitState({
+        status: "error",
+        message: "Indicá una superficie aproximada mayor a cero.",
       });
       return;
     }
@@ -93,18 +123,26 @@ export default function ProjectForm({ onSubmit }: ProjectFormProps) {
       const response = await fetch("/api/proyecto", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          nombre: form.nombre.trim(),
+          email: form.email.trim(),
+          telefono: form.telefono.trim(),
+          direccion: form.direccion.trim(),
+          tipoProyecto: form.tipoProyecto,
+          estilo: form.estilo,
+          tono: form.tono,
+          superficieM2: area,
+          timeline: form.timeline,
+          mensaje: form.mensaje.trim(),
+        }),
       });
 
       const result = (await response.json()) as {
         ok: boolean;
         error?: string;
-        paneles?: number;
-        areaM2?: number;
-        contactoPreferido?: ProjectFormData["contactoPreferido"];
       };
 
-      if (!response.ok || !result.ok || !result.paneles || !result.areaM2) {
+      if (!response.ok || !result.ok) {
         setSubmitState({
           status: "error",
           message:
@@ -114,13 +152,7 @@ export default function ProjectForm({ onSubmit }: ProjectFormProps) {
         return;
       }
 
-      onSubmit?.({ ...data, ...calculated });
-      setSubmitState({
-        status: "success",
-        paneles: result.paneles,
-        areaM2: result.areaM2,
-        contactoPreferido: result.contactoPreferido ?? data.contactoPreferido,
-      });
+      setSubmitState({ status: "success" });
     } catch {
       setSubmitState({
         status: "error",
@@ -131,238 +163,395 @@ export default function ProjectForm({ onSubmit }: ProjectFormProps) {
   };
 
   if (submitState.status === "success") {
-    const medio =
-      submitState.contactoPreferido === "whatsapp"
-        ? "WhatsApp"
-        : "llamada telefónica";
-
     return (
-      <div
+      <motion.div
         role="status"
-        className="rounded-sm border border-sand/40 bg-slate p-8"
+        initial={prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={prefersReducedMotion ? { duration: 0.2 } : { ...glide, duration: 0.4 }}
+        className="py-8"
       >
-        <p className="mb-4 text-lg leading-relaxed text-offwhite">
-          Gracias por confiar en Fill Home. Recibimos los datos de tu proyecto y
-          nuestro equipo te contactará a la brevedad por {medio}.
+        <p className="font-headline text-[28px] font-normal italic leading-[1.1] text-carbon lg:text-[40px]">
+          Recibimos tu proyecto.
         </p>
-        <dl className="grid gap-3 border-t border-offwhite/10 pt-6 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="mb-1 uppercase tracking-widest text-sand">
-              Superficie estimada
-            </dt>
-            <dd className="text-offwhite/80">
-              {formatArea(submitState.areaM2)} m²
-            </dd>
-          </div>
-          <div>
-            <dt className="mb-1 uppercase tracking-widest text-sand">
-              Paneles necesarios
-            </dt>
-            <dd className="font-headline text-2xl text-offwhite">
-              {submitState.paneles}
-            </dd>
-          </div>
-        </dl>
-        <p className="mt-4 text-sm text-offwhite/50">
-          Cálculo basado en {PANEL_COVERAGE_M2.toLocaleString("es")} m² de
-          cobertura por panel. El plan definitivo lo confirma nuestro equipo
-          según el recorte y la orientación de la instalación.
+        <p className="mt-4 max-w-measure text-base leading-[1.65] text-carbon/70">
+          El equipo revisará tipo, acabado y superficie, y te responderá con
+          la cotización y el plan de paneles.
         </p>
-      </div>
+      </motion.div>
     );
   }
 
-  const isLoading = submitState.status === "loading";
+  const areaPreview = estimateFromArea(Number(form.superficieM2));
 
   return (
     <form
       onSubmit={handleSubmit}
-      aria-label="Formulario de planificación de proyecto"
-      className="flex flex-col gap-6"
+      aria-label="Solicitud de cotización"
+      className="flex flex-col gap-10"
       noValidate={false}
     >
-      <div className="grid gap-6 md:grid-cols-2">
-        <div>
-          <label htmlFor={`${formId}-nombre`} className={LABEL_CLASSES}>
-            Nombre completo
-          </label>
-          <input
-            id={`${formId}-nombre`}
-            name="nombre"
-            type="text"
-            required
-            disabled={isLoading}
-            autoComplete="name"
-            placeholder="Ej.: Ana Martínez"
-            className={INPUT_CLASSES}
+      {/* Progress — 1px Sand over Carbon@20% track */}
+      <div>
+        <div
+          className="h-px w-full bg-carbon/20"
+          role="progressbar"
+          aria-valuenow={step}
+          aria-valuemin={1}
+          aria-valuemax={3}
+          aria-label="Progreso del formulario"
+        >
+          <motion.div
+            className="h-px bg-sand"
+            initial={false}
+            animate={{ width: `${progress * 100}%` }}
+            transition={prefersReducedMotion ? { duration: 0.15 } : precision}
           />
         </div>
-        <div>
-          <label htmlFor={`${formId}-telefono`} className={LABEL_CLASSES}>
-            Teléfono / WhatsApp
-          </label>
-          <input
-            id={`${formId}-telefono`}
-            name="telefono"
-            type="tel"
-            required
-            disabled={isLoading}
-            autoComplete="tel"
-            placeholder="Ej.: +54 9 351 000 0000"
-            className={INPUT_CLASSES}
-          />
-        </div>
+        <ol className="mt-4 flex flex-wrap gap-4 font-mono text-xs tracking-[0.02em] text-carbon/50 lg:text-[13px]">
+          {STEPS.map((s) => (
+            <li
+              key={s.id}
+              className={step === s.id ? "text-carbon" : undefined}
+            >
+              {s.label}
+            </li>
+          ))}
+        </ol>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div>
-          <label htmlFor={`${formId}-tipo`} className={LABEL_CLASSES}>
-            Tipo de proyecto
-          </label>
-          <select
-            id={`${formId}-tipo`}
-            name="tipoProyecto"
-            required
-            disabled={isLoading}
-            defaultValue=""
-            className={INPUT_CLASSES}
-          >
-            <option value="" disabled>
-              Selecciona una opción
-            </option>
-            <option value="interior">Interior</option>
-            <option value="exterior">Exterior</option>
-            <option value="comercial">Comercial</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor={`${formId}-estilo`} className={LABEL_CLASSES}>
-            Estilo preferido
-          </label>
-          <select
-            id={`${formId}-estilo`}
-            name="estilo"
-            required
-            disabled={isLoading}
-            defaultValue=""
-            className={INPUT_CLASSES}
-          >
-            <option value="" disabled>
-              Selecciona una opción
-            </option>
-            <option value="madera">Aspecto Madera</option>
-            <option value="metalico">Metálico Negro</option>
-          </select>
-        </div>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+          transition={
+            prefersReducedMotion ? { duration: 0.15 } : { ...glide, duration: 0.4 }
+          }
+          className="flex flex-col gap-8"
+        >
+          {step === 1 && (
+            <fieldset disabled={isLoading}>
+              <legend className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60">
+                Tipo de proyecto
+              </legend>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {PROJECT_TYPES.map(({ key, label }) => {
+                  const selected = form.tipoProyecto === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => update("tipoProyecto", key)}
+                      className={`border px-6 py-5 text-left text-sm font-medium uppercase tracking-[0.08em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
+                        selected
+                          ? "border-carbon bg-carbon text-offwhite"
+                          : "border-carbon text-carbon hover:bg-carbon/5"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          )}
 
-      <fieldset disabled={isLoading}>
-        <legend className={LABEL_CLASSES}>
-          Dimensiones de la pared (en metros)
-        </legend>
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label htmlFor={`${formId}-ancho`} className={LABEL_CLASSES}>
-              Ancho
-            </label>
-            <input
-              id={`${formId}-ancho`}
-              name="anchoMetros"
-              type="number"
-              required
-              min={0.1}
-              step={0.1}
-              inputMode="decimal"
-              placeholder="Ej.: 4.5"
-              value={ancho}
-              onChange={(e) => setAncho(e.target.value)}
-              className={INPUT_CLASSES}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${formId}-alto`} className={LABEL_CLASSES}>
-              Alto
-            </label>
-            <input
-              id={`${formId}-alto`}
-              name="altoMetros"
-              type="number"
-              required
-              min={0.1}
-              step={0.1}
-              inputMode="decimal"
-              placeholder="Ej.: 2.6"
-              value={alto}
-              onChange={(e) => setAlto(e.target.value)}
-              className={INPUT_CLASSES}
-            />
-          </div>
-        </div>
-      </fieldset>
+          {step === 2 && (
+            <div className="flex flex-col gap-10">
+              <fieldset disabled={isLoading}>
+                <legend className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60">
+                  Dirección de material
+                </legend>
+                <div
+                  role="group"
+                  aria-label="Acabado"
+                  className="flex items-center gap-6"
+                >
+                  {(
+                    [
+                      { key: "madera" as const, label: "Aspecto madera" },
+                      { key: "metalico" as const, label: "Metálico" },
+                    ] as const
+                  ).map(({ key, label }, index) => (
+                    <div key={key} className="flex items-center gap-6">
+                      {index > 0 && (
+                        <span
+                          aria-hidden="true"
+                          className="h-4 w-px bg-carbon/30"
+                        />
+                      )}
+                      <button
+                        type="button"
+                        aria-pressed={form.estilo === key}
+                        onClick={() => update("estilo", key)}
+                        className="relative pb-2 text-sm font-medium uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+                      >
+                        <span
+                          className={
+                            form.estilo === key
+                              ? "text-carbon"
+                              : "text-carbon/40"
+                          }
+                        >
+                          {label}
+                        </span>
+                        {form.estilo === key && (
+                          <motion.span
+                            layoutId="form-style-underline"
+                            aria-hidden="true"
+                            className="absolute inset-x-0 bottom-0 h-px bg-sand"
+                            transition={
+                              prefersReducedMotion
+                                ? { duration: 0.15 }
+                                : precision
+                            }
+                          />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
 
-      <div
-        aria-live="polite"
-        className="rounded-sm border border-offwhite/10 bg-slate px-5 py-4"
-      >
-        {estimate ? (
-          <p className="text-sm leading-relaxed text-offwhite/80">
-            Superficie estimada:{" "}
-            <span className="text-offwhite">
-              {formatArea(estimate.areaM2)} m²
-            </span>
-            . Paneles necesarios:{" "}
-            <span className="font-headline text-xl text-sand">
-              {estimate.paneles}
-            </span>{" "}
-            <span className="text-offwhite/50">
-              (cobertura de {PANEL_COVERAGE_M2.toLocaleString("es")} m² por
-              panel)
-            </span>
-          </p>
-        ) : (
-          <p className="text-sm text-offwhite/50">
-            Ingresá el ancho y el alto para calcular cuántos paneles necesita
-            tu proyecto.
-          </p>
-        )}
-      </div>
+              <fieldset disabled={isLoading}>
+                <legend className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60">
+                  Tono de acabado
+                </legend>
+                <div className="flex flex-wrap gap-5">
+                  {FINISH_TONES.map(({ key, label, src, objectPosition }) => {
+                    const selected = form.tono === key;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        aria-pressed={selected}
+                        aria-label={label}
+                        onClick={() => update("tono", key)}
+                        className={`flex flex-col items-start gap-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
+                          selected ? "opacity-100" : "opacity-45"
+                        }`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`relative h-14 w-14 overflow-hidden border ${
+                            selected
+                              ? "border-carbon"
+                              : "border-carbon/25"
+                          }`}
+                        >
+                          <Image
+                            src={src}
+                            alt=""
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                            style={{ objectPosition }}
+                          />
+                        </span>
+                        <span className="font-mono text-xs tracking-[0.02em] text-carbon">
+                          {label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            </div>
+          )}
 
-      <fieldset disabled={isLoading}>
-        <legend className={LABEL_CLASSES}>
-          ¿Cómo prefieres que te contactemos?
-        </legend>
-        <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
-          <label className="flex cursor-pointer items-center gap-3 text-base text-offwhite/80">
-            <input
-              type="radio"
-              name="contactoPreferido"
-              value="llamada"
-              required
-              className="h-4 w-4 accent-[#D4C3B3]"
-            />
-            Prefiero una llamada
-          </label>
-          <label className="flex cursor-pointer items-center gap-3 text-base text-offwhite/80">
-            <input
-              type="radio"
-              name="contactoPreferido"
-              value="whatsapp"
-              className="h-4 w-4 accent-[#D4C3B3]"
-            />
-            Cotización por WhatsApp
-          </label>
-        </div>
-      </fieldset>
+          {step === 3 && (
+            <div className="flex flex-col gap-8">
+              <div className="grid gap-8 md:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor={`${formId}-nombre`}
+                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                  >
+                    Nombre
+                  </label>
+                  <input
+                    id={`${formId}-nombre`}
+                    name="nombre"
+                    type="text"
+                    required
+                    disabled={isLoading}
+                    autoComplete="name"
+                    value={form.nombre}
+                    onChange={(e) => update("nombre", e.target.value)}
+                    className={INPUT_UNDERLINE}
+                    style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", transitionDuration: "400ms" }}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor={`${formId}-email`}
+                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                  >
+                    Email
+                  </label>
+                  <input
+                    id={`${formId}-email`}
+                    name="email"
+                    type="email"
+                    required
+                    disabled={isLoading}
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={(e) => update("email", e.target.value)}
+                    className={INPUT_UNDERLINE}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-8 md:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor={`${formId}-telefono`}
+                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                  >
+                    Teléfono
+                  </label>
+                  <input
+                    id={`${formId}-telefono`}
+                    name="telefono"
+                    type="tel"
+                    required
+                    disabled={isLoading}
+                    autoComplete="tel"
+                    value={form.telefono}
+                    onChange={(e) => update("telefono", e.target.value)}
+                    className={INPUT_UNDERLINE}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor={`${formId}-direccion`}
+                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                  >
+                    Dirección del proyecto
+                  </label>
+                  <input
+                    id={`${formId}-direccion`}
+                    name="direccion"
+                    type="text"
+                    disabled={isLoading}
+                    autoComplete="street-address"
+                    value={form.direccion}
+                    onChange={(e) => update("direccion", e.target.value)}
+                    className={INPUT_UNDERLINE}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-8 md:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor={`${formId}-superficie`}
+                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                  >
+                    Superficie aprox. (m²)
+                  </label>
+                  <input
+                    id={`${formId}-superficie`}
+                    name="superficieM2"
+                    type="number"
+                    required
+                    min={0.1}
+                    step={0.1}
+                    inputMode="decimal"
+                    disabled={isLoading}
+                    value={form.superficieM2}
+                    onChange={(e) => update("superficieM2", e.target.value)}
+                    className={INPUT_UNDERLINE}
+                  />
+                  {areaPreview && (
+                    <p className="mt-2 font-mono text-xs tracking-[0.02em] text-carbon/50">
+                      ~{areaPreview.paneles} paneles ({formatArea(areaPreview.areaM2)}{" "}
+                      m² · {PANEL_COVERAGE_M2} m²/panel)
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor={`${formId}-timeline`}
+                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                  >
+                    Plazo
+                  </label>
+                  <select
+                    id={`${formId}-timeline`}
+                    name="timeline"
+                    required
+                    disabled={isLoading}
+                    value={form.timeline}
+                    onChange={(e) => update("timeline", e.target.value)}
+                    className={INPUT_UNDERLINE}
+                  >
+                    <option value="" disabled>
+                      Seleccionar
+                    </option>
+                    {TIMELINES.map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor={`${formId}-mensaje`}
+                  className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                >
+                  Mensaje
+                </label>
+                <textarea
+                  id={`${formId}-mensaje`}
+                  name="mensaje"
+                  rows={4}
+                  disabled={isLoading}
+                  value={form.mensaje}
+                  onChange={(e) => update("mensaje", e.target.value)}
+                  className={`${INPUT_UNDERLINE} resize-y`}
+                />
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
 
       {submitState.status === "error" && (
-        <p role="alert" className="text-sm text-red-300">
+        <p role="alert" className="text-sm text-[#8B3A3A]">
           {submitState.message}
         </p>
       )}
 
-      <div>
-        <Button variant="primary" size="md" type="submit" disabled={isLoading}>
-          {isLoading ? "Enviando…" : "Enviar datos del proyecto"}
+      <div className="flex flex-wrap items-center gap-6">
+        {step > 1 && (
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => setStep((s) => s - 1)}
+            className="text-sm font-medium uppercase tracking-[0.08em] text-carbon/60 hover:text-carbon focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+          >
+            Atrás
+          </button>
+        )}
+        <Button
+          variant="primary"
+          size="md"
+          type="submit"
+          disabled={isLoading || (step < 3 && !canAdvance())}
+        >
+          {isLoading
+            ? "Enviando…"
+            : step < 3
+              ? "Continuar"
+              : "Enviar solicitud"}
         </Button>
       </div>
     </form>
