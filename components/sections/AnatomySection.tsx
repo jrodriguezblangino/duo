@@ -1,5 +1,6 @@
 import Image from "next/image";
 import FeatureCard from "@/components/ui/FeatureCard";
+import Reveal from "@/components/ui/Reveal";
 
 const ICON_PROPS = {
   width: 32,
@@ -65,30 +66,36 @@ export default function AnatomySection() {
       className="bg-slate/50 px-5 py-24 md:py-32 lg:px-10"
     >
       <div className="mx-auto max-w-7xl">
-        <h2
-          id="anatomia-heading"
-          className="mb-6 font-headline text-3xl md:text-4xl"
-        >
-          La ciencia detrás de la superficie.
-        </h2>
-        <p className="mb-12 max-w-2xl text-lg leading-relaxed text-offwhite/70">
-          Cada panel es un sistema de ingeniería de tres capas, diseñado para
-          durar y pensado para verse impecable.
-        </p>
+        <Reveal>
+          <h2
+            id="anatomia-heading"
+            className="mb-6 font-headline text-3xl md:text-4xl"
+          >
+            La ciencia detrás de la superficie.
+          </h2>
+          <p className="mb-12 max-w-2xl text-lg leading-relaxed text-offwhite/70">
+            Cada panel es un sistema de ingeniería de tres capas, diseñado para
+            durar y pensado para verse impecable.
+          </p>
+        </Reveal>
 
         <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
-            <Image
-              src="/assets/images/exploded_view_components.png"
-              alt="Vista explotada del panel: frente de acero, núcleo de poliuretano y barrera de aluminio"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-            />
-          </div>
+          <Reveal>
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
+              <Image
+                src="/assets/images/exploded_view_components.png"
+                alt="Vista explotada del panel: frente de acero, núcleo de poliuretano y barrera de aluminio"
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </Reveal>
           <div className="grid gap-6 sm:grid-cols-2">
-            {FEATURES.map((feature) => (
-              <FeatureCard key={feature.title} {...feature} />
+            {FEATURES.map((feature, index) => (
+              <Reveal key={feature.title} delay={0.08 * index}>
+                <FeatureCard {...feature} />
+              </Reveal>
             ))}
           </div>
         </div>

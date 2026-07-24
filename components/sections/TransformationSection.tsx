@@ -1,3 +1,5 @@
+import Reveal from "@/components/ui/Reveal";
+
 const BENEFITS = [
   {
     title: "Sobre paredes existentes",
@@ -23,7 +25,7 @@ export default function TransformationSection() {
       className="px-5 py-24 md:py-32 lg:px-10"
     >
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
-        <div>
+        <Reveal>
           <h2
             id="transformacion-heading"
             className="mb-6 font-headline text-3xl md:text-4xl"
@@ -53,23 +55,25 @@ export default function TransformationSection() {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-          tabIndex={-1}
-          className="aspect-video w-full rounded-sm object-cover"
-        >
-          <source
-            src="/assets/videos/motion_disassembly_components.mp4"
-            type="video/mp4"
-          />
-        </video>
+        <Reveal delay={0.15}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            tabIndex={-1}
+            className="aspect-video w-full rounded-sm object-cover"
+          >
+            <source
+              src="/assets/videos/motion_disassembly_components.mp4"
+              type="video/mp4"
+            />
+          </video>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import GalleryGrid from "@/components/ui/GalleryGrid";
+import Reveal from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Galería",
@@ -11,17 +12,21 @@ export default function GaleriaPage() {
   return (
     <section aria-labelledby="galeria-heading" className="px-5 py-24 lg:px-10">
       <div className="mx-auto max-w-7xl">
-        <h1
-          id="galeria-heading"
-          className="mb-6 font-headline text-4xl leading-tight md:text-5xl"
-        >
-          El material, en detalle.
-        </h1>
-        <p className="mb-12 max-w-2xl text-lg leading-relaxed text-offwhite/70">
-          Texturas, acabados y rendimiento real. Explora el panel Fill Home de
-          cerca y descubre por qué la calidad se percibe a primera vista.
-        </p>
-        <GalleryGrid />
+        <Reveal>
+          <h1
+            id="galeria-heading"
+            className="mb-6 font-headline text-4xl leading-tight md:text-5xl"
+          >
+            El material, en detalle.
+          </h1>
+          <p className="mb-12 max-w-2xl text-lg leading-relaxed text-offwhite/70">
+            Texturas, acabados y rendimiento real. Explora el panel Fill Home
+            de cerca y descubre por qué la calidad se percibe a primera vista.
+          </p>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <GalleryGrid />
+        </Reveal>
       </div>
     </section>
   );

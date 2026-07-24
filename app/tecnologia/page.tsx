@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
+import Reveal from "@/components/ui/Reveal";
 import { CTA } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -54,7 +55,7 @@ export default function TecnologiaPage() {
         aria-labelledby="tecnologia-heading"
         className="px-5 pb-16 pt-24 lg:px-10"
       >
-        <div className="mx-auto flex max-w-4xl flex-col gap-6">
+        <Reveal className="mx-auto flex max-w-4xl flex-col gap-6">
           <h1
             id="tecnologia-heading"
             className="font-headline text-4xl leading-tight md:text-5xl"
@@ -66,7 +67,7 @@ export default function TecnologiaPage() {
             revestimiento que combina estética arquitectónica con rendimiento
             estructural real.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       <section
@@ -74,65 +75,70 @@ export default function TecnologiaPage() {
         className="bg-slate/50 px-5 py-24 lg:px-10"
       >
         <div className="mx-auto max-w-7xl">
-          <h2
-            id="composicion-heading"
-            className="mb-12 font-headline text-3xl md:text-4xl"
-          >
-            Composición de tres capas.
-          </h2>
+          <Reveal>
+            <h2
+              id="composicion-heading"
+              className="mb-12 font-headline text-3xl md:text-4xl"
+            >
+              Composición de tres capas.
+            </h2>
+          </Reveal>
 
           <div className="mb-12 grid gap-6 lg:grid-cols-3">
-            {LAYERS.map(({ name, role, description }) => (
-              <article
-                key={name}
-                className="flex flex-col gap-3 rounded-sm border border-offwhite/10 bg-carbon p-8"
-              >
-                <p className="text-xs uppercase tracking-widest text-sand">
-                  {role}
-                </p>
-                <h3 className="font-headline text-xl text-offwhite">{name}</h3>
-                <p className="text-sm leading-relaxed text-offwhite/60">
-                  {description}
-                </p>
-              </article>
+            {LAYERS.map(({ name, role, description }, index) => (
+              <Reveal key={name} delay={0.08 * index}>
+                <article className="flex h-full flex-col gap-3 rounded-sm border border-offwhite/10 bg-carbon p-8">
+                  <p className="text-xs uppercase tracking-widest text-sand">
+                    {role}
+                  </p>
+                  <h3 className="font-headline text-xl text-offwhite">{name}</h3>
+                  <p className="text-sm leading-relaxed text-offwhite/60">
+                    {description}
+                  </p>
+                </article>
+              </Reveal>
             ))}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <figure className="flex flex-col gap-3">
-              <div className="relative aspect-video w-full overflow-hidden rounded-sm">
-                <Image
-                  src="/assets/images/detail_internal_45deg_alt.png"
-                  alt="Estructura interna del panel vista a 45 grados: capas de acero, poliuretano y aluminio"
-                  fill
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
-              <figcaption className="text-sm text-offwhite/50">
-                Estructura interna del panel a 45°.
-              </figcaption>
-            </figure>
-            <figure className="flex flex-col gap-3">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                aria-hidden="true"
-                tabIndex={-1}
-                className="aspect-video w-full rounded-sm object-cover"
-              >
-                <source
-                  src="/assets/videos/motion_thermal_capacity.mp4"
-                  type="video/mp4"
-                />
-              </video>
-              <figcaption className="text-sm text-offwhite/50">
-                Capacidad térmica del núcleo de poliuretano.
-              </figcaption>
-            </figure>
+            <Reveal>
+              <figure className="flex flex-col gap-3">
+                <div className="relative aspect-video w-full overflow-hidden rounded-sm">
+                  <Image
+                    src="/assets/images/detail_internal_45deg_alt.png"
+                    alt="Estructura interna del panel vista a 45 grados: capas de acero, poliuretano y aluminio"
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <figcaption className="text-sm text-offwhite/50">
+                  Estructura interna del panel a 45°.
+                </figcaption>
+              </figure>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <figure className="flex flex-col gap-3">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  className="aspect-video w-full rounded-sm object-cover"
+                >
+                  <source
+                    src="/assets/videos/motion_thermal_capacity.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+                <figcaption className="text-sm text-offwhite/50">
+                  Capacidad térmica del núcleo de poliuretano.
+                </figcaption>
+              </figure>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -141,7 +147,7 @@ export default function TecnologiaPage() {
         aria-labelledby="ficha-heading"
         className="px-5 py-24 lg:px-10"
       >
-        <div className="mx-auto max-w-4xl">
+        <Reveal className="mx-auto max-w-4xl">
           <h2
             id="ficha-heading"
             className="mb-12 font-headline text-3xl md:text-4xl"
@@ -177,7 +183,7 @@ export default function TecnologiaPage() {
               {CTA.label}
             </Button>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );
