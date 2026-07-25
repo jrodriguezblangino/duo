@@ -63,8 +63,6 @@ const SECTION_CLASS =
   "relative isolate overflow-hidden bg-carbon text-offwhite min-h-dvh md:min-h-[90vh]";
 const CONTENT_CLASS =
   "relative z-10 flex min-h-dvh flex-col justify-center px-6 py-24 md:min-h-[90vh] md:px-16 lg:px-20 lg:py-section xl:px-28";
-const CAPTION_CLASS =
-  "pointer-events-none absolute bottom-6 right-6 font-mono text-xs tracking-wider text-sand/50 md:bottom-8 md:right-10 lg:bottom-10 lg:right-20";
 
 export default function TransformationSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -220,8 +218,6 @@ export default function TransformationSection() {
             ))}
           </ul>
         </div>
-
-        <p className={CAPTION_CLASS}>Instalación real — sin efectos</p>
       </div>
     </section>
   );
