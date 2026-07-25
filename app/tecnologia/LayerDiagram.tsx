@@ -28,13 +28,20 @@ const MARKERS: readonly Marker[] = [
   { index: "03", left: "95%", top: "46%" },
 ] as const;
 
+/** Match page HEADLINE_LG / BODY tokens */
+const CALL_OUT_HEADLINE =
+  "font-headline text-[1.75rem] font-normal italic leading-[1.08] tracking-[-0.01em] text-offwhite lg:text-[2.35rem]";
+const CALL_OUT_BODY =
+  "mt-5 max-w-[36ch] text-base leading-[1.65] text-offwhite/65 lg:text-[17px]";
+
 type LayerDiagramProps = {
   layers: readonly LayerInfo[];
 };
 
 /**
- * Composition chapter visual — sits in the shared 7/5 chapter grid.
- * Markers on the still; callout docks in the copy column (never overlays).
+ * Composition chapter — 7/5 grid.
+ * Markers on the still; callout matches Instalación / Aislamiento copy pattern
+ * (italic headline + body only — no duplicate 01/02/03 role label).
  */
 export default function LayerDiagram({ layers }: LayerDiagramProps) {
   const baseId = useId();
@@ -66,12 +73,11 @@ export default function LayerDiagram({ layers }: LayerDiagramProps) {
   }, []);
 
   const activeLayer = active != null ? layers[active] : null;
-  const activeMarker = active != null ? MARKERS[active] : null;
 
   return (
     <div
       ref={rootRef}
-      className="grid items-start gap-8 lg:grid-cols-12 lg:gap-16"
+      className="grid items-start gap-10 lg:grid-cols-12 lg:gap-16"
     >
       <div className="lg:col-span-7">
         <CroppedPanelImage
@@ -104,6 +110,7 @@ export default function LayerDiagram({ layers }: LayerDiagramProps) {
                   type="button"
                   aria-expanded={isActive}
                   aria-controls={`${baseId}-callout`}
+                  aria-label={`${marker.index} · ${layer.name}`}
                   onClick={() => activate(i)}
                   onMouseEnter={() => {
                     setHovered(i);
@@ -119,16 +126,12 @@ export default function LayerDiagram({ layers }: LayerDiagramProps) {
                         : "border-sand/65 bg-carbon/80 text-sand hover:border-sand"
                   }`}
                 >
-                  <span className="sr-only">Capa </span>
                   {marker.index}
                 </button>
               </div>
             );
           })}
         </CroppedPanelImage>
-        <p className="mt-4 font-mono text-xs tracking-[0.02em] text-offwhite/45 lg:text-[13px]">
-          Canto en corte — tres capas
-        </p>
       </div>
 
       <div className="lg:col-span-5">
@@ -136,23 +139,12 @@ export default function LayerDiagram({ layers }: LayerDiagramProps) {
           id={`${baseId}-callout`}
           role="region"
           aria-live="polite"
-          className="border-l border-sand/35 pl-5"
+          className="min-h-[8.5rem]"
         >
-          {activeLayer && activeMarker ? (
+          {activeLayer ? (
             <>
-              <p className="font-mono text-[11px] tracking-[0.14em] text-sand">
-                {activeMarker.index}
-                <span className="text-offwhite/30"> · </span>
-                <span className="text-offwhite/50">
-                  {activeLayer.role.replace(/^\d+\s*·\s*/, "")}
-                </span>
-              </p>
-              <p className="mt-3 font-headline text-[1.75rem] font-normal italic leading-[1.1] text-offwhite lg:text-[2.25rem]">
-                {activeLayer.name}
-              </p>
-              <p className="mt-4 max-w-[34ch] text-base leading-[1.65] text-offwhite/65">
-                {activeLayer.description}
-              </p>
+              <p className={CALL_OUT_HEADLINE}>{activeLayer.name}</p>
+              <p className={CALL_OUT_BODY}>{activeLayer.description}</p>
             </>
           ) : (
             <p className="text-sm text-offwhite/40">

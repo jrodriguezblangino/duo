@@ -8,6 +8,10 @@ import {
 
 const DUMMY_RANGE = [0, 1] as const;
 
+/** Organic draw — matches Manifiesto / Anatomy pacing */
+const DRAW_DURATION = 0.9;
+const STAGGER = 0.45;
+
 function ViewMark({
   children,
   delay = 0,
@@ -32,7 +36,7 @@ function ViewMark({
       range={DUMMY_RANGE}
       reveal="view"
       surface="dark"
-      duration={0.5}
+      duration={DRAW_DURATION}
       delay={delay}
     >
       {children}
@@ -40,36 +44,46 @@ function ViewMark({
   );
 }
 
-/** Scene 1 — fabrication sequence; markers on extrusión / tolerancia */
+/** Hero / 01 — fabrication; highlight on proceso (not tolerancia) */
 export function ManufacturingBody({ className }: { className: string }) {
   const reduce = Boolean(useReducedMotion());
 
   return (
     <p className={className}>
-      La cara nace por <ViewMark reduce={reduce}>extrusión</ViewMark> de
-      aluminio; el núcleo se inyecta en poliuretano; el respaldo se lamina en
-      acero galvanizado. El proceso está calibrado para la{" "}
-      <ViewMark reduce={reduce} delay={0.35}>
-        tolerancia
-      </ViewMark>{" "}
-      del encastre oculto.
+      La cara nace por extrusión de aluminio; el núcleo se inyecta en
+      poliuretano; el respaldo se lamina en acero galvanizado. El{" "}
+      <ViewMark reduce={reduce}>proceso</ViewMark> está calibrado para la
+      tolerancia del encastre oculto.
     </p>
   );
 }
 
-/** Scene 3 — on-site installation; markers on encastre / tolerancia */
+/** 03 — installation; same draw timing as hero */
 export function InstallationBody({ className }: { className: string }) {
   const reduce = Boolean(useReducedMotion());
 
   return (
     <p className={className}>
       Esa precisión se traslada a la obra: el{" "}
-      <ViewMark reduce={reduce}>encastre</ViewMark> oculto sostiene una{" "}
-      <ViewMark reduce={reduce} delay={0.35}>
-        tolerancia
+      <ViewMark reduce={reduce}>encastre</ViewMark> oculto sostiene una
+      tolerancia constante sobre el muro real, y permite un ensamble limpio —
+      sin fijaciones a la vista.
+    </p>
+  );
+}
+
+/** 04 — insulation; peer highlight treatment */
+export function InsulationBody({ className }: { className: string }) {
+  const reduce = Boolean(useReducedMotion());
+
+  return (
+    <p className={className}>
+      El poliuretano de alta densidad reduce la transferencia térmica, aporta
+      confort acústico y es la capa que{" "}
+      <ViewMark reduce={reduce} delay={STAGGER}>
+        adhiere
       </ViewMark>{" "}
-      constante sobre el muro real, y permite un ensamble limpio — sin
-      fijaciones a la vista.
+      cara y respaldo en una sola pieza.
     </p>
   );
 }

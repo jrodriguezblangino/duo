@@ -3,10 +3,10 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import Button from "@/components/ui/Button";
 import { CTA } from "@/lib/site";
-import CroppedPanelImage from "./CroppedPanelImage";
 import LayerDiagram from "./LayerDiagram";
 import {
   InstallationBody,
+  InsulationBody,
   ManufacturingBody,
 } from "./HighlightedBodies";
 
@@ -18,19 +18,19 @@ export const metadata: Metadata = {
 
 const LAYERS = [
   {
-    role: "01 · Cara vista",
+    role: "Cara vista",
     name: "Aluminio anodizado",
     description:
       "0.6 mm de cara anodizada. Wood-look o metálico — es lo que se ve y se toca.",
   },
   {
-    role: "02 · Núcleo",
+    role: "Núcleo",
     name: "Poliuretano de alta densidad",
     description:
       "Aislamiento térmico y acústico, y la capa que adhiere cara y respaldo.",
   },
   {
-    role: "03 · Respaldo",
+    role: "Respaldo",
     name: "Acero galvanizado",
     description:
       "Rigidez estructural del sistema; estabilidad dimensional en el tiempo.",
@@ -48,16 +48,9 @@ const SPECS = [
   { label: "Acabados", value: "Aspecto madera / Metálico" },
 ];
 
-/**
- * One composition rail for the whole narrative.
- * Every chapter shares this width so left edges and media columns align.
- */
 const RAIL = "mx-auto w-full max-w-[64rem]";
-
-/** Shared chapter vertical rhythm */
 const CHAPTER_Y = "py-16 lg:py-24";
-const CHAPTER_GRID =
-  "grid items-start gap-10 lg:grid-cols-12 lg:gap-16";
+const CHAPTER_GRID = "grid items-start gap-10 lg:grid-cols-12 lg:gap-16";
 
 const EYEBROW =
   "mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em] text-offwhite/55 lg:text-[13px]";
@@ -65,8 +58,6 @@ const HEADLINE_LG =
   "font-headline text-[1.75rem] font-normal italic leading-[1.08] tracking-[-0.01em] text-offwhite lg:text-[2.35rem]";
 const BODY =
   "max-w-[36ch] text-base leading-[1.65] text-offwhite/65 lg:text-[17px]";
-const CAPTION =
-  "mt-4 font-mono text-xs tracking-[0.02em] text-offwhite/45 lg:text-[13px]";
 const SPEC_LINE =
   "mt-6 font-mono text-xs tracking-[0.02em] text-sand lg:text-[13px]";
 
@@ -123,21 +114,19 @@ function MediaFrame({
 export default function TecnologiaPage() {
   return (
     <>
-      {/* ─── One continuous carbon narrative ─── */}
       <section
         aria-labelledby="tecnologia-heading"
         className="bg-carbon px-6 pt-28 text-offwhite lg:px-20 lg:pt-36"
       >
         <div className={RAIL}>
           <div className="relative">
-            {/* Spine — left of the shared content edge */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute bottom-10 left-0 top-8 hidden w-px bg-offwhite/12 lg:block"
             />
 
             <div className="lg:pl-10">
-              {/* Intro + chapters share one left edge */}
+              {/* Hero */}
               <div className="max-w-[40rem] pb-6 lg:pb-4">
                 <p className={EYEBROW}>
                   <span
@@ -155,9 +144,8 @@ export default function TecnologiaPage() {
                 <ManufacturingBody className={`mt-6 ${BODY} max-w-[42ch]`} />
               </div>
 
-            {/* 01 — Establishing shot (full rail) */}
-            <Chapter id="fabricacion">
-              <div>
+              {/* 01 Fabricación */}
+              <Chapter id="fabricacion">
                 <ChapterEyebrow index="01" label="Fabricación" />
                 <MediaFrame aspectClass="aspect-[2/1]">
                   <Image
@@ -169,106 +157,112 @@ export default function TecnologiaPage() {
                     priority
                   />
                 </MediaFrame>
-                <p className={CAPTION}>
-                  Sistema de panel y perfiles — vista de taller
-                </p>
-              </div>
-            </Chapter>
+              </Chapter>
 
-            {/* 02 — Composition: diagram + live callout (7/5) */}
-            <Chapter id="composicion" className="border-t border-offwhite/[0.06]">
-              <div>
+              {/* 02 Composición */}
+              <Chapter
+                id="composicion"
+                className="border-t border-offwhite/[0.06]"
+              >
                 <ChapterEyebrow index="02" label="Composición" />
                 <h2 className="sr-only">Composición de tres capas</h2>
                 <LayerDiagram layers={LAYERS} />
-              </div>
-            </Chapter>
+              </Chapter>
 
-            {/* 03 — Instalación: media | copy */}
-            <Chapter id="instalacion" className="border-t border-offwhite/[0.06]">
-              <ChapterEyebrow index="03" label="Instalación" />
-              <div className={CHAPTER_GRID}>
-                <div className="lg:col-span-7">
-                  <CroppedPanelImage
-                    src="/assets/images/detail_internal_45deg.png"
-                    alt="Detalle del encastre oculto entre paneles Fill Home"
-                    aspectClass="aspect-[16/10]"
-                    sizes="(min-width: 1024px) 58vw, 100vw"
-                    contentRight={0.58}
-                    zoom={1.12}
-                    objectPosition="60% 48%"
-                  />
-                  <p className={CAPTION}>Junta oculta — ajuste mecánico</p>
+              {/* 03 Instalación — motion-clipper */}
+              <Chapter
+                id="instalacion"
+                className="border-t border-offwhite/[0.06]"
+              >
+                <ChapterEyebrow index="03" label="Instalación" />
+                <div className={CHAPTER_GRID}>
+                  <div className="lg:col-span-7">
+                    <MediaFrame aspectClass="aspect-[16/10]">
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        aria-label="Encastre oculto entre paneles Fill Home"
+                        className="absolute inset-0 h-full w-full object-cover"
+                      >
+                        <source
+                          src="/assets/videos/motion-clipper.mp4"
+                          type="video/mp4"
+                        />
+                      </video>
+                    </MediaFrame>
+                  </div>
+                  <div className="lg:col-span-5">
+                    <p className={HEADLINE_LG}>El ajuste que no se ve.</p>
+                    <InstallationBody className={`mt-5 ${BODY}`} />
+                    <p className={SPEC_LINE}>
+                      Encastre oculto · tolerancia ± 0.3 mm [VERIFY]
+                    </p>
+                  </div>
                 </div>
-                <div className="lg:col-span-5">
-                  <p className={HEADLINE_LG}>El ajuste que no se ve.</p>
-                  <InstallationBody className={`mt-5 ${BODY}`} />
-                  <p className={SPEC_LINE}>
-                    Encastre oculto · tolerancia ± 0.3 mm [VERIFY]
-                  </p>
-                </div>
-              </div>
-            </Chapter>
+              </Chapter>
 
-            {/* 04 — Aislamiento: copy | media (flip for rhythm) */}
-            <Chapter id="aislamiento" className="border-t border-offwhite/[0.06]">
-              <ChapterEyebrow index="04" label="Aislamiento" />
-              <div className={CHAPTER_GRID}>
-                <div className="order-2 lg:order-1 lg:col-span-5">
-                  <p className={HEADLINE_LG}>El núcleo que sostiene.</p>
-                  <p className={`mt-5 ${BODY}`}>
-                    El poliuretano de alta densidad reduce la transferencia
-                    térmica, aporta confort acústico y es la capa que adhiere
-                    cara y respaldo en una sola pieza.
-                  </p>
-                  <p className={SPEC_LINE}>
-                    Núcleo HD · aislamiento + adhesión
-                  </p>
+              {/* 04 Aislamiento */}
+              <Chapter
+                id="aislamiento"
+                className="border-t border-offwhite/[0.06]"
+              >
+                <ChapterEyebrow index="04" label="Aislamiento" />
+                <div className={CHAPTER_GRID}>
+                  <div className="order-2 lg:order-1 lg:col-span-5">
+                    <p className={HEADLINE_LG}>El núcleo que sostiene.</p>
+                    <InsulationBody className={`mt-5 ${BODY}`} />
+                    <p className={SPEC_LINE}>
+                      Núcleo HD · aislamiento + adhesión
+                    </p>
+                  </div>
+                  <div className="order-1 lg:order-2 lg:col-span-7">
+                    <MediaFrame aspectClass="aspect-[16/10]">
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        aria-hidden="true"
+                        tabIndex={-1}
+                        className="absolute inset-0 h-full w-full object-cover object-[75%_42%] scale-[1.15] origin-right"
+                      >
+                        <source
+                          src="/assets/videos/motion_thermal_capacity.mp4"
+                          type="video/mp4"
+                        />
+                      </video>
+                    </MediaFrame>
+                  </div>
                 </div>
-                <div className="order-1 lg:order-2 lg:col-span-7">
-                  <MediaFrame aspectClass="aspect-[16/10]">
-                    <video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                      aria-hidden="true"
-                      tabIndex={-1}
-                      className="absolute inset-0 h-full w-full object-cover object-[75%_42%] scale-[1.15] origin-right"
-                    >
-                      <source
-                        src="/assets/videos/motion_thermal_capacity.mp4"
-                        type="video/mp4"
-                      />
-                    </video>
-                  </MediaFrame>
-                  <p className={CAPTION}>Capacidad térmica del núcleo</p>
-                </div>
-              </div>
-            </Chapter>
+              </Chapter>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Dark → light bridge */}
       <div
         aria-hidden="true"
         className="h-28 bg-gradient-to-b from-carbon via-[#1f1f1f] to-offwhite sm:h-36"
       />
 
-      {/* Specs — same rail width as narrative for continuity */}
+      {/* 05 Especificaciones */}
       <section
         aria-labelledby="ficha-heading"
         className="bg-offwhite px-6 pb-24 pt-6 text-carbon lg:px-20 lg:pb-section lg:pt-10"
       >
-        <div className={`${RAIL} max-w-[40rem]`}>
+        <div className={`${RAIL} max-w-[40rem] lg:pl-10`}>
           <p className="mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em] text-carbon/55 lg:text-[13px]">
             <span className="font-mono font-normal tracking-[0.08em] text-carbon/70">
               05
             </span>
-            <span aria-hidden="true" className="h-px w-5 shrink-0 bg-carbon/25" />
+            <span
+              aria-hidden="true"
+              className="h-px w-5 shrink-0 bg-carbon/25"
+            />
             <span>Ficha técnica</span>
           </p>
           <h2
