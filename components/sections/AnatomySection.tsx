@@ -15,6 +15,10 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { glide } from "@/lib/motion";
+import {
+  HighlightWord,
+  HighlightWordStatic,
+} from "@/components/ui/HighlightWord";
 
 /**
  * Anatomy — scroll-driven composition story (desktop pin).
@@ -56,19 +60,23 @@ const LAYERS = [
 ] as const;
 
 const LAYER_RANGES: readonly (readonly [number, number])[] = [
-  [0.35, 0.5],
-  [0.5, 0.65],
-  [0.65, 0.75],
+  [0.35, 0.48],
+  [0.48, 0.58],
+  [0.58, 0.68],
 ];
 
-/** Scene 1 supporting copy — Manifiesto tone, material-literal */
-const SCENE1_SUPPORT_BEFORE =
-  "El panel combina la calidez de un ";
-const SCENE1_SUPPORT_MID =
-  " con la ";
-const SCENE1_SUPPORT_AFTER =
-  " del acero. La cara wood-look se mantiene en el tiempo ";
-const SCENE1_SUPPORT_END = "; el núcleo une y aísla sin complicar la obra.";
+/** Scene 1 supporting copy — single-word markers on Calidez / acero */
+const SCENE1_BODY = {
+  mid: " que no se desvanece. Resistencia que no se nota — hasta que la necesitás. Cada panel une un acabado real con la solidez del ",
+  end: ", sin mantenimiento y sin complicar la obra.",
+} as const;
+
+const SCENE1_EYEBROW =
+  "mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.14em] text-sand lg:text-[13px]";
+const SCENE1_HEADLINE =
+  "font-headline text-[2.95rem] font-normal leading-[0.98] tracking-[-0.02em] text-offwhite lg:text-[3.5rem] xl:text-[4.25rem]";
+const SCENE1_BODY_CLASS =
+  "mt-6 max-w-[58ch] text-base leading-[1.6] text-[#b8b3ab] lg:text-[17px]";
 
 const MONO_MUTED =
   "font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]";
@@ -79,84 +87,69 @@ const VIEWPORT = { once: true, amount: 0.35 } as const;
 
 /* ─── Shared focus / reveal helpers ─── */
 
-/** Sand accent on carbon — text + underline draw (Manifesto echo treatment) */
-function AccentUnderline({
-  children,
-  progress,
-  range,
-}: {
-  children: string;
-  progress: MotionValue<number>;
-  range: readonly [number, number];
-}) {
-  const [start, end] = range;
-  const scaleX = useTransform(progress, [start, end, 1], [0, 1, 1]);
-
+function Scene1Eyebrow() {
   return (
-    <span className="relative inline text-sand">
-      {children}
-      <motion.span
-        aria-hidden="true"
-        className="absolute bottom-[0.05em] left-0 h-[2px] w-full origin-left bg-sand will-change-transform"
-        style={{ scaleX }}
-      />
-    </span>
-  );
-}
-
-function AccentUnderlineStatic({ children }: { children: string }) {
-  return (
-    <span className="relative inline text-sand">
-      {children}
-      <span
-        aria-hidden="true"
-        className="absolute bottom-[0.05em] left-0 h-[2px] w-full bg-sand"
-      />
-    </span>
+    <p className={SCENE1_EYEBROW}>
+      <span aria-hidden="true" className="h-px w-4 shrink-0 bg-sand" />
+      Composición — tres capas
+    </p>
   );
 }
 
 function Scene1Support({
   progress,
+  reduce = false,
+  highlightReveal = "scroll",
 }: {
   progress?: MotionValue<number>;
+  reduce?: boolean;
+  highlightReveal?: "scroll" | "view";
 }) {
-  const bodyClass =
-    "mt-6 max-w-[36ch] text-base leading-[1.65] text-offwhite/70 lg:text-[17px]";
-
-  if (!progress) {
+  if (!progress || reduce) {
     return (
-      <p className={bodyClass}>
-        {SCENE1_SUPPORT_BEFORE}
-        <AccentUnderlineStatic>acabado real</AccentUnderlineStatic>
-        {SCENE1_SUPPORT_MID}
-        <AccentUnderlineStatic>resistencia estructural</AccentUnderlineStatic>
-        {SCENE1_SUPPORT_AFTER}
-        <AccentUnderlineStatic>sin mantenimiento</AccentUnderlineStatic>
-        {SCENE1_SUPPORT_END}
+      <p className={SCENE1_BODY_CLASS}>
+        <HighlightWordStatic surface="dark">Calidez</HighlightWordStatic>
+        {SCENE1_BODY.mid}
+        <HighlightWordStatic surface="dark">acero</HighlightWordStatic>
+        {SCENE1_BODY.end}
       </p>
     );
   }
 
+  const isView = highlightReveal === "view";
+
   return (
-    <p className={bodyClass}>
-      {SCENE1_SUPPORT_BEFORE}
-      <AccentUnderline progress={progress} range={[0.08, 0.18]}>
-        acabado real
-      </AccentUnderline>
-      {SCENE1_SUPPORT_MID}
-      <AccentUnderline progress={progress} range={[0.12, 0.22]}>
-        resistencia estructural
-      </AccentUnderline>
-      {SCENE1_SUPPORT_AFTER}
-      <AccentUnderline progress={progress} range={[0.16, 0.26]}>
-        sin mantenimiento
-      </AccentUnderline>
-      {SCENE1_SUPPORT_END}
+    <p className={SCENE1_BODY_CLASS}>
+      <HighlightWord
+        reduce={false}
+        progress={progress}
+        range={[0.22, 0.28]}
+        reveal={highlightReveal}
+        surface="dark"
+        {...(isView ? { duration: 0.45, delay: 0 } : {})}
+      >
+        Calidez
+      </HighlightWord>
+      {SCENE1_BODY.mid}
+      <HighlightWord
+        reduce={false}
+        progress={progress}
+        range={[0.24, 0.3]}
+        reveal={highlightReveal}
+        surface="dark"
+        {...(isView ? { duration: 0.45, delay: 0.15 } : {})}
+      >
+        acero
+      </HighlightWord>
+      {SCENE1_BODY.end}
     </p>
   );
 }
 
+/**
+ * Scroll-linked entrance: opacity + blur-to-focus + soft rise.
+ * Matches Manifiesto FocusBlock language for Scene 1 copy.
+ */
 function FocusText({
   children,
   progress,
@@ -169,12 +162,16 @@ function FocusText({
   className?: string;
 }) {
   const [start, end] = range;
-  const opacity = useTransform(progress, [start, end, 1], [0.25, 1, 1]);
-  const blur = useTransform(progress, [start, end, 1], [12, 0, 0]);
+  const opacity = useTransform(progress, [start, end, 1], [0, 1, 1]);
+  const blur = useTransform(progress, [start, end, 1], [5, 0, 0]);
+  const y = useTransform(progress, [start, end, 1], [12, 0, 0]);
   const filter = useMotionTemplate`blur(${blur}px)`;
 
   return (
-    <motion.div className={className} style={{ opacity, filter }}>
+    <motion.div
+      className={className}
+      style={{ opacity, filter, y, willChange: "opacity, filter, transform" }}
+    >
       {children}
     </motion.div>
   );
@@ -293,17 +290,15 @@ function StaticAnatomy() {
     >
       <div className="mx-auto max-w-site">
         <div className="mx-auto mb-12 max-w-measure text-center lg:mb-20">
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-            Composición — tres capas
-          </p>
-          <h2
-            id="anatomia-heading"
-            className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite lg:text-6xl"
-          >
-            De la superficie a la estructura.
-          </h2>
-          <div className="mx-auto mt-2 w-fit text-left">
-            <Scene1Support />
+          <div className="mx-auto w-fit text-left">
+            <Scene1Eyebrow />
+            <h2
+              id="anatomia-heading"
+              className={SCENE1_HEADLINE}
+            >
+              De la superficie a la estructura.
+            </h2>
+            <Scene1Support reduce />
           </div>
         </div>
 
@@ -400,30 +395,37 @@ function StaticAnatomy() {
 /* ─── Mobile: sequential, no sticky scrub ─── */
 
 function MobileAnatomy() {
+  const introRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: introRef,
+    offset: ["start 0.85", "end 0.45"],
+  });
+
   return (
     <section
       aria-labelledby="anatomia-heading"
       className="bg-carbon px-6 py-section-mobile text-offwhite lg:hidden"
     >
       <div className="mx-auto max-w-site">
-        <motion.div
-          className="mb-10 max-w-measure"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={VIEWPORT}
-          transition={glide}
-        >
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60">
-            Composición — tres capas
-          </p>
-          <h2
-            id="anatomia-heading"
-            className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite"
-          >
-            De la superficie a la estructura.
-          </h2>
-          <Scene1Support />
-        </motion.div>
+        <div ref={introRef} className="mb-10 max-w-[58ch]">
+          <FocusText progress={scrollYProgress} range={[0.02, 0.22]}>
+            <Scene1Eyebrow />
+          </FocusText>
+          <FocusText progress={scrollYProgress} range={[0.12, 0.36]}>
+            <h2
+              id="anatomia-heading"
+              className={SCENE1_HEADLINE}
+            >
+              De la superficie a la estructura.
+            </h2>
+          </FocusText>
+          <FocusText progress={scrollYProgress} range={[0.28, 0.55]}>
+            <Scene1Support
+              progress={scrollYProgress}
+              highlightReveal="view"
+            />
+          </FocusText>
+        </div>
 
         <motion.div
           className="mb-12"
@@ -548,54 +550,54 @@ function DesktopAnatomy() {
     offset: ["start start", "end end"],
   });
 
-  useProgressGatedPlayback(heroVideoRef, scrollYProgress, 0, 0.72);
-  useProgressGatedPlayback(detailVideoRef, scrollYProgress, 0.72);
+  useProgressGatedPlayback(heroVideoRef, scrollYProgress, 0, 0.78);
+  useProgressGatedPlayback(detailVideoRef, scrollYProgress, 0.78);
 
   /* Scene 1 — headline (hold 0 through end — avoid FM extrapolation revive) */
   const scene1Opacity = useTransform(
     scrollYProgress,
-    [0.28, 0.38, 1],
+    [0.3, 0.4, 1],
     [1, 0, 0],
   );
 
-  /* Scene 2 — layers panel */
+  /* Scene 2 — layers panel: hold after 01/02/03, then long fade into Scene 3 */
   const scene2Opacity = useTransform(
     scrollYProgress,
-    [0.32, 0.38, 0.72, 0.78, 1],
+    [0.34, 0.4, 0.78, 0.92, 1],
     [0, 1, 1, 0, 0],
   );
 
   /* Visual: hero video → detail video */
   const videoOpacity = useTransform(
     scrollYProgress,
-    [0, 0.72, 0.86, 1],
+    [0, 0.78, 0.94, 1],
     [1, 1, 0, 0],
   );
   const detailOpacity = useTransform(
     scrollYProgress,
-    [0, 0.72, 0.88, 1],
+    [0, 0.78, 0.95, 1],
     [0, 0, 1, 1],
   );
   const detailScale = useTransform(
     scrollYProgress,
-    [0.72, 0.92, 1],
+    [0.78, 0.96, 1],
     [1.05, 1, 1],
   );
 
   /* Scene 3 — detail copy */
   const scene3Opacity = useTransform(
     scrollYProgress,
-    [0.78, 0.9, 1],
+    [0.86, 0.96, 1],
     [0, 1, 1],
   );
-  const scene3Y = useTransform(scrollYProgress, [0.78, 0.92, 1], [16, 0, 0]);
+  const scene3Y = useTransform(scrollYProgress, [0.86, 0.97, 1], [16, 0, 0]);
 
   return (
     <section
       aria-labelledby="anatomia-heading-desktop"
       className="relative hidden bg-carbon text-offwhite lg:block"
     >
-      <div ref={trackRef} className="relative h-[320vh]">
+      <div ref={trackRef} className="relative h-[400vh]">
         <div className="sticky top-0 flex h-dvh flex-col justify-center overflow-hidden">
           <div className="relative mx-auto grid h-full w-full max-w-site grid-cols-12 items-center gap-gutter px-20 py-24">
             {/* Visual stage — 1:1 hero / 16:9 detail crossfade */}
@@ -647,21 +649,25 @@ function DesktopAnatomy() {
 
             {/* Right column — scenes 1–3 overlays */}
             <div className="relative col-span-5 flex h-full max-h-[min(560px,68vh)] flex-col justify-center">
-              {/* Scene 1 — eyebrow + headline + support (vertically centered) */}
+              {/* Scene 1 — paced reveal: eyebrow → headline → paragraph → markers */}
               <motion.div
                 className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center"
                 style={{ opacity: scene1Opacity }}
               >
-                <FocusText progress={scrollYProgress} range={[0.02, 0.18]}>
-                  <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-                    Composición — tres capas
-                  </p>
+                <FocusText progress={scrollYProgress} range={[0.02, 0.1]}>
+                  <Scene1Eyebrow />
+                </FocusText>
+
+                <FocusText progress={scrollYProgress} range={[0.06, 0.14]}>
                   <h2
                     id="anatomia-heading-desktop"
-                    className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite lg:text-5xl xl:text-6xl"
+                    className={SCENE1_HEADLINE}
                   >
                     De la superficie a la estructura.
                   </h2>
+                </FocusText>
+
+                <FocusText progress={scrollYProgress} range={[0.12, 0.2]}>
                   <Scene1Support progress={scrollYProgress} />
                 </FocusText>
               </motion.div>

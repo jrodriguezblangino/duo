@@ -22,3 +22,13 @@ export const ENTRY_Y = 24;
 
 /** Max stagger between children */
 export const STAGGER = 0.08;
+
+/**
+ * Accent highlight / underline — fire when the word sits mid-viewport
+ * (~40–50% in), not on first entry. Shared by HighlightWord + AccentEcho.
+ */
+export const ACCENT_VIEWPORT = {
+  once: true,
+  amount: 0.5,
+  margin: "-40% 0px -45% 0px",
+} as const;

@@ -9,15 +9,17 @@ import {
   useMotionTemplate,
   type MotionValue,
 } from "framer-motion";
-import { glide } from "@/lib/motion";
+import { AccentEcho, AccentEchoStatic } from "@/components/ui/AccentEcho";
+import {
+  HighlightWord,
+  HighlightWordStatic,
+} from "@/components/ui/HighlightWord";
 
 /**
  * Manifesto — typographic break between Hero and Anatomy.
  * Desktop: pinned scrub with staged paragraph focus (blur in → clear).
  * Mobile: natural flow (no full-viewport pin) — same staged focus on scroll.
  */
-
-const ACCENT_VIEWPORT = { once: true, amount: 0.8 } as const;
 
 const BODY_LEAD =
   "Tras viajar a la Expo de Cantón, identificamos una oportunidad única: la intersección entre la ingeniería de vanguardia y la calidez de los materiales naturales.";
@@ -30,125 +32,16 @@ const BODY_CLOSE =
 
 const BLUR_MAX = 14;
 
-type AccentReveal = "scroll" | "view";
-
-type HighlightWordProps = {
-  children: string;
-  reduce: boolean;
-  progress: MotionValue<number>;
-  range: readonly [number, number];
-  /** Mobile: draw on enter — scroll scrub often finishes off-screen without a pin */
-  reveal?: AccentReveal;
-};
-
-/** Primary accent — carbon word, sand highlight bar draws L→R. */
-function HighlightWord({
-  children,
-  reduce,
-  progress,
-  range,
-  reveal = "scroll",
-}: HighlightWordProps) {
-  const [start, end] = range;
-  const scaleX = useTransform(progress, [start, end], [0, 1]);
-
-  if (reduce) {
-    return (
-      <span className="relative inline px-[0.14em] text-carbon">
-        <span
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-[0.06em] top-[0.16em] bg-sand/50"
-        />
-        <span className="relative">{children}</span>
-      </span>
-    );
-  }
-
-  if (reveal === "view") {
-    return (
-      <span className="relative inline px-[0.14em] text-carbon">
-        <motion.span
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-[0.06em] top-[0.16em] origin-left bg-sand/50 will-change-transform"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={ACCENT_VIEWPORT}
-          transition={{ duration: 0.85, ease: glide.ease }}
-        />
-        <span className="relative">{children}</span>
-      </span>
-    );
-  }
-
-  return (
-    <span className="relative inline px-[0.14em] text-carbon">
-      <motion.span
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-[0.06em] top-[0.16em] origin-left bg-sand/50 will-change-transform"
-        style={{ scaleX }}
-      />
-      <span className="relative">{children}</span>
-    </span>
-  );
-}
-
 type EchoWordProps = {
   children: string;
   reduce: boolean;
   progress: MotionValue<number>;
   range: readonly [number, number];
-  reveal?: AccentReveal;
+  reveal?: "scroll" | "view";
 };
 
-/** Secondary accent — carbon word + sand underline (legible on off-white). */
-function EchoWord({
-  children,
-  reduce,
-  progress,
-  range,
-  reveal = "scroll",
-}: EchoWordProps) {
-  const [start, end] = range;
-  const scaleX = useTransform(progress, [start, end], [0, 1]);
-
-  if (reduce) {
-    return (
-      <span className="relative inline text-carbon">
-        {children}
-        <span
-          aria-hidden="true"
-          className="absolute bottom-[0.05em] left-0 h-[2px] w-full bg-sand"
-        />
-      </span>
-    );
-  }
-
-  if (reveal === "view") {
-    return (
-      <span className="relative inline text-carbon">
-        {children}
-        <motion.span
-          aria-hidden="true"
-          className="absolute bottom-[0.05em] left-0 h-[2px] w-full origin-left bg-sand will-change-transform"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={ACCENT_VIEWPORT}
-          transition={{ duration: 0.75, ease: glide.ease, delay: 0.08 }}
-        />
-      </span>
-    );
-  }
-
-  return (
-    <span className="relative inline text-carbon">
-      {children}
-      <motion.span
-        aria-hidden="true"
-        className="absolute bottom-[0.05em] left-0 h-[2px] w-full origin-left bg-sand will-change-transform"
-        style={{ scaleX }}
-      />
-    </span>
-  );
+function EchoWord(props: EchoWordProps) {
+  return <AccentEcho {...props} tone="ink" />;
 }
 
 type FocusBlockProps = {
@@ -229,7 +122,7 @@ function LeadBlock({
         <HighlightWord
           reduce={reduce}
           progress={progress}
-          range={[0.04, 0.2]}
+          range={[0.28, 0.42]}
           reveal={compact ? "view" : "scroll"}
         >
           búsqueda.
@@ -241,7 +134,7 @@ function LeadBlock({
         <EchoWord
           reduce={reduce}
           progress={progress}
-          range={[0.14, 0.32]}
+          range={[0.38, 0.52]}
           reveal={compact ? "view" : "scroll"}
         >
           arte
@@ -291,23 +184,11 @@ function StaticLead() {
         className="box-border w-full max-w-[14ch] break-words font-headline text-[clamp(2.125rem,7.2vw+0.5rem,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-carbon"
       >
         Nacimos de una{" "}
-        <span className="relative inline px-[0.14em] text-carbon">
-          <span
-            aria-hidden="true"
-            className="absolute inset-x-0 bottom-[0.06em] top-[0.16em] bg-sand/50"
-          />
-          <span className="relative">búsqueda.</span>
-        </span>
+        <HighlightWordStatic>búsqueda.</HighlightWordStatic>
       </h2>
       <p className={`mt-5 lg:mt-8 ${italicClass}`}>
         Ingeniería que se siente como{" "}
-        <span className="relative inline text-carbon">
-          arte
-          <span
-            aria-hidden="true"
-            className="absolute bottom-[0.05em] left-0 h-[2px] w-full bg-sand"
-          />
-        </span>
+        <AccentEchoStatic tone="ink">arte</AccentEchoStatic>
         ; diseño que se instala sin complicaciones.
       </p>
     </div>
