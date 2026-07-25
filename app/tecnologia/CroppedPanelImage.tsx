@@ -15,6 +15,10 @@ type CroppedPanelImageProps = {
    * Matches StyleToggle default of 0.7; lower = tighter crop.
    */
   contentRight?: number;
+  /** CSS object-position for the inner still */
+  objectPosition?: string;
+  /** Extra scale on the crop layer (1 = default) */
+  zoom?: number;
 };
 
 export default function CroppedPanelImage({
@@ -26,8 +30,10 @@ export default function CroppedPanelImage({
   className = "",
   children,
   contentRight = 0.7,
+  objectPosition,
+  zoom = 1,
 }: CroppedPanelImageProps) {
-  const cropWidth = `${100 / contentRight}%`;
+  const cropWidth = `${(100 / contentRight) * zoom}%`;
 
   return (
     <div
@@ -45,6 +51,7 @@ export default function CroppedPanelImage({
             sizes={sizes}
             priority={priority}
             className="object-cover"
+            style={objectPosition ? { objectPosition } : undefined}
           />
         </div>
       </div>

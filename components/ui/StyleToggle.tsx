@@ -342,7 +342,7 @@ export default function StyleToggle() {
         </span>
       </div>
 
-      <p className="w-full text-center font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">
+      <p className="w-full text-center font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:pr-[12%] lg:text-[13px]">
         Misma geometría · Junta oculta · Núcleo y acero invariables
       </p>
     </div>

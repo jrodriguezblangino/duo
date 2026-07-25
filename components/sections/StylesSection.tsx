@@ -15,7 +15,13 @@ export default function StylesSection() {
     >
       <div className="mx-auto max-w-site">
         <div className={COMPOSITION}>
-          <Reveal className="mx-auto mb-10 max-w-[58ch] text-center lg:mb-12">
+          {/*
+            Text shares the slider's width. Extra right padding offsets the
+            left-weighted panel mass in the crop (black void on the right)
+            so title/caption optically center on the visible product, not the
+            empty frame edge — crop itself stays untouched.
+          */}
+          <Reveal className="mb-10 w-full text-center lg:mb-12 lg:pr-[12%]">
             <p className="mb-4 flex items-center justify-center gap-3 text-xs font-medium uppercase tracking-[0.14em] text-sand lg:text-[13px]">
               <span
                 aria-hidden="true"
@@ -29,7 +35,7 @@ export default function StylesSection() {
             >
               Un panel, dos acabados.
             </h2>
-            <p className="text-base leading-[1.6] text-[#b8b3ab] lg:text-[17px]">
+            <p className="mx-auto max-w-[58ch] text-base leading-[1.6] text-[#b8b3ab] lg:text-[17px]">
               Misma estructura de tres capas. La cara cambia; el núcleo y el
               acero no.
             </p>
