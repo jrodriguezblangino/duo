@@ -21,6 +21,44 @@ const HINT_MS = 900;
 const HELPER_FADE_MS = 4000;
 
 /**
+ * Both sources are square; panel content spans ~0–62% x (rest is black void).
+ * Show a bit past the content edge so the plate isn’t flush-cropped.
+ */
+const CONTENT_RIGHT = 0.7;
+const CROP_FRAME_WIDTH = `${100 / CONTENT_RIGHT}%`;
+
+function FinishCropLayer({
+  src,
+  clipPath,
+}: {
+  src: string;
+  clipPath?: string;
+}) {
+  return (
+    <div
+      className="absolute inset-0 overflow-hidden"
+      style={clipPath ? { clipPath } : undefined}
+      aria-hidden={clipPath ? true : undefined}
+    >
+      <div
+        className="absolute left-0 top-1/2 aspect-square -translate-y-1/2"
+        style={{ width: CROP_FRAME_WIDTH }}
+      >
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 992px, 100vw"
+          className="object-cover"
+          priority
+          draggable={false}
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
  * Finish compare — Aspecto madera ⇄ Metálico (§3.4).
  * Draggable before/after slider over aligned detail stills.
  */
@@ -216,7 +254,12 @@ export default function StyleToggle() {
     !prefersReducedMotion && !hasInteracted && isHovering;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex w-full flex-col gap-6 pb-4 lg:gap-7 lg:pb-8">
+      {/*
+        Width comes from the parent composition (max-w-[62rem]). Aspect only
+        controls frame height — crop/zoom inside FinishCropLayer is untouched.
+        Drag range tracks getBoundingClientRect of this container.
+      */}
       <div
         ref={containerRef}
         className="relative aspect-[16/10] w-full cursor-ew-resize touch-none overflow-hidden bg-carbon select-none"
@@ -227,49 +270,9 @@ export default function StyleToggle() {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        {/* Metal — base / full frame */}
-        <Image
-          src={METAL_SRC}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 80vw, 100vw"
-          className="object-cover"
-          priority
-          draggable={false}
-        />
+        <FinishCropLayer src={METAL_SRC} />
+        <FinishCropLayer src={WOOD_SRC} clipPath={woodClip} />
 
-        {/* Wood — top layer, clipped from the left */}
-        <div
-          className="absolute inset-0"
-          style={{ clipPath: woodClip }}
-          aria-hidden="true"
-        >
-          <Image
-            src={WOOD_SRC}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 80vw, 100vw"
-            className="object-cover"
-            priority
-            draggable={false}
-          />
-        </div>
-
-        {/* Persistent finish labels */}
-        <span
-          className="pointer-events-none absolute left-4 top-4 z-10 font-mono text-[10px] uppercase tracking-[0.16em] text-sand/85 sm:left-5 sm:top-5 sm:text-[11px]"
-          aria-hidden="true"
-        >
-          Aspecto madera
-        </span>
-        <span
-          className="pointer-events-none absolute right-4 top-4 z-10 font-mono text-[10px] uppercase tracking-[0.16em] text-sand/85 sm:right-5 sm:top-5 sm:text-[11px]"
-          aria-hidden="true"
-        >
-          Metálico
-        </span>
-
-        {/* Divider line */}
         <div
           className="pointer-events-none absolute inset-y-0 z-20 w-px -translate-x-1/2 bg-sand/80"
           style={{ left: `${position}%` }}
@@ -299,30 +302,30 @@ export default function StyleToggle() {
                 : "scale-100"
             }`}
           >
+            {/* Editorial hairline ticks — restrained, not icon-font chevrons */}
             <svg
-              width="16"
+              width="10"
               height="12"
-              viewBox="0 0 16 12"
+              viewBox="0 0 10 12"
               fill="none"
               aria-hidden="true"
             >
               <path
-                d="M5 1.5L1.5 6L5 10.5"
+                d="M3 1.5V10.5"
                 stroke="currentColor"
-                strokeWidth="1.25"
+                strokeWidth="0.75"
                 strokeLinecap="square"
               />
               <path
-                d="M11 1.5L14.5 6L11 10.5"
+                d="M7 1.5V10.5"
                 stroke="currentColor"
-                strokeWidth="1.25"
+                strokeWidth="0.75"
                 strokeLinecap="square"
               />
             </svg>
           </span>
         </button>
 
-        {/* First-view helper microcopy */}
         <p
           className={`pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-sand/80 transition-opacity duration-500 sm:bottom-5 sm:text-[11px] ${
             showHelper && !hasInteracted ? "opacity-100" : "opacity-0"
@@ -339,9 +342,8 @@ export default function StyleToggle() {
         </span>
       </div>
 
-      <p className="mx-auto max-w-[60ch] text-center text-base leading-[1.65] text-offwhite/70 lg:text-[17px]">
-        Misma geometría de panel, misma junta oculta. Cara de aluminio con
-        grano madera; el núcleo y el acero no cambian.
+      <p className="w-full text-center font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">
+        Misma geometría · Junta oculta · Núcleo y acero invariables
       </p>
     </div>
   );
