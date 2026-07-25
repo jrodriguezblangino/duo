@@ -20,11 +20,14 @@ type HighlightWordProps = {
   /** Mobile / IO: draw on enter — scroll scrub often finishes off-screen without a pin */
   reveal?: HighlightReveal;
   surface?: HighlightSurface;
-  /** Stagger delay (view mode) in seconds */
+  /** Stagger delay (view mode) in seconds — prefer 0; fire from own IO entry */
   delay?: number;
   /** View-mode draw duration; default matches Manifiesto */
   duration?: number;
 };
+
+const BODY_MUTED = "#b8b3ab";
+const CARBON = "#0D0D0D";
 
 function markerClass(surface: HighlightSurface) {
   return surface === "dark"
@@ -34,7 +37,8 @@ function markerClass(surface: HighlightSurface) {
 
 /**
  * Primary accent — carbon word, sand highlight bar draws L→R.
- * Shared by Manifiesto + Anatomy (marker-style highlight).
+ * On dark surfaces, text stays muted until the marker draws so the
+ * word is readable plain during section entrance (not pre-highlighted).
  */
 export function HighlightWord({
   children,
@@ -47,8 +51,16 @@ export function HighlightWord({
   duration = 0.85,
 }: HighlightWordProps) {
   const [start, end] = range;
-  const scaleX = useTransform(progress, [start, end], [0, 1]);
+  const scaleX = useTransform(progress, [0, start, end, 1], [0, 0, 1, 1]);
+  const color = useTransform(
+    progress,
+    [0, start, end, 1],
+    surface === "dark"
+      ? [BODY_MUTED, BODY_MUTED, CARBON, CARBON]
+      : [CARBON, CARBON, CARBON, CARBON],
+  );
   const bar = markerClass(surface);
+  const shell = "relative inline-block whitespace-nowrap px-[0.14em]";
 
   if (reduce) {
     return (
@@ -58,7 +70,17 @@ export function HighlightWord({
 
   if (reveal === "view") {
     return (
-      <span className="relative inline px-[0.14em] text-carbon">
+      <motion.span
+        className={shell}
+        initial={
+          surface === "dark" ? { color: BODY_MUTED } : { color: CARBON }
+        }
+        whileInView={
+          surface === "dark" ? { color: CARBON } : { color: CARBON }
+        }
+        viewport={ACCENT_VIEWPORT}
+        transition={{ duration, ease: glide.ease, delay }}
+      >
         <motion.span
           aria-hidden="true"
           className={`${bar} origin-left will-change-transform`}
@@ -67,20 +89,20 @@ export function HighlightWord({
           viewport={ACCENT_VIEWPORT}
           transition={{ duration, ease: glide.ease, delay }}
         />
-        <span className="relative">{children}</span>
-      </span>
+        <span className="relative z-[1]">{children}</span>
+      </motion.span>
     );
   }
 
   return (
-    <span className="relative inline px-[0.14em] text-carbon">
+    <motion.span className={shell} style={{ color }}>
       <motion.span
         aria-hidden="true"
         className={`${bar} origin-left will-change-transform`}
         style={{ scaleX }}
       />
-      <span className="relative">{children}</span>
-    </span>
+      <span className="relative z-[1]">{children}</span>
+    </motion.span>
   );
 }
 
@@ -93,9 +115,9 @@ export function HighlightWordStatic({
   surface?: HighlightSurface;
 }) {
   return (
-    <span className="relative inline px-[0.14em] text-carbon">
+    <span className="relative inline-block whitespace-nowrap px-[0.14em] text-carbon">
       <span aria-hidden="true" className={markerClass(surface)} />
-      <span className="relative">{children}</span>
+      <span className="relative z-[1]">{children}</span>
     </span>
   );
 }

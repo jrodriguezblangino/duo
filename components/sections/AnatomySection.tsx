@@ -9,6 +9,7 @@ import {
 import {
   motion,
   useMotionTemplate,
+  useMotionValue,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -41,28 +42,39 @@ const LAYERS = [
     index: "01",
     role: "Cara vista",
     name: "Aluminio anodizado",
-    spec: "0.6 mm — wood-look / metallic",
+    spec: "Una superficie diseñada para conservar su carácter. Acabado wood-look con resistencia frente al sol, la humedad y el desgaste cotidiano.",
   },
   {
     id: "polyurethane",
     index: "02",
     role: "Núcleo",
-    name: "Poliuretano",
-    spec: "Alta densidad — aislamiento + adhesión",
+    name: "Poliuretano HD",
+    spec: "El corazón del sistema. Aporta aislamiento térmico, confort acústico y una estructura sólida que se percibe desde el primer contacto.",
   },
   {
     id: "steel",
     index: "03",
     role: "Respaldo",
     name: "Acero galvanizado",
-    spec: "Rigidez estructural del sistema",
+    spec: "La estructura que sostiene el rendimiento. Rigidez, estabilidad y protección para una placa preparada para acompañar cada proyecto durante años.",
   },
 ] as const;
 
+const SCENE3_COPY = {
+  label: "Detalle constructivo",
+  headlineLine1: "Tres materiales.",
+  headlineLine2: "Una sola solución.",
+  lead: "Cada capa fue elegida por una razón. El ",
+  afterAluminum: " protege la superficie y mantiene su acabado. El ",
+  afterPoly: " aporta aislamiento y consistencia. El ",
+  afterSteel:
+    " entrega la rigidez estructural que define el sistema. Todo integrado mediante un encastre oculto que elimina fijaciones visibles y consigue una superficie limpia, continua y precisa.",
+} as const;
+
 const LAYER_RANGES: readonly (readonly [number, number])[] = [
-  [0.35, 0.48],
-  [0.48, 0.58],
-  [0.58, 0.68],
+  [0.26, 0.3],
+  [0.3, 0.33],
+  [0.33, 0.36],
 ];
 
 /** Scene 1 supporting copy — single-word markers on Calidez / acero */
@@ -77,6 +89,8 @@ const SCENE1_HEADLINE =
   "font-headline text-[2.95rem] font-normal leading-[0.98] tracking-[-0.02em] text-offwhite lg:text-[3.5rem] xl:text-[4.25rem]";
 const SCENE1_BODY_CLASS =
   "mt-6 max-w-[58ch] text-base leading-[1.6] text-[#b8b3ab] lg:text-[17px]";
+const SCENE3_BODY_CLASS =
+  "mt-6 max-w-measure text-base leading-[1.65] text-[#b8b3ab] lg:text-[17px]";
 
 const MONO_MUTED =
   "font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]";
@@ -92,6 +106,105 @@ function Scene1Eyebrow() {
     <p className={SCENE1_EYEBROW}>
       <span aria-hidden="true" className="h-px w-4 shrink-0 bg-sand" />
       Composición — tres capas
+    </p>
+  );
+}
+
+function Scene3Headline() {
+  return (
+    <p className={SCENE1_HEADLINE}>
+      {SCENE3_COPY.headlineLine1}
+      <br />
+      {SCENE3_COPY.headlineLine2}
+    </p>
+  );
+}
+
+function Scene3Spec({ className = "mt-10" }: { className?: string }) {
+  return (
+    <div className={className}>
+      <span
+        aria-hidden="true"
+        className="mb-4 block h-px w-full max-w-measure bg-offwhite/15"
+      />
+      <p className="font-mono text-[11px] tracking-[0.06em] text-offwhite/45 lg:text-xs">
+        <span className="text-sand">0.6 mm</span>
+        {" aluminio anodizado · núcleo "}
+        <span className="text-sand">HD</span>
+        {" · acero galvanizado"}
+      </p>
+    </div>
+  );
+}
+
+function Scene3Body({
+  progress,
+  reduce = false,
+  highlightReveal = "scroll",
+}: {
+  progress?: MotionValue<number>;
+  reduce?: boolean;
+  highlightReveal?: "scroll" | "view";
+}) {
+  if (!progress || reduce) {
+    return (
+      <p className={SCENE3_BODY_CLASS}>
+        {SCENE3_COPY.lead}
+        <HighlightWordStatic surface="dark">
+          aluminio anodizado
+        </HighlightWordStatic>
+        {SCENE3_COPY.afterAluminum}
+        <HighlightWordStatic surface="dark">
+          poliuretano de alta densidad
+        </HighlightWordStatic>
+        {SCENE3_COPY.afterPoly}
+        <HighlightWordStatic surface="dark">
+          acero galvanizado
+        </HighlightWordStatic>
+        {SCENE3_COPY.afterSteel}
+      </p>
+    );
+  }
+
+  const isView = highlightReveal === "view";
+
+  // First mark waits until Scene 3 is fully settled (after 0.54)
+  return (
+    <p className={SCENE3_BODY_CLASS}>
+      {SCENE3_COPY.lead}
+      <HighlightWord
+        reduce={false}
+        progress={progress}
+        range={[0.72, 0.78]}
+        reveal={highlightReveal}
+        surface="dark"
+        {...(isView ? { duration: 0.6, delay: 0 } : {})}
+      >
+        aluminio anodizado
+      </HighlightWord>
+      {SCENE3_COPY.afterAluminum}
+      <HighlightWord
+        reduce={false}
+        progress={progress}
+        range={[0.86, 0.92]}
+        reveal={highlightReveal}
+        surface="dark"
+        {...(isView ? { duration: 0.6, delay: 0.8 } : {})}
+      >
+        poliuretano de alta densidad
+      </HighlightWord>
+      {SCENE3_COPY.afterPoly}
+      <HighlightWord
+        reduce={false}
+        progress={progress}
+        range={[0.96, 1]}
+        reveal={highlightReveal}
+        surface="dark"
+        {...(isView ? { duration: 0.6, delay: 1.6 } : {})}
+      >
+        acero galvanizado
+      </HighlightWord>
+      {SCENE3_COPY.afterSteel}
     </p>
   );
 }
@@ -123,7 +236,7 @@ function Scene1Support({
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.22, 0.28]}
+        range={[0.12, 0.15]}
         reveal={highlightReveal}
         surface="dark"
         {...(isView ? { duration: 0.45, delay: 0 } : {})}
@@ -134,10 +247,10 @@ function Scene1Support({
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.24, 0.3]}
+        range={[0.18, 0.21]}
         reveal={highlightReveal}
         surface="dark"
-        {...(isView ? { duration: 0.45, delay: 0.15 } : {})}
+        {...(isView ? { duration: 0.45, delay: 0.35 } : {})}
       >
         acero
       </HighlightWord>
@@ -372,19 +485,11 @@ function StaticAnatomy() {
           </div>
           <div className="lg:col-span-5">
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-              Detalle de canto
+              {SCENE3_COPY.label}
             </p>
-            <p className="font-headline text-[1.75rem] font-normal italic leading-[1.1] text-offwhite lg:text-[2.5rem]">
-              Tolerancia visible.
-            </p>
-            <p className="mt-6 max-w-measure text-base leading-[1.65] text-offwhite/70">
-              Cara de aluminio anodizado sobre núcleo de poliuretano y respaldo
-              de acero. El canto muestra las tres capas sin maquillaje de
-              render.
-            </p>
-            <p className={`mt-6 ${MONO_ACCENT}`}>
-              0.6 mm aluminio · núcleo HD · acero galvanizado
-            </p>
+            <Scene3Headline />
+            <Scene3Body reduce />
+            <Scene3Spec />
           </div>
         </div>
       </div>
@@ -396,6 +501,7 @@ function StaticAnatomy() {
 
 function MobileAnatomy() {
   const introRef = useRef<HTMLDivElement>(null);
+  const detailIdleProgress = useMotionValue(1);
   const { scrollYProgress } = useScroll({
     target: introRef,
     offset: ["start 0.85", "end 0.45"],
@@ -518,19 +624,14 @@ function MobileAnatomy() {
             transition={{ ...glide, delay: 0.06 }}
           >
             <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60">
-              Detalle de canto
+              {SCENE3_COPY.label}
             </p>
-            <p className="font-headline text-[1.75rem] font-normal italic leading-[1.1] text-offwhite">
-              Tolerancia visible.
-            </p>
-            <p className="mt-5 max-w-measure text-base leading-[1.65] text-offwhite/70">
-              Cara de aluminio anodizado sobre núcleo de poliuretano y respaldo
-              de acero. El canto muestra las tres capas sin maquillaje de
-              render.
-            </p>
-            <p className={`mt-5 ${MONO_ACCENT}`}>
-              0.6 mm aluminio · núcleo HD · acero galvanizado
-            </p>
+            <Scene3Headline />
+            <Scene3Body
+              progress={detailIdleProgress}
+              highlightReveal="view"
+            />
+            <Scene3Spec className="mt-8" />
           </motion.div>
         </div>
       </div>
@@ -550,54 +651,54 @@ function DesktopAnatomy() {
     offset: ["start start", "end end"],
   });
 
-  useProgressGatedPlayback(heroVideoRef, scrollYProgress, 0, 0.78);
-  useProgressGatedPlayback(detailVideoRef, scrollYProgress, 0.78);
+  useProgressGatedPlayback(heroVideoRef, scrollYProgress, 0, 0.42);
+  useProgressGatedPlayback(detailVideoRef, scrollYProgress, 0.42);
 
-  /* Scene 1 — headline (hold 0 through end — avoid FM extrapolation revive) */
+  /* Scene 1 — hold after reveal before Scene 2 annotations enter */
   const scene1Opacity = useTransform(
     scrollYProgress,
-    [0.3, 0.4, 1],
+    [0.2, 0.26, 1],
     [1, 0, 0],
   );
 
-  /* Scene 2 — layers panel: hold after 01/02/03, then long fade into Scene 3 */
+  /* Scene 2 — sit on 01/02/03, then long fade before Scene 3 */
   const scene2Opacity = useTransform(
     scrollYProgress,
-    [0.34, 0.4, 0.78, 0.92, 1],
+    [0.22, 0.28, 0.38, 0.5, 1],
     [0, 1, 1, 0, 0],
   );
 
-  /* Visual: hero video → detail video */
+  /* Visual: hero video → detail video — slow crossfade */
   const videoOpacity = useTransform(
     scrollYProgress,
-    [0, 0.78, 0.94, 1],
+    [0, 0.42, 0.54, 1],
     [1, 1, 0, 0],
   );
   const detailOpacity = useTransform(
     scrollYProgress,
-    [0, 0.78, 0.95, 1],
+    [0, 0.42, 0.54, 1],
     [0, 0, 1, 1],
   );
   const detailScale = useTransform(
     scrollYProgress,
-    [0.78, 0.96, 1],
+    [0.42, 0.54, 1],
     [1.05, 1, 1],
   );
 
-  /* Scene 3 — detail copy */
+  /* Scene 3 — slow entrance (~1vh), long pause (~1vh), spaced highlights */
   const scene3Opacity = useTransform(
     scrollYProgress,
-    [0.86, 0.96, 1],
+    [0.44, 0.54, 1],
     [0, 1, 1],
   );
-  const scene3Y = useTransform(scrollYProgress, [0.86, 0.97, 1], [16, 0, 0]);
+  const scene3Y = useTransform(scrollYProgress, [0.44, 0.54, 1], [12, 0, 0]);
 
   return (
     <section
       aria-labelledby="anatomia-heading-desktop"
       className="relative hidden bg-carbon text-offwhite lg:block"
     >
-      <div ref={trackRef} className="relative h-[400vh]">
+      <div ref={trackRef} className="relative h-[1000vh]">
         <div className="sticky top-0 flex h-dvh flex-col justify-center overflow-hidden">
           <div className="relative mx-auto grid h-full w-full max-w-site grid-cols-12 items-center gap-gutter px-20 py-24">
             {/* Visual stage — 1:1 hero / 16:9 detail crossfade */}
@@ -654,11 +755,11 @@ function DesktopAnatomy() {
                 className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center"
                 style={{ opacity: scene1Opacity }}
               >
-                <FocusText progress={scrollYProgress} range={[0.02, 0.1]}>
+                <FocusText progress={scrollYProgress} range={[0.02, 0.07]}>
                   <Scene1Eyebrow />
                 </FocusText>
 
-                <FocusText progress={scrollYProgress} range={[0.06, 0.14]}>
+                <FocusText progress={scrollYProgress} range={[0.04, 0.09]}>
                   <h2
                     id="anatomia-heading-desktop"
                     className={SCENE1_HEADLINE}
@@ -667,7 +768,7 @@ function DesktopAnatomy() {
                   </h2>
                 </FocusText>
 
-                <FocusText progress={scrollYProgress} range={[0.12, 0.2]}>
+                <FocusText progress={scrollYProgress} range={[0.07, 0.12]}>
                   <Scene1Support progress={scrollYProgress} />
                 </FocusText>
               </motion.div>
@@ -699,19 +800,11 @@ function DesktopAnatomy() {
                 style={{ opacity: scene3Opacity, y: scene3Y }}
               >
                 <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-                  Detalle de canto
+                  {SCENE3_COPY.label}
                 </p>
-                <p className="font-headline text-[1.75rem] font-normal italic leading-[1.1] text-offwhite lg:text-[2.5rem]">
-                  Tolerancia visible.
-                </p>
-                <p className="mt-6 max-w-measure text-base leading-[1.65] text-offwhite/70">
-                  Cara de aluminio anodizado sobre núcleo de poliuretano y
-                  respaldo de acero. El canto muestra las tres capas sin
-                  maquillaje de render.
-                </p>
-                <p className={`mt-6 ${MONO_ACCENT}`}>
-                  0.6 mm aluminio · núcleo HD · acero galvanizado
-                </p>
+                <Scene3Headline />
+                <Scene3Body progress={scrollYProgress} />
+                <Scene3Spec />
               </motion.div>
             </div>
           </div>
