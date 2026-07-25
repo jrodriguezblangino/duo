@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
-import { precision } from "@/lib/motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ENTRY_Y, STAGGER, glide, precision } from "@/lib/motion";
 
 type Category = "interior" | "exterior";
 type Filter = "todos" | Category;
@@ -14,6 +14,8 @@ type GalleryItem = {
   category: Category;
   caption: string;
   alt?: string;
+  /** Still frame while video buffers — avoids empty black tiles */
+  poster?: string;
 };
 
 const ITEMS: GalleryItem[] = [
@@ -36,12 +38,14 @@ const ITEMS: GalleryItem[] = [
     type: "video",
     category: "interior",
     caption: "Recorrido sobre la superficie del panel.",
+    poster: "/assets/images/macro_zoom_quality.png",
   },
   {
     src: "/assets/videos/motion_interlocking_sparkle.mp4",
     type: "video",
     category: "interior",
     caption: "Encastre oculto en movimiento.",
+    poster: "/assets/images/gallery_color_options.png",
   },
   {
     src: "/assets/images/durability_water_drops_still.png",
@@ -55,12 +59,14 @@ const ITEMS: GalleryItem[] = [
     type: "video",
     category: "exterior",
     caption: "Escurrimiento de agua sin marcar el acabado.",
+    poster: "/assets/images/durability_water_drops_still.png",
   },
   {
     src: "/assets/videos/motion_water_sliding_v2.mp4",
     type: "video",
     category: "exterior",
     caption: "Comportamiento al agua — vista alternativa.",
+    poster: "/assets/images/durability_water_drops_still.png",
   },
 ];
 
@@ -69,6 +75,9 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "interior", label: "Interior" },
   { key: "exterior", label: "Exterior" },
 ];
+
+const mediaMotion =
+  "h-full w-full object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:group-hover:scale-100 group-hover:scale-[1.03]";
 
 export default function GalleryGrid() {
   const [filter, setFilter] = useState<Filter>("todos");
@@ -80,27 +89,32 @@ export default function GalleryGrid() {
       : ITEMS.filter((item) => item.category === filter);
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 lg:gap-12">
       <div
         role="group"
         aria-label="Filtrar galería por categoría"
-        className="flex flex-wrap items-center gap-6"
+        className="-mx-1 flex flex-nowrap items-center overflow-x-auto px-1"
       >
         {FILTERS.map(({ key, label }, index) => (
-          <div key={key} className="flex items-center gap-6">
+          <Fragment key={key}>
             {index > 0 && (
-              <span aria-hidden="true" className="h-4 w-px bg-offwhite/30" />
+              <span
+                aria-hidden="true"
+                className="mx-5 h-4 w-px shrink-0 bg-sand/20 sm:mx-6"
+              />
             )}
             <button
               type="button"
               aria-pressed={filter === key}
               onClick={() => setFilter(key)}
-              className="relative pb-2 text-sm font-medium uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+              className="relative shrink-0 pb-2 text-sm font-medium uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
             >
               <span
-                className={
-                  filter === key ? "text-offwhite" : "text-offwhite/40"
-                }
+                className={`transition-colors duration-300 ${
+                  filter === key
+                    ? "text-offwhite"
+                    : "text-offwhite/40 hover:text-offwhite/70"
+                }`}
               >
                 {label}
               </span>
@@ -115,45 +129,71 @@ export default function GalleryGrid() {
                 />
               )}
             </button>
-          </div>
+          </Fragment>
         ))}
       </div>
 
-      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {visibleItems.map((item, index) => (
-          <li key={item.src}>
-            <figure className="flex flex-col gap-3">
-              {item.type === "image" ? (
-                <div className="relative aspect-video w-full overflow-hidden">
-                  <Image
-                    src={item.src}
-                    alt={item.alt ?? ""}
-                    fill
-                    priority={index < 3}
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
-                  />
+      <ul
+        aria-live="polite"
+        className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-y-12"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          {visibleItems.map((item, index) => (
+            <motion.li
+              key={item.src}
+              layout={!prefersReducedMotion}
+              initial={
+                prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }
+              }
+              animate={{ opacity: 1, y: 0 }}
+              exit={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: ENTRY_Y / 2 }
+              }
+              transition={{
+                ...(prefersReducedMotion
+                  ? { duration: 0.2 }
+                  : glide),
+                delay: prefersReducedMotion
+                  ? 0
+                  : Math.min(index, 4) * STAGGER,
+              }}
+            >
+              <figure className="group flex flex-col gap-4">
+                <div className="relative aspect-video w-full overflow-hidden bg-slate">
+                  {item.type === "image" ? (
+                    <Image
+                      src={item.src}
+                      alt={item.alt ?? ""}
+                      fill
+                      priority={index < 3}
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className={mediaMotion}
+                    />
+                  ) : (
+                    <video
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      poster={item.poster}
+                      aria-hidden="true"
+                      tabIndex={-1}
+                      className={`absolute inset-0 ${mediaMotion}`}
+                    >
+                      <source src={item.src} type="video/mp4" />
+                    </video>
+                  )}
                 </div>
-              ) : (
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-hidden="true"
-                  tabIndex={-1}
-                  className="aspect-video w-full object-cover"
-                >
-                  <source src={item.src} type="video/mp4" />
-                </video>
-              )}
-              <figcaption className="text-sm leading-relaxed text-offwhite/60">
-                {item.caption}
-              </figcaption>
-            </figure>
-          </li>
-        ))}
+                <figcaption className="font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">
+                  {item.caption}
+                </figcaption>
+              </figure>
+            </motion.li>
+          ))}
+        </AnimatePresence>
       </ul>
     </div>
   );
