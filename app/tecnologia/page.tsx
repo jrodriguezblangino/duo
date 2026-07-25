@@ -3,6 +3,12 @@ import Image from "next/image";
 import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
 import { CTA } from "@/lib/site";
+import CroppedPanelImage from "./CroppedPanelImage";
+import LayerDiagram from "./LayerDiagram";
+import {
+  InstallationBody,
+  ManufacturingBody,
+} from "./HighlightedBodies";
 
 export const metadata: Metadata = {
   title: "Tecnología",
@@ -29,7 +35,7 @@ const LAYERS = [
     description:
       "Rigidez estructural del sistema; estabilidad dimensional en el tiempo.",
   },
-];
+] as const;
 
 const SPECS = [
   { label: "Dimensiones", value: "3 m × 40 cm" },
@@ -42,6 +48,9 @@ const SPECS = [
   { label: "Acabados", value: "Aspecto madera / Metálico" },
 ];
 
+/** Shared vertical rhythm between narrative sub-blocks (~64–80px) */
+const BLOCK_GAP = "mt-16 lg:mt-20";
+
 export default function TecnologiaPage() {
   return (
     <>
@@ -51,36 +60,34 @@ export default function TecnologiaPage() {
       >
         <Reveal className="mx-auto max-w-measure text-center">
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-            Ingeniería de panel
+            Proceso de fabricación
           </p>
           <h1
             id="tecnologia-heading"
             className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite lg:text-6xl"
           >
-            De la superficie a la estructura.
+            De la extrusión al encastre.
           </h1>
-          <p className="mx-auto mt-6 max-w-measure text-base leading-[1.65] text-offwhite/70 lg:text-[17px]">
-            Orden visible → estructural: aluminio, poliuretano, acero.
-          </p>
+          <ManufacturingBody className="mx-auto mt-6 max-w-measure text-base leading-[1.65] text-offwhite/70 lg:text-[17px]" />
         </Reveal>
       </section>
 
       <section
         aria-labelledby="composicion-heading"
-        className="bg-carbon px-6 pb-24 lg:px-20 lg:pb-section"
+        className="bg-carbon px-6 pb-0 lg:px-20"
       >
-        <div className="mx-auto max-w-site">
+        <div className="mx-auto max-w-site pb-16 lg:pb-20">
           <h2 id="composicion-heading" className="sr-only">
             Composición de tres capas
           </h2>
 
-          <Reveal className="mb-16 lg:mb-24">
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate">
+          <Reveal className="mx-auto max-w-[62rem]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate">
               <Image
                 src="/assets/images/exploded_view_components.png"
                 alt="Perfiles y panel Fill Home en vista de taller"
                 fill
-                sizes="(min-width: 1440px) 1440px, 100vw"
+                sizes="(min-width: 1440px) 992px, 100vw"
                 className="object-cover"
                 priority
               />
@@ -90,49 +97,45 @@ export default function TecnologiaPage() {
             </p>
           </Reveal>
 
-          <div className="mb-16 grid gap-px bg-sand/20 lg:mb-24 lg:grid-cols-3">
-            {LAYERS.map(({ role, name, description }, index) => (
-              <Reveal key={name} delay={0.08 * index}>
-                <article className="h-full bg-slate px-6 py-8">
-                  <p className="mb-4 font-mono text-xs tracking-[0.02em] text-offwhite/50">
-                    {role}
-                  </p>
-                  <h3 className="text-base text-offwhite">{name}</h3>
-                  <p className="mt-3 max-w-measure text-sm leading-relaxed text-offwhite/60">
-                    {description}
-                  </p>
-                </article>
-              </Reveal>
-            ))}
-          </div>
+          {/* Annotated cross-section — replaces disconnected 01/02/03 card grid */}
+          <Reveal className={BLOCK_GAP}>
+            <LayerDiagram layers={LAYERS} />
+          </Reveal>
 
-          <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-16">
-            <Reveal className="relative aspect-[4/3] overflow-hidden bg-slate lg:col-span-7">
-              <Image
-                src="/assets/images/macro_zoom_quality.png"
-                alt="Macro del canto: cara, núcleo y acabado"
-                fill
+          {/* Instalación — image + copy as one pair */}
+          <div
+            className={`${BLOCK_GAP} grid items-center gap-8 lg:grid-cols-12 lg:gap-16`}
+          >
+            <Reveal className="lg:col-span-7">
+              <CroppedPanelImage
+                src="/assets/images/detail_internal_45deg.png"
+                alt="Detalle del encastre oculto entre paneles Fill Home"
+                aspectClass="aspect-[16/10]"
                 sizes="(min-width: 1024px) 58vw, 100vw"
-                className="object-cover"
+                contentRight={0.65}
               />
+              <p className="mt-4 font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">
+                Junta oculta — ajuste mecánico
+              </p>
             </Reveal>
             <Reveal delay={0.08} className="lg:col-span-5">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-                Detalle de canto
+                Instalación
               </p>
               <p className="font-headline text-[1.75rem] font-normal italic leading-[1.1] text-offwhite lg:text-[2.5rem]">
-                Tolerancia visible.
+                El ajuste que no se ve.
               </p>
-              <p className="mt-6 max-w-measure text-base leading-[1.65] text-offwhite/70">
-                El canto muestra las tres capas sin maquillaje de render.
-              </p>
+              <InstallationBody className="mt-6 max-w-measure text-base leading-[1.65] text-offwhite/70" />
               <p className="mt-6 font-mono text-xs tracking-[0.02em] text-sand lg:text-[13px]">
-                0.6 mm aluminio · núcleo HD · acero galvanizado
+                Encastre oculto · tolerancia ± 0.3 mm [VERIFY]
               </p>
             </Reveal>
           </div>
 
-          <div className="mt-16 grid gap-10 lg:mt-24 lg:grid-cols-12 lg:gap-16">
+          {/* Aislamiento — text + thermal visual as one pair */}
+          <div
+            className={`${BLOCK_GAP} grid items-center gap-8 lg:grid-cols-12 lg:gap-16`}
+          >
             <Reveal className="lg:col-span-5">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
                 Aislamiento
@@ -143,21 +146,23 @@ export default function TecnologiaPage() {
               </p>
             </Reveal>
             <Reveal delay={0.08} className="lg:col-span-7">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                aria-hidden="true"
-                tabIndex={-1}
-                className="aspect-video w-full object-cover"
-              >
-                <source
-                  src="/assets/videos/motion_thermal_capacity.mp4"
-                  type="video/mp4"
-                />
-              </video>
+              <div className="overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  className="aspect-video w-full object-cover"
+                >
+                  <source
+                    src="/assets/videos/motion_thermal_capacity.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              </div>
               <p className="mt-4 font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">
                 Capacidad térmica del núcleo
               </p>
@@ -166,9 +171,15 @@ export default function TecnologiaPage() {
         </div>
       </section>
 
+      {/* Dark → light bridge (Home has a hard cut; this page needs a seam) */}
+      <div
+        aria-hidden="true"
+        className="h-36 bg-gradient-to-b from-carbon from-0% via-[#2a2a2a] via-55% to-offwhite to-100% sm:h-44"
+      />
+
       <section
         aria-labelledby="ficha-heading"
-        className="bg-offwhite px-6 py-24 text-carbon lg:px-20 lg:py-section"
+        className="bg-offwhite px-6 pb-24 pt-8 text-carbon lg:px-20 lg:pb-section lg:pt-12"
       >
         <Reveal className="mx-auto max-w-[720px]">
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60 lg:text-[13px]">
