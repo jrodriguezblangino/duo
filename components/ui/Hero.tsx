@@ -2,6 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { assetPath } from "@/lib/assetPath";
 import { ENTRY_Y, glide } from "@/lib/motion";
 
 type HeroProps = {
@@ -30,7 +31,7 @@ export default function Hero({
   headlineContinued,
   bridgeLine = "Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución.",
   videoSrc,
-  poster = "/assets/images/exploded_view_components.png",
+  poster = assetPath("/assets/images/exploded_view_components.png"),
 }: HeroProps) {
   const prefersReducedMotion = useReducedMotion();
 

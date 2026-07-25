@@ -7,10 +7,11 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import { assetPath } from "@/lib/assetPath";
 import { glide } from "@/lib/motion";
 
-const VIDEO_SRC = "/assets/videos/motion-house.mp4";
-const POSTER_SRC = "/assets/images/motion-house-poster.jpg";
+const VIDEO_SRC = assetPath("/assets/videos/motion-house.mp4");
+const POSTER_SRC = assetPath("/assets/images/motion-house-poster.jpg");
 
 const BENEFITS = [
   {

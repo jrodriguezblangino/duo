@@ -4,6 +4,7 @@ import AnatomySection from "@/components/sections/AnatomySection";
 import TransformationSection from "@/components/sections/TransformationSection";
 import StylesSection from "@/components/sections/StylesSection";
 import ConversionSection from "@/components/sections/ConversionSection";
+import { assetPath } from "@/lib/assetPath";
 
 export default function HomePage() {
   return (
@@ -13,7 +14,7 @@ export default function HomePage() {
         headline="Metal Sliding."
         headlineContinued="El revestimiento que se adapta a tu diseño."
         bridgeLine="Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución."
-        videoSrc="/assets/videos/hero_cinematic_scan.mp4"
+        videoSrc={assetPath("/assets/videos/hero_cinematic_scan.mp4")}
       />
       <ManifestoSection />
       <AnatomySection />

@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { estimateFromArea } from "@/lib/panelCalculator";
 
 export type ProjectSubmission = {
@@ -22,7 +21,7 @@ const TIPOS = new Set([
 ]);
 const ESTILOS = new Set(["madera", "metalico"]);
 
-function isValidSubmission(body: unknown): body is ProjectSubmission {
+export function isValidSubmission(body: unknown): body is ProjectSubmission {
   if (!body || typeof body !== "object") return false;
   const data = body as Record<string, unknown>;
 
@@ -46,47 +45,11 @@ function isValidSubmission(body: unknown): body is ProjectSubmission {
 }
 
 /**
- * Endpoint de planificación de proyecto.
- * Valida el payload, calcula paneles y simula la notificación al equipo.
+ * Shared validation + panel estimate for the quote form.
+ * Used when restoring a real API route (e.g. Vercel); static demo has no server.
  */
-export async function POST(request: Request) {
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: "Solicitud inválida." },
-      { status: 400 },
-    );
-  }
-
-  if (!isValidSubmission(body)) {
-    return NextResponse.json(
-      { ok: false, error: "Faltan datos o el formato es incorrecto." },
-      { status: 400 },
-    );
-  }
-
+export function processProjectSubmission(body: ProjectSubmission) {
   const estimate = estimateFromArea(body.superficieM2);
-
-  if (!estimate) {
-    return NextResponse.json(
-      { ok: false, error: "La superficie debe ser mayor a cero." },
-      { status: 400 },
-    );
-  }
-
-  console.info("[Fill Home] Nueva solicitud de proyecto", {
-    ...body,
-    areaM2: estimate.areaM2,
-    paneles: estimate.paneles,
-    recibidoEn: new Date().toISOString(),
-  });
-
-  return NextResponse.json({
-    ok: true,
-    paneles: estimate.paneles,
-    areaM2: estimate.areaM2,
-  });
+  if (!estimate) return null;
+  return estimate;
 }

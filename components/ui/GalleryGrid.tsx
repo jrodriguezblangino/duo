@@ -3,6 +3,7 @@
 import { Fragment, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { assetPath } from "@/lib/assetPath";
 import { ENTRY_Y, STAGGER, glide, precision } from "@/lib/motion";
 
 type Category = "interior" | "exterior";
@@ -20,53 +21,53 @@ type GalleryItem = {
 
 const ITEMS: GalleryItem[] = [
   {
-    src: "/assets/images/gallery_color_options.png",
+    src: assetPath("/assets/images/gallery_color_options.png"),
     type: "image",
     category: "interior",
     caption: "Acabados: wood-look y metálico — misma geometría de panel.",
     alt: "Paneles Fill Home en acabados wood-look y metálico",
   },
   {
-    src: "/assets/images/macro_zoom_quality.png",
+    src: assetPath("/assets/images/macro_zoom_quality.png"),
     type: "image",
     category: "interior",
     caption: "Macro de textura — cara de aluminio anodizado.",
     alt: "Primer plano de la textura del panel",
   },
   {
-    src: "/assets/videos/detail_scan_high_quality.mp4",
+    src: assetPath("/assets/videos/detail_scan_high_quality.mp4"),
     type: "video",
     category: "interior",
     caption: "Recorrido sobre la superficie del panel.",
-    poster: "/assets/images/macro_zoom_quality.png",
+    poster: assetPath("/assets/images/macro_zoom_quality.png"),
   },
   {
-    src: "/assets/videos/motion_interlocking_sparkle.mp4",
+    src: assetPath("/assets/videos/motion_interlocking_sparkle.mp4"),
     type: "video",
     category: "interior",
     caption: "Encastre oculto en movimiento.",
-    poster: "/assets/images/gallery_color_options.png",
+    poster: assetPath("/assets/images/gallery_color_options.png"),
   },
   {
-    src: "/assets/images/durability_water_drops_still.png",
+    src: assetPath("/assets/images/durability_water_drops_still.png"),
     type: "image",
     category: "exterior",
     caption: "Rechazo de agua sobre la cara anodizada.",
     alt: "Gotas de agua sobre la superficie del panel",
   },
   {
-    src: "/assets/videos/motion_water_sliding_v1.mp4",
+    src: assetPath("/assets/videos/motion_water_sliding_v1.mp4"),
     type: "video",
     category: "exterior",
     caption: "Escurrimiento de agua sin marcar el acabado.",
-    poster: "/assets/images/durability_water_drops_still.png",
+    poster: assetPath("/assets/images/durability_water_drops_still.png"),
   },
   {
-    src: "/assets/videos/motion_water_sliding_v2.mp4",
+    src: assetPath("/assets/videos/motion_water_sliding_v2.mp4"),
     type: "video",
     category: "exterior",
     caption: "Comportamiento al agua — vista alternativa.",
-    poster: "/assets/images/durability_water_drops_still.png",
+    poster: assetPath("/assets/images/durability_water_drops_still.png"),
   },
 ];
 

@@ -15,6 +15,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { assetPath } from "@/lib/assetPath";
 import { glide } from "@/lib/motion";
 import {
   HighlightWord,
@@ -28,11 +29,13 @@ import {
  * Mobile: sequential reveal; reduced motion: static stack.
  */
 
-const VIDEO_SRC = "/assets/videos/motion_disassembly_components.mp4";
-const VIDEO_POSTER = "/assets/images/exploded_view_components.png";
+const VIDEO_SRC = assetPath("/assets/videos/motion_disassembly_components.mp4");
+const VIDEO_POSTER = assetPath("/assets/images/exploded_view_components.png");
 /** Native 960×960 — container must be 1:1 so layers are never cropped */
 const VIDEO_ASPECT = "aspect-square";
-const DETAIL_VIDEO_SRC = "/assets/videos/motion_disassembly_components-2.mp4";
+const DETAIL_VIDEO_SRC = assetPath(
+  "/assets/videos/motion_disassembly_components-2.mp4",
+);
 /** Native 1280×720 */
 const DETAIL_ASPECT = "aspect-video";
 

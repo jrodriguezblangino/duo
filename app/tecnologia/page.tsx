@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import Button from "@/components/ui/Button";
+import { assetPath } from "@/lib/assetPath";
 import { CTA } from "@/lib/site";
 import LayerDiagram from "./LayerDiagram";
 import {
@@ -149,7 +150,7 @@ export default function TecnologiaPage() {
                 <ChapterEyebrow index="01" label="Fabricación" />
                 <MediaFrame aspectClass="aspect-[2/1]">
                   <Image
-                    src="/assets/images/exploded_view_components.png"
+                    src={assetPath("/assets/images/exploded_view_components.png")}
                     alt="Perfiles y panel Fill Home en vista de taller"
                     fill
                     sizes="(min-width: 1440px) 1024px, 100vw"
@@ -188,7 +189,7 @@ export default function TecnologiaPage() {
                         className="absolute inset-0 h-full w-full object-cover"
                       >
                         <source
-                          src="/assets/videos/motion-clipper.mp4"
+                          src={assetPath("/assets/videos/motion-clipper.mp4")}
                           type="video/mp4"
                         />
                       </video>
@@ -231,7 +232,9 @@ export default function TecnologiaPage() {
                         className="absolute inset-0 h-full w-full object-cover object-[75%_42%] scale-[1.15] origin-right"
                       >
                         <source
-                          src="/assets/videos/motion_thermal_capacity.mp4"
+                          src={assetPath(
+                            "/assets/videos/motion_thermal_capacity.mp4",
+                          )}
                           type="video/mp4"
                         />
                       </video>

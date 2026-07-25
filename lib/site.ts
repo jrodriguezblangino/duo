@@ -1,3 +1,5 @@
+import { assetPath } from "@/lib/assetPath";
+
 export const SITE_NAME = "Fill Home";
 
 export const NAV_LINKS = [
@@ -13,4 +15,4 @@ export const CTA = {
 } as const;
 
 /** Legacy stamp asset — not used in chrome; kept for reference until a clean mark exists */
-export const BRAND_LOGO = "/assets/logos/brand_logo.png";
+export const BRAND_LOGO = assetPath("/assets/logos/brand_logo.png");

@@ -117,49 +117,8 @@ export default function ProjectForm() {
       return;
     }
 
-    setSubmitState({ status: "loading" });
-
-    try {
-      const response = await fetch("/api/proyecto", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: form.nombre.trim(),
-          email: form.email.trim(),
-          telefono: form.telefono.trim(),
-          direccion: form.direccion.trim(),
-          tipoProyecto: form.tipoProyecto,
-          estilo: form.estilo,
-          tono: form.tono,
-          superficieM2: area,
-          timeline: form.timeline,
-          mensaje: form.mensaje.trim(),
-        }),
-      });
-
-      const result = (await response.json()) as {
-        ok: boolean;
-        error?: string;
-      };
-
-      if (!response.ok || !result.ok) {
-        setSubmitState({
-          status: "error",
-          message:
-            result.error ??
-            "No pudimos enviar tu solicitud. Intentá de nuevo en unos minutos.",
-        });
-        return;
-      }
-
-      setSubmitState({ status: "success" });
-    } catch {
-      setSubmitState({
-        status: "error",
-        message:
-          "Hubo un problema de conexión. Verificá tu red e intentá nuevamente.",
-      });
-    }
+    // Demo / static export: no API. Keep the multi-step UX for client review.
+    setSubmitState({ status: "success" });
   };
 
   if (submitState.status === "success") {
@@ -172,11 +131,11 @@ export default function ProjectForm() {
         className="py-8"
       >
         <p className="font-headline text-[28px] font-normal italic leading-[1.1] text-carbon lg:text-[40px]">
-          Recibimos tu proyecto.
+          Flujo de cotización (demo).
         </p>
         <p className="mt-4 max-w-measure text-base leading-[1.65] text-carbon/70">
-          El equipo revisará tipo, acabado y superficie, y te responderá con
-          la cotización y el plan de paneles.
+          Esta maqueta muestra el recorrido del formulario. El envío real y la
+          cotización se activarán en la versión de producción.
         </p>
       </motion.div>
     );

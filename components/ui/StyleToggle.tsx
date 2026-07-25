@@ -10,9 +10,10 @@ import {
 } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
+import { assetPath } from "@/lib/assetPath";
 
-const WOOD_SRC = "/assets/images/detail_internal_45deg_alt.png";
-const METAL_SRC = "/assets/images/detail_internal_45deg_alt_metal.png";
+const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.png");
+const METAL_SRC = assetPath("/assets/images/detail_internal_45deg_alt_metal.png");
 
 const DEFAULT_POSITION = 50;
 const HINT_OUT = 35;
