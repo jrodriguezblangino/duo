@@ -34,3 +34,25 @@
     outline: none;
   }
 }
+
+@layer utilities {
+  @keyframes finish-handle-pulse {
+    0%,
+    100% {
+      transform: scale(1.05);
+    }
+    50% {
+      transform: scale(1.12);
+    }
+  }
+
+  .animate-finish-handle-pulse {
+    animation: finish-handle-pulse 1.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-finish-handle-pulse {
+      animation: none;
+    }
+  }
+}
