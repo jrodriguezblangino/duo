@@ -432,6 +432,31 @@ function useProgressGatedPlayback(
 /* ─── Static / reduced-motion layout ─── */
 
 function StaticAnatomy() {
+  // #region agent log
+  useEffect(() => {
+    fetch("http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "5c4445",
+      },
+      body: JSON.stringify({
+        sessionId: "5c4445",
+        runId: "pre-fix",
+        hypothesisId: "A",
+        location: "AnatomySection.tsx:StaticAnatomy",
+        message: "StaticAnatomy mounted",
+        data: {
+          hasSectionLoop: true,
+          detailHasPoster: true,
+          note: "static layout now uses SectionLoopVideo for both clips",
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+  }, []);
+  // #endregion
+
   return (
     <section
       aria-labelledby="anatomia-heading"
@@ -452,20 +477,13 @@ function StaticAnatomy() {
         </div>
 
         <div className="mx-auto mb-12 w-full max-w-4xl lg:mb-20">
-          <div
-            className={`relative ${VIDEO_ASPECT} mx-auto w-full max-w-[min(100%,560px)] overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
-          >
-            <video
-              muted
-              playsInline
-              preload="metadata"
-              poster={VIDEO_POSTER}
-              className="h-full w-full object-contain"
-              aria-label="Desmontaje de las tres capas del panel Fill Home"
-            >
-              <source src={VIDEO_SRC} type="video/mp4" />
-            </video>
-          </div>
+          <SectionLoopVideo
+            src={VIDEO_SRC}
+            poster={VIDEO_POSTER}
+            wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto w-full max-w-[min(100%,560px)] overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+            className="h-full w-full object-contain"
+            aria-label="Desmontaje de las tres capas del panel Fill Home"
+          />
           <p className={`mt-4 ${MONO_MUTED}`}>
             Desmontaje de capas — ensamble mecánico
           </p>
@@ -506,18 +524,14 @@ function StaticAnatomy() {
         </ol>
 
         <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
-          <div
-            className={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate lg:col-span-7`}
-          >
-            <video
-              muted
-              playsInline
-              preload="metadata"
+          <div className="lg:col-span-7">
+            <SectionLoopVideo
+              src={DETAIL_VIDEO_SRC}
+              poster={DETAIL_VIDEO_POSTER}
+              wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
               className="h-full w-full object-contain"
               aria-label="Detalle de canto del panel Fill Home — tres capas"
-            >
-              <source src={DETAIL_VIDEO_SRC} type="video/mp4" />
-            </video>
+            />
           </div>
           <div className="lg:col-span-5">
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
@@ -838,7 +852,46 @@ export default function AnatomySection() {
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
 
-  if (prefersReducedMotion) {
+  // #region agent log
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const branch =
+      prefersReducedMotion && isDesktop
+        ? "static"
+        : isDesktop
+          ? "desktop"
+          : "mobile";
+    fetch("http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "5c4445",
+      },
+      body: JSON.stringify({
+        sessionId: "5c4445",
+        runId: "post-fix",
+        hypothesisId: "A",
+        location: "AnatomySection.tsx:export",
+        message: "Anatomy branch selected",
+        data: {
+          prefersReducedMotion,
+          isDesktop,
+          branch,
+          mqlMatches: mql.matches,
+          vw: window.innerWidth,
+          note: "mobile never uses StaticAnatomy (iOS reduce-motion trap)",
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+  }, [prefersReducedMotion, isDesktop]);
+  // #endregion
+
+  // iOS Safari often reports prefers-reduced-motion even when the user
+  // expects motion — StaticAnatomy then showed inert videos (poster / black,
+  // no play control). Keep interactive mobile layout; only desktop reduced
+  // motion uses the static stack (now with SectionLoopVideo).
+  if (prefersReducedMotion && isDesktop) {
     return <StaticAnatomy />;
   }
 
