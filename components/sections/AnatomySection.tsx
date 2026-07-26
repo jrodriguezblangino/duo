@@ -31,12 +31,14 @@ import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";
  * Mobile: sequential reveal; reduced motion: static stack.
  */
 
-const VIDEO_SRC = assetPath("/assets/videos/motion_disassembly_components.mp4");
+const VIDEO_SRC = assetPath(
+  "/assets/videos/motion_disassembly_components_ios.mp4",
+);
 const VIDEO_POSTER = assetPath("/assets/images/exploded_view_components.webp");
 /** Native 960×960 — container must be 1:1 so layers are never cropped */
 const VIDEO_ASPECT = "aspect-square";
 const DETAIL_VIDEO_SRC = assetPath(
-  "/assets/videos/motion_disassembly_components-2.mp4",
+  "/assets/videos/motion_disassembly_components_ios-2.mp4",
 );
 /** Native 1280×720 */
 const DETAIL_ASPECT = "aspect-video";

@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type MouseEvent,
-  type PointerEvent,
-} from "react";
+import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 
 type SectionLoopVideoProps = {
   src: string;
@@ -19,56 +11,13 @@ type SectionLoopVideoProps = {
 };
 
 /**
- * iOS-proof looping section video.
+ * Mobile Composición loops — same contract as Hero (muted / playsInline /
+ * autoplay), plus an iOS tap fallback.
  *
- * Guards:
- * 1) Decoder pool — only the most-visible instance keeps `src`.
- * 2) Black frame after bogus "playing" — overlay stays until timeupdate advances.
- * 3) Video element always mounted; src attached while active+near so tap can
- *    call play() inside the user gesture (requires faststart MP4s).
- * 4) Coarse pointers skip autoplay — always show ▶ until confirmed playback.
+ * Intentionally simple: no decoder mutex, no opacity-0 video, no load() inside
+ * the tap handler. Those patterns passed desktop/Responsively and failed on
+ * real iPhone Safari.
  */
-
-let activeLoopId: string | null = null;
-const loopListeners = new Set<() => void>();
-
-function claimLoop(id: string) {
-  if (activeLoopId === id) return;
-  activeLoopId = id;
-  loopListeners.forEach((fn) => fn());
-}
-
-function releaseLoop(id: string) {
-  if (activeLoopId !== id) return;
-  activeLoopId = null;
-  loopListeners.forEach((fn) => fn());
-}
-
-function isNearViewport(el: Element, marginPx = 40) {
-  const rect = el.getBoundingClientRect();
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return (
-    rect.bottom > -marginPx &&
-    rect.top < vh + marginPx &&
-    rect.width > 0 &&
-    rect.height > 0
-  );
-}
-
-function visibilityScore(el: Element) {
-  const rect = el.getBoundingClientRect();
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
-}
-
-const TAP_QUERY = "(hover: none), (pointer: coarse)";
-
-function subscribeTapQuery(onChange: () => void) {
-  const mql = window.matchMedia(TAP_QUERY);
-  mql.addEventListener("change", onChange);
-  return () => mql.removeEventListener("change", onChange);
-}
-
 export default function SectionLoopVideo({
   src,
   poster,
@@ -78,80 +27,35 @@ export default function SectionLoopVideo({
 }: SectionLoopVideoProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const id = useId();
+  const unlockedRef = useRef(false);
 
-  const [near, setNear] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [confirmedPlay, setConfirmedPlay] = useState(false);
-
-  const tapOnly = useSyncExternalStore(
-    subscribeTapQuery,
-    () => window.matchMedia(TAP_QUERY).matches,
-    () => true,
-  );
-
-  useEffect(() => {
-    const sync = () => setIsActive(activeLoopId === id);
-    sync();
-    loopListeners.add(sync);
-    return () => {
-      loopListeners.delete(sync);
-      releaseLoop(id);
-    };
-  }, [id]);
+  const [inView, setInView] = useState(false);
+  const [showTap, setShowTap] = useState(false);
 
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
-    const sync = () => {
-      const next = isNearViewport(root);
-      setNear(next);
-      if (!next) {
-        releaseLoop(id);
-        return;
-      }
-      let bestId = id;
-      let bestScore = visibilityScore(root);
-      document.querySelectorAll("[data-section-loop]").forEach((node) => {
-        if (!(node instanceof HTMLElement)) return;
-        const otherId = node.dataset.sectionLoop;
-        if (!otherId || otherId === id) return;
-        const score = visibilityScore(node);
-        if (score > bestScore) {
-          bestScore = score;
-          bestId = otherId;
-        }
-      });
-      claimLoop(bestId);
-    };
-
-    const io = new IntersectionObserver(() => sync(), {
-      threshold: [0, 0.01, 0.1, 0.25, 0.5, 1],
-      rootMargin: "40px 0px 40px 0px",
-    });
+    const io = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some(
+          (e) => e.isIntersecting && e.intersectionRatio >= 0.12,
+        );
+        setInView(hit);
+      },
+      { threshold: [0, 0.12, 0.25, 0.5, 1], rootMargin: "0px" },
+    );
     io.observe(root);
-    window.addEventListener("scroll", sync, { passive: true, capture: true });
-    window.addEventListener("resize", sync);
-    window.visualViewport?.addEventListener("resize", sync);
-    sync();
-
-    return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", sync, true);
-      window.removeEventListener("resize", sync);
-      window.visualViewport?.removeEventListener("resize", sync);
-      releaseLoop(id);
-    };
-  }, [id]);
-
-  const shouldAttach = near && isActive;
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (!shouldAttach) setConfirmedPlay(false);
-  }, [shouldAttach]);
+    if (!inView) {
+      setShowTap(false);
+      unlockedRef.current = false;
+      return;
+    }
 
-  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
@@ -171,78 +75,55 @@ export default function SectionLoopVideo({
       }
     };
 
-    if (!shouldAttach) {
-      video.pause();
-      if (video.getAttribute("src")) {
-        video.removeAttribute("src");
-        video.load();
+    const tryPlay = () => {
+      lock();
+      if (!video.paused) {
+        setShowTap(false);
+        return;
       }
-      return;
-    }
+      void video.play().then(
+        () => setShowTap(false),
+        () => setShowTap(true),
+      );
+    };
+
+    const onPlaying = () => setShowTap(false);
+    const onPause = () => {
+      // Only re-offer tap if still on screen — avoid fighting scroll-away pause
+      if (unlockedRef.current) return;
+      if (video.paused) setShowTap(true);
+    };
+    const onCanPlay = () => {
+      if (unlockedRef.current || !video.paused) tryPlay();
+    };
 
     lock();
-    // Don't reload if tap already attached this src (would cancel play())
-    if (video.getAttribute("src") !== src) {
-      video.setAttribute("src", src);
-      video.load();
-    }
-
-    const confirm = () => {
-      if (!video.paused && video.currentTime > 0.05) setConfirmedPlay(true);
-    };
-
-    const onTimeUpdate = () => confirm();
-    const onPlaying = () => confirm();
-    const onPause = () => setConfirmedPlay(false);
-    const onEmptied = () => setConfirmedPlay(false);
-
-    video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("playing", onPlaying);
     video.addEventListener("pause", onPause);
-    video.addEventListener("emptied", onEmptied);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("canplay", onCanPlay);
 
-    if (!tapOnly) {
-      const tryPlay = () => {
-        lock();
-        if (video.paused) void video.play().catch(() => {});
-      };
-      video.addEventListener("loadeddata", tryPlay);
-      video.addEventListener("canplay", tryPlay);
-      tryPlay();
-      const t1 = window.setTimeout(tryPlay, 300);
-      const t2 = window.setTimeout(tryPlay, 1000);
-      return () => {
-        window.clearTimeout(t1);
-        window.clearTimeout(t2);
-        video.removeEventListener("loadeddata", tryPlay);
-        video.removeEventListener("canplay", tryPlay);
-        video.removeEventListener("timeupdate", onTimeUpdate);
-        video.removeEventListener("playing", onPlaying);
-        video.removeEventListener("pause", onPause);
-        video.removeEventListener("emptied", onEmptied);
-      };
-    }
+    tryPlay();
+    const t1 = window.setTimeout(tryPlay, 400);
+    const t2 = window.setTimeout(() => {
+      if (video.paused) setShowTap(true);
+    }, 1000);
 
     return () => {
-      video.removeEventListener("timeupdate", onTimeUpdate);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("pause", onPause);
-      video.removeEventListener("emptied", onEmptied);
+      video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("canplay", onCanPlay);
+      video.pause();
     };
-  }, [shouldAttach, src, tapOnly]);
+  }, [inView, src]);
 
-  const onTapPlay = (e: MouseEvent<HTMLButtonElement> | PointerEvent<HTMLButtonElement>) => {
-    // Prefer a single gesture path — ignore the synthetic click after pointerup
-    if (e.type === "click" && e.detail === 0) return;
-    if ("pointerType" in e && e.type === "pointerup" && e.pointerType === "mouse") {
-      return; // mouse uses click
-    }
-
+  const onTapPlay = (e: SyntheticEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    claimLoop(id);
-    setNear(true);
-    setIsActive(true);
+    unlockedRef.current = true;
 
     const video = videoRef.current;
     if (!video) return;
@@ -255,20 +136,17 @@ export default function SectionLoopVideo({
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
 
-    if (video.getAttribute("src") !== src) {
-      video.setAttribute("src", src);
-      video.load();
-    }
-
-    void video.play().catch(() => setConfirmedPlay(false));
+    // Src is already on the element from React — do NOT call load() here
+    // (load() cancels the user-gesture unlock on iOS).
+    void video.play().then(
+      () => setShowTap(false),
+      () => setShowTap(true),
+    );
   };
-
-  const showTap = near && !confirmedPlay;
 
   return (
     <div
       ref={rootRef}
-      data-section-loop={id}
       className={`relative ${wrapperClassName ?? ""}`}
     >
       {poster ? (
@@ -278,37 +156,35 @@ export default function SectionLoopVideo({
           alt=""
           decoding="async"
           draggable={false}
-          className={`absolute inset-0 z-0 h-full w-full object-contain ${
-            confirmedPlay ? "opacity-0" : "opacity-100"
-          }`}
+          className="absolute inset-0 z-0 h-full w-full object-contain"
           aria-hidden="true"
         />
-      ) : (
-        <div className="absolute inset-0 z-0 bg-slate" aria-hidden="true" />
-      )}
+      ) : null}
 
-      <video
-        ref={videoRef}
-        poster={poster}
-        className={`relative z-[1] ${className ?? "h-full w-full object-contain"} ${
-          confirmedPlay ? "opacity-100" : "opacity-0"
-        }`}
-        muted
-        loop
-        playsInline
-        controls={false}
-        disablePictureInPicture
-        preload={shouldAttach ? "auto" : "none"}
-        tabIndex={-1}
-        aria-hidden={ariaLabel ? undefined : true}
-        aria-label={ariaLabel}
-      />
+      {inView ? (
+        <video
+          ref={videoRef}
+          key={src}
+          src={src}
+          poster={poster}
+          className={`relative z-[1] ${className ?? "h-full w-full object-contain"}`}
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls={false}
+          disablePictureInPicture
+          preload="auto"
+          tabIndex={-1}
+          aria-hidden={ariaLabel ? undefined : true}
+          aria-label={ariaLabel}
+        />
+      ) : null}
 
-      {showTap ? (
+      {inView && showTap ? (
         <button
           type="button"
           onClick={onTapPlay}
-          onPointerUp={onTapPlay}
           className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-carbon/50"
           aria-label={
             ariaLabel ? `Reproducir: ${ariaLabel}` : "Reproducir video"
