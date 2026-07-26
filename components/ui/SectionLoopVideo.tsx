@@ -11,12 +11,13 @@ type SectionLoopVideoProps = {
 };
 
 /**
- * Mobile Composición loops — same contract as Hero (muted / playsInline /
- * autoplay), plus an iOS tap fallback.
+ * Composición loops for mobile.
  *
- * Intentionally simple: no decoder mutex, no opacity-0 video, no load() inside
- * the tap handler. Those patterns passed desktop/Responsively and failed on
- * real iPhone Safari.
+ * - Mount video when intersecting (isIntersecting only — iOS often reports
+ *   ratio 0 while intersecting, which previously left a dead poster).
+ * - Keep poster + ▶ above the video until timeupdate proves frames.
+ * - Try muted autoplay on enter; never trust play() alone to hide the UI.
+ * - Tap only calls play() (no load()) so the user gesture stays valid on iOS.
  */
 export default function SectionLoopVideo({
   src,
@@ -27,10 +28,10 @@ export default function SectionLoopVideo({
 }: SectionLoopVideoProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const unlockedRef = useRef(false);
 
   const [inView, setInView] = useState(false);
-  const [showTap, setShowTap] = useState(false);
+  /** True only after currentTime has advanced — not after play() resolves */
+  const [hasFrames, setHasFrames] = useState(false);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -38,12 +39,11 @@ export default function SectionLoopVideo({
 
     const io = new IntersectionObserver(
       (entries) => {
-        const hit = entries.some(
-          (e) => e.isIntersecting && e.intersectionRatio >= 0.12,
-        );
-        setInView(hit);
+        // Do NOT require intersectionRatio — iOS Safari often reports 0
+        // while isIntersecting is true (left Composición stuck on poster).
+        setInView(entries.some((e) => e.isIntersecting));
       },
-      { threshold: [0, 0.12, 0.25, 0.5, 1], rootMargin: "0px" },
+      { threshold: 0, rootMargin: "0px" },
     );
     io.observe(root);
     return () => io.disconnect();
@@ -51,8 +51,7 @@ export default function SectionLoopVideo({
 
   useEffect(() => {
     if (!inView) {
-      setShowTap(false);
-      unlockedRef.current = false;
+      setHasFrames(false);
       return;
     }
 
@@ -75,47 +74,38 @@ export default function SectionLoopVideo({
       }
     };
 
-    const tryPlay = () => {
-      lock();
-      if (!video.paused) {
-        setShowTap(false);
-        return;
+    const confirmFrames = () => {
+      if (!video.paused && video.currentTime > 0.05) {
+        setHasFrames(true);
       }
-      void video.play().then(
-        () => setShowTap(false),
-        () => setShowTap(true),
-      );
     };
 
-    const onPlaying = () => setShowTap(false);
-    const onPause = () => {
-      // Only re-offer tap if still on screen — avoid fighting scroll-away pause
-      if (unlockedRef.current) return;
-      if (video.paused) setShowTap(true);
-    };
-    const onCanPlay = () => {
-      if (unlockedRef.current || !video.paused) tryPlay();
+    const tryPlay = () => {
+      lock();
+      if (video.paused) {
+        void video.play().catch(() => {
+          /* show tap UI until frames confirm */
+        });
+      }
     };
 
     lock();
-    video.addEventListener("playing", onPlaying);
-    video.addEventListener("pause", onPause);
+    video.addEventListener("timeupdate", confirmFrames);
+    video.addEventListener("playing", confirmFrames);
     video.addEventListener("loadeddata", tryPlay);
-    video.addEventListener("canplay", onCanPlay);
+    video.addEventListener("canplay", tryPlay);
 
     tryPlay();
-    const t1 = window.setTimeout(tryPlay, 400);
-    const t2 = window.setTimeout(() => {
-      if (video.paused) setShowTap(true);
-    }, 1000);
+    const t1 = window.setTimeout(tryPlay, 350);
+    const t2 = window.setTimeout(tryPlay, 1200);
 
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
-      video.removeEventListener("playing", onPlaying);
-      video.removeEventListener("pause", onPause);
+      video.removeEventListener("timeupdate", confirmFrames);
+      video.removeEventListener("playing", confirmFrames);
       video.removeEventListener("loadeddata", tryPlay);
-      video.removeEventListener("canplay", onCanPlay);
+      video.removeEventListener("canplay", tryPlay);
       video.pause();
     };
   }, [inView, src]);
@@ -123,7 +113,6 @@ export default function SectionLoopVideo({
   const onTapPlay = (e: SyntheticEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    unlockedRef.current = true;
 
     const video = videoRef.current;
     if (!video) return;
@@ -136,19 +125,15 @@ export default function SectionLoopVideo({
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
 
-    // Src is already on the element from React — do NOT call load() here
-    // (load() cancels the user-gesture unlock on iOS).
-    void video.play().then(
-      () => setShowTap(false),
-      () => setShowTap(true),
-    );
+    // Src already set by React — never load() inside the gesture.
+    void video.play().catch(() => {});
   };
 
+  const showCover = inView && !hasFrames;
+
   return (
-    <div
-      ref={rootRef}
-      className={`relative ${wrapperClassName ?? ""}`}
-    >
+    <div ref={rootRef} className={`relative ${wrapperClassName ?? ""}`}>
+      {/* Permanent still — visible until real frames (covers black decode) */}
       {poster ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -156,7 +141,9 @@ export default function SectionLoopVideo({
           alt=""
           decoding="async"
           draggable={false}
-          className="absolute inset-0 z-0 h-full w-full object-contain"
+          className={`absolute inset-0 z-[2] h-full w-full object-contain transition-opacity duration-200 ${
+            hasFrames ? "pointer-events-none opacity-0" : "opacity-100"
+          }`}
           aria-hidden="true"
         />
       ) : null}
@@ -179,13 +166,28 @@ export default function SectionLoopVideo({
           aria-hidden={ariaLabel ? undefined : true}
           aria-label={ariaLabel}
         />
-      ) : null}
+      ) : poster ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={poster}
+          alt=""
+          decoding="async"
+          draggable={false}
+          className={`relative z-[1] ${className ?? "h-full w-full object-contain"}`}
+          aria-hidden="true"
+        />
+      ) : (
+        <div
+          className={`relative z-[1] ${className ?? "h-full w-full"} bg-slate`}
+          aria-hidden="true"
+        />
+      )}
 
-      {inView && showTap ? (
+      {showCover ? (
         <button
           type="button"
           onClick={onTapPlay}
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-carbon/50"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-carbon/45"
           aria-label={
             ariaLabel ? `Reproducir: ${ariaLabel}` : "Reproducir video"
           }

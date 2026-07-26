@@ -34,11 +34,17 @@ import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";
 const VIDEO_SRC = assetPath(
   "/assets/videos/motion_disassembly_components_ios.mp4",
 );
-const VIDEO_POSTER = assetPath("/assets/images/exploded_view_components.webp");
+/** Frame from the square disassembly loop — not the exploded still */
+const VIDEO_POSTER = assetPath(
+  "/assets/images/motion_disassembly_hero_poster.jpg",
+);
 /** Native 960×960 — container must be 1:1 so layers are never cropped */
 const VIDEO_ASPECT = "aspect-square";
 const DETAIL_VIDEO_SRC = assetPath(
   "/assets/videos/motion_disassembly_components_ios-2.mp4",
+);
+const DETAIL_VIDEO_POSTER = assetPath(
+  "/assets/images/motion_disassembly_detail_poster.jpg",
 );
 /** Native 1280×720 */
 const DETAIL_ASPECT = "aspect-video";
@@ -620,7 +626,7 @@ function MobileAnatomy() {
           <div>
             <SectionLoopVideo
               src={DETAIL_VIDEO_SRC}
-              poster={VIDEO_POSTER}
+              poster={DETAIL_VIDEO_POSTER}
               wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
               className="h-full w-full object-contain"
               aria-label="Detalle de canto del panel Fill Home — tres capas"
