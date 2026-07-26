@@ -9,7 +9,6 @@ import {
 import {
   motion,
   useMotionTemplate,
-  useMotionValue,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -21,6 +20,8 @@ import {
   HighlightWord,
   HighlightWordStatic,
 } from "@/components/ui/HighlightWord";
+import BackgroundVideo from "@/components/ui/BackgroundVideo";
+import { useIsDesktop } from "@/lib/useMediaQuery";
 
 /**
  * Anatomy — scroll-driven composition story (desktop pin).
@@ -30,7 +31,7 @@ import {
  */
 
 const VIDEO_SRC = assetPath("/assets/videos/motion_disassembly_components.mp4");
-const VIDEO_POSTER = assetPath("/assets/images/exploded_view_components.png");
+const VIDEO_POSTER = assetPath("/assets/images/exploded_view_components.webp");
 /** Native 960×960 — container must be 1:1 so layers are never cropped */
 const VIDEO_ASPECT = "aspect-square";
 const DETAIL_VIDEO_SRC = assetPath(
@@ -144,10 +145,16 @@ function Scene3Body({
   progress,
   reduce = false,
   highlightReveal = "scroll",
+  ranges = [
+    [0.72, 0.78],
+    [0.86, 0.92],
+    [0.96, 1],
+  ] as const,
 }: {
   progress?: MotionValue<number>;
   reduce?: boolean;
   highlightReveal?: "scroll" | "view";
+  ranges?: readonly (readonly [number, number])[];
 }) {
   if (!progress || reduce) {
     return (
@@ -171,14 +178,13 @@ function Scene3Body({
 
   const isView = highlightReveal === "view";
 
-  // First mark waits until Scene 3 is fully settled (after 0.54)
   return (
     <p className={SCENE3_BODY_CLASS}>
       {SCENE3_COPY.lead}
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.72, 0.78]}
+        range={ranges[0]}
         reveal={highlightReveal}
         surface="dark"
         {...(isView ? { duration: 0.6, delay: 0 } : {})}
@@ -189,7 +195,7 @@ function Scene3Body({
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.86, 0.92]}
+        range={ranges[1]}
         reveal={highlightReveal}
         surface="dark"
         {...(isView ? { duration: 0.6, delay: 0.8 } : {})}
@@ -200,7 +206,7 @@ function Scene3Body({
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.96, 1]}
+        range={ranges[2]}
         reveal={highlightReveal}
         surface="dark"
         {...(isView ? { duration: 0.6, delay: 1.6 } : {})}
@@ -216,10 +222,15 @@ function Scene1Support({
   progress,
   reduce = false,
   highlightReveal = "scroll",
+  ranges = [
+    [0.12, 0.15],
+    [0.18, 0.21],
+  ] as const,
 }: {
   progress?: MotionValue<number>;
   reduce?: boolean;
   highlightReveal?: "scroll" | "view";
+  ranges?: readonly (readonly [number, number])[];
 }) {
   if (!progress || reduce) {
     return (
@@ -239,7 +250,7 @@ function Scene1Support({
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.12, 0.15]}
+        range={ranges[0]}
         reveal={highlightReveal}
         surface="dark"
         {...(isView ? { duration: 0.45, delay: 0 } : {})}
@@ -250,7 +261,7 @@ function Scene1Support({
       <HighlightWord
         reduce={false}
         progress={progress}
-        range={[0.18, 0.21]}
+        range={ranges[1]}
         reveal={highlightReveal}
         surface="dark"
         {...(isView ? { duration: 0.45, delay: 0.35 } : {})}
@@ -362,16 +373,29 @@ function useProgressGatedPlayback(
     const video = videoRef.current;
     if (!video) return;
 
+    const lockInlineMuted = () => {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
+      video.disablePictureInPicture = true;
+    };
+
     const sync = () => {
       const active =
         progressRef.current >= activeFrom &&
         progressRef.current < activeUntil;
       if (inViewRef.current && active) {
+        lockInlineMuted();
         void video.play().catch(() => {});
       } else {
         video.pause();
       }
     };
+
+    lockInlineMuted();
 
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -504,16 +528,20 @@ function StaticAnatomy() {
 
 function MobileAnatomy() {
   const introRef = useRef<HTMLDivElement>(null);
-  const detailIdleProgress = useMotionValue(1);
+  const detailRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: introRef,
-    offset: ["start 0.85", "end 0.45"],
+    offset: ["start 0.9", "end 0.35"],
+  });
+  const { scrollYProgress: detailProgress } = useScroll({
+    target: detailRef,
+    offset: ["start 0.85", "end 0.4"],
   });
 
   return (
     <section
       aria-labelledby="anatomia-heading"
-      className="bg-carbon px-6 py-section-mobile text-offwhite lg:hidden"
+      className="bg-carbon px-6 py-section-mobile text-offwhite"
     >
       <div className="mx-auto max-w-site">
         <div ref={introRef} className="mb-10 max-w-[58ch]">
@@ -531,7 +559,11 @@ function MobileAnatomy() {
           <FocusText progress={scrollYProgress} range={[0.28, 0.55]}>
             <Scene1Support
               progress={scrollYProgress}
-              highlightReveal="view"
+              highlightReveal="scroll"
+              ranges={[
+                [0.52, 0.66],
+                [0.7, 0.84],
+              ]}
             />
           </FocusText>
         </div>
@@ -544,18 +576,13 @@ function MobileAnatomy() {
           transition={{ ...glide, delay: 0.06 }}
         >
           <div className={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}>
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
+            <BackgroundVideo
+              src={VIDEO_SRC}
               poster={VIDEO_POSTER}
-              className="h-full w-full object-contain"
+              preload="metadata"
               aria-label="Desmontaje de las tres capas del panel Fill Home"
-            >
-              <source src={VIDEO_SRC} type="video/mp4" />
-            </video>
+              className="h-full w-full object-contain"
+            />
           </div>
           <p className={`mt-4 ${MONO_MUTED}`}>
             Desmontaje de capas — ensamble mecánico
@@ -600,7 +627,7 @@ function MobileAnatomy() {
           ))}
         </ol>
 
-        <div className="grid gap-8">
+        <div ref={detailRef} className="grid gap-8">
           <motion.div
             className={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
             initial={{ opacity: 0, scale: 1.04 }}
@@ -608,17 +635,12 @@ function MobileAnatomy() {
             viewport={VIEWPORT}
             transition={glide}
           >
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
+            <BackgroundVideo
+              src={DETAIL_VIDEO_SRC}
               preload="metadata"
-              className="h-full w-full object-contain"
               aria-label="Detalle de canto del panel Fill Home — tres capas"
-            >
-              <source src={DETAIL_VIDEO_SRC} type="video/mp4" />
-            </video>
+              className="h-full w-full object-contain"
+            />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -631,8 +653,13 @@ function MobileAnatomy() {
             </p>
             <Scene3Headline />
             <Scene3Body
-              progress={detailIdleProgress}
-              highlightReveal="view"
+              progress={detailProgress}
+              highlightReveal="scroll"
+              ranges={[
+                [0.22, 0.4],
+                [0.45, 0.62],
+                [0.66, 0.84],
+              ]}
             />
             <Scene3Spec className="mt-8" />
           </motion.div>
@@ -699,7 +726,7 @@ function DesktopAnatomy() {
   return (
     <section
       aria-labelledby="anatomia-heading-desktop"
-      className="relative hidden bg-carbon text-offwhite lg:block"
+      className="relative bg-carbon text-offwhite"
     >
       <div ref={trackRef} className="relative h-[1000vh]">
         <div className="sticky top-0 flex h-dvh flex-col justify-center overflow-hidden">
@@ -715,17 +742,17 @@ function DesktopAnatomy() {
                 >
                   <video
                     ref={heroVideoRef}
+                    src={VIDEO_SRC}
                     autoPlay
                     muted
                     loop
                     playsInline
                     preload="metadata"
                     poster={VIDEO_POSTER}
+                    disablePictureInPicture
                     className="h-full w-full object-contain"
                     aria-label="Desmontaje de las tres capas del panel Fill Home"
-                  >
-                    <source src={VIDEO_SRC} type="video/mp4" />
-                  </video>
+                  />
                 </motion.div>
 
                 <motion.div
@@ -737,15 +764,15 @@ function DesktopAnatomy() {
                   >
                     <video
                       ref={detailVideoRef}
+                      src={DETAIL_VIDEO_SRC}
                       muted
                       loop
                       playsInline
                       preload="metadata"
+                      disablePictureInPicture
                       className="h-full w-full object-contain"
                       aria-label="Detalle de canto del panel Fill Home — tres capas"
-                    >
-                      <source src={DETAIL_VIDEO_SRC} type="video/mp4" />
-                    </video>
+                    />
                   </div>
                 </motion.div>
               </div>
@@ -819,15 +846,21 @@ function DesktopAnatomy() {
 
 export default function AnatomySection() {
   const prefersReducedMotion = useReducedMotion();
+  const isDesktop = useIsDesktop();
 
   if (prefersReducedMotion) {
     return <StaticAnatomy />;
   }
 
-  return (
-    <>
-      <MobileAnatomy />
-      <DesktopAnatomy />
-    </>
-  );
+  /* Avoid mounting both sticky desktop track + mobile media on small screens */
+  if (isDesktop === null) {
+    return (
+      <section
+        aria-labelledby="anatomia-heading"
+        className="min-h-[50vh] bg-carbon"
+      />
+    );
+  }
+
+  return isDesktop ? <DesktopAnatomy /> : <MobileAnatomy />;
 }

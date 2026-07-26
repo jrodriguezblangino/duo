@@ -1,28 +1,34 @@
 "use client";
 
-import { useMotionValue, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { useReducedMotion, useScroll } from "framer-motion";
 import {
   HighlightWord,
   HighlightWordStatic,
 } from "@/components/ui/HighlightWord";
 
-const DUMMY_RANGE = [0, 1] as const;
+function useParagraphScroll() {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    /* Narrow upper-viewport window so above-the-fold Tecnología copy
+       still has headroom to scrub from ~0 on first paint. */
+    offset: ["start 0.28", "start 0.02"],
+  });
+  return { ref, progress: scrollYProgress };
+}
 
-/** Organic draw — matches Manifiesto / Anatomy pacing */
-const DRAW_DURATION = 0.9;
-const STAGGER = 0.45;
-
-function ViewMark({
+function ScrollMark({
   children,
-  delay = 0,
+  progress,
+  range,
   reduce,
 }: {
   children: string;
-  delay?: number;
+  progress: ReturnType<typeof useParagraphScroll>["progress"];
+  range: readonly [number, number];
   reduce: boolean;
 }) {
-  const progress = useMotionValue(0);
-
   if (reduce) {
     return (
       <HighlightWordStatic surface="dark">{children}</HighlightWordStatic>
@@ -33,11 +39,9 @@ function ViewMark({
     <HighlightWord
       reduce={false}
       progress={progress}
-      range={DUMMY_RANGE}
-      reveal="view"
+      range={range}
+      reveal="scroll"
       surface="dark"
-      duration={DRAW_DURATION}
-      delay={delay}
     >
       {children}
     </HighlightWord>
@@ -47,13 +51,16 @@ function ViewMark({
 /** Hero / 01 — fabrication; highlight on proceso (not tolerancia) */
 export function ManufacturingBody({ className }: { className: string }) {
   const reduce = Boolean(useReducedMotion());
+  const { ref, progress } = useParagraphScroll();
 
   return (
-    <p className={className}>
+    <p ref={ref} className={className}>
       La cara nace por extrusión de aluminio; el núcleo se inyecta en
       poliuretano; el respaldo se lamina en acero galvanizado. El{" "}
-      <ViewMark reduce={reduce}>proceso</ViewMark> está calibrado para la
-      tolerancia del encastre oculto.
+      <ScrollMark reduce={reduce} progress={progress} range={[0.15, 0.7]}>
+        proceso
+      </ScrollMark>{" "}
+      está calibrado para la tolerancia del encastre oculto.
     </p>
   );
 }
@@ -61,13 +68,16 @@ export function ManufacturingBody({ className }: { className: string }) {
 /** 03 — installation; same draw timing as hero */
 export function InstallationBody({ className }: { className: string }) {
   const reduce = Boolean(useReducedMotion());
+  const { ref, progress } = useParagraphScroll();
 
   return (
-    <p className={className}>
+    <p ref={ref} className={className}>
       Esa precisión se traslada a la obra: el{" "}
-      <ViewMark reduce={reduce}>encastre</ViewMark> oculto sostiene una
-      tolerancia constante sobre el muro real, y permite un ensamble limpio —
-      sin fijaciones a la vista.
+      <ScrollMark reduce={reduce} progress={progress} range={[0.15, 0.7]}>
+        encastre
+      </ScrollMark>{" "}
+      oculto sostiene una tolerancia constante sobre el muro real, y permite un
+      ensamble limpio — sin fijaciones a la vista.
     </p>
   );
 }
@@ -75,14 +85,15 @@ export function InstallationBody({ className }: { className: string }) {
 /** 04 — insulation; peer highlight treatment */
 export function InsulationBody({ className }: { className: string }) {
   const reduce = Boolean(useReducedMotion());
+  const { ref, progress } = useParagraphScroll();
 
   return (
-    <p className={className}>
+    <p ref={ref} className={className}>
       El poliuretano de alta densidad reduce la transferencia térmica, aporta
       confort acústico y es la capa que{" "}
-      <ViewMark reduce={reduce} delay={STAGGER}>
+      <ScrollMark reduce={reduce} progress={progress} range={[0.2, 0.75]}>
         adhiere
-      </ViewMark>{" "}
+      </ScrollMark>{" "}
       cara y respaldo en una sola pieza.
     </p>
   );

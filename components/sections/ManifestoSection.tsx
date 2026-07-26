@@ -14,6 +14,7 @@ import {
   HighlightWord,
   HighlightWordStatic,
 } from "@/components/ui/HighlightWord";
+import { useIsDesktop } from "@/lib/useMediaQuery";
 
 /**
  * Manifesto — typographic break between Hero and Anatomy.
@@ -122,8 +123,8 @@ function LeadBlock({
         <HighlightWord
           reduce={reduce}
           progress={progress}
-          range={[0.28, 0.42]}
-          reveal={compact ? "view" : "scroll"}
+          range={compact ? [0.35, 0.55] : [0.28, 0.42]}
+          reveal="scroll"
         >
           búsqueda.
         </HighlightWord>
@@ -134,8 +135,8 @@ function LeadBlock({
         <EchoWord
           reduce={reduce}
           progress={progress}
-          range={[0.38, 0.52]}
-          reveal={compact ? "view" : "scroll"}
+          range={compact ? [0.5, 0.7] : [0.38, 0.52]}
+          reveal="scroll"
         >
           arte
         </EchoWord>
@@ -209,24 +210,90 @@ function StaticBody() {
   );
 }
 
+function MobileManifesto() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 0.9", "end 0.25"],
+  });
+  const spine = useTransform(scrollYProgress, [0.02, 0.45], [0, 1]);
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-labelledby="manifiesto-heading"
+      className="box-border bg-offwhite px-6 py-section-mobile text-carbon"
+    >
+      <div className="relative mx-auto w-full max-w-site">
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-2 left-0 top-0 w-px origin-top bg-sand/50"
+          style={{ scaleY: spine }}
+        />
+
+        <div className="flex flex-col gap-8 pl-7 md:gap-10 md:pl-9">
+          <LeadBlock reduce={false} progress={scrollYProgress} compact />
+          <BodyBlocks
+            progress={scrollYProgress}
+            className="flex flex-col gap-7 md:gap-8"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DesktopManifesto() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ["start start", "end end"],
+  });
+  const spine = useTransform(scrollYProgress, [0.02, 0.4], [0, 1]);
+
+  return (
+    <section
+      aria-labelledby="manifiesto-heading-desktop"
+      className="box-border bg-offwhite text-carbon"
+    >
+      <div ref={trackRef} className="relative h-[150vh]">
+        <div className="sticky top-0 flex h-dvh items-center overflow-x-hidden py-24">
+          <div className="relative mx-auto w-full max-w-site px-20">
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-[10%] left-20 top-0 w-px origin-top bg-sand/50"
+              style={{ scaleY: spine }}
+            />
+
+            <div className="grid w-full max-w-full items-start gap-gutter pl-12 lg:grid-cols-12">
+              <LeadBlock
+                reduce={false}
+                progress={scrollYProgress}
+                headingId="manifiesto-heading-desktop"
+              />
+
+              <div className="flex min-w-0 flex-col lg:col-span-5">
+                <div
+                  aria-hidden="true"
+                  className="mb-7 h-[1.2em] shrink-0 text-[13px] leading-[1.2] tracking-[0.18em]"
+                />
+                <BodyBlocks
+                  progress={scrollYProgress}
+                  className="flex flex-col gap-8"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function ManifestoSection() {
   const prefersReducedMotion = useReducedMotion();
   const reduce = !!prefersReducedMotion;
-  const mobileRef = useRef<HTMLElement>(null);
-  const desktopTrackRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress: mobileProgress } = useScroll({
-    target: mobileRef,
-    offset: ["start 0.85", "end 0.35"],
-  });
-
-  const { scrollYProgress: desktopProgress } = useScroll({
-    target: desktopTrackRef,
-    offset: ["start start", "end end"],
-  });
-
-  const mobileSpine = useTransform(mobileProgress, [0.02, 0.45], [0, 1]);
-  const desktopSpine = useTransform(desktopProgress, [0.02, 0.4], [0, 1]);
+  const isDesktop = useIsDesktop();
 
   if (reduce) {
     return (
@@ -248,67 +315,14 @@ export default function ManifestoSection() {
     );
   }
 
-  return (
-    <>
-      {/* —— Mobile: natural height, no viewport pin (fixes empty gap) —— */}
+  if (isDesktop === null) {
+    return (
       <section
-        ref={mobileRef}
         aria-labelledby="manifiesto-heading"
-        className="box-border bg-offwhite px-6 py-section-mobile text-carbon lg:hidden"
-      >
-        <div className="relative mx-auto w-full max-w-site">
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-2 left-0 top-0 w-px origin-top bg-sand/50"
-            style={{ scaleY: mobileSpine }}
-          />
+        className="min-h-[40vh] bg-offwhite"
+      />
+    );
+  }
 
-          <div className="flex flex-col gap-8 pl-7 md:gap-10 md:pl-9">
-            <LeadBlock reduce={false} progress={mobileProgress} compact />
-            <BodyBlocks
-              progress={mobileProgress}
-              className="flex flex-col gap-7 md:gap-8"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* —— Desktop: pinned scrub frame —— */}
-      <section
-        aria-labelledby="manifiesto-heading-desktop"
-        className="box-border hidden bg-offwhite text-carbon lg:block"
-      >
-        <div ref={desktopTrackRef} className="relative h-[150vh]">
-          <div className="sticky top-0 flex h-dvh items-center overflow-x-hidden py-24">
-            <div className="relative mx-auto w-full max-w-site px-20">
-              <motion.div
-                aria-hidden="true"
-                className="pointer-events-none absolute bottom-[10%] left-20 top-0 w-px origin-top bg-sand/50"
-                style={{ scaleY: desktopSpine }}
-              />
-
-              <div className="grid w-full max-w-full items-start gap-gutter pl-12 lg:grid-cols-12">
-                <LeadBlock
-                  reduce={false}
-                  progress={desktopProgress}
-                  headingId="manifiesto-heading-desktop"
-                />
-
-                <div className="flex min-w-0 flex-col lg:col-span-5">
-                  <div
-                    aria-hidden="true"
-                    className="mb-7 h-[1.2em] shrink-0 text-[13px] leading-[1.2] tracking-[0.18em]"
-                  />
-                  <BodyBlocks
-                    progress={desktopProgress}
-                    className="flex flex-col gap-8"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  );
+  return isDesktop ? <DesktopManifesto /> : <MobileManifesto />;
 }

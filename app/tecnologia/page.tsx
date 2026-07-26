@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import Button from "@/components/ui/Button";
+import BackgroundVideo from "@/components/ui/BackgroundVideo";
 import { assetPath } from "@/lib/assetPath";
 import { CTA } from "@/lib/site";
 import LayerDiagram from "./LayerDiagram";
@@ -150,7 +151,7 @@ export default function TecnologiaPage() {
                 <ChapterEyebrow index="01" label="Fabricación" />
                 <MediaFrame aspectClass="aspect-[2/1]">
                   <Image
-                    src={assetPath("/assets/images/exploded_view_components.png")}
+                    src={assetPath("/assets/images/exploded_view_components.webp")}
                     alt="Perfiles y panel Fill Home en vista de taller"
                     fill
                     sizes="(min-width: 1440px) 1024px, 100vw"
@@ -179,20 +180,12 @@ export default function TecnologiaPage() {
                 <div className={CHAPTER_GRID}>
                   <div className="lg:col-span-7">
                     <MediaFrame aspectClass="aspect-[16/10]">
-                      <video
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
+                      <BackgroundVideo
+                        src={assetPath("/assets/videos/motion-clipper.mp4")}
                         preload="metadata"
                         aria-label="Encastre oculto entre paneles Fill Home"
                         className="absolute inset-0 h-full w-full object-cover"
-                      >
-                        <source
-                          src={assetPath("/assets/videos/motion-clipper.mp4")}
-                          type="video/mp4"
-                        />
-                      </video>
+                      />
                     </MediaFrame>
                   </div>
                   <div className="lg:col-span-5">
@@ -221,23 +214,13 @@ export default function TecnologiaPage() {
                   </div>
                   <div className="order-1 lg:order-2 lg:col-span-7">
                     <MediaFrame aspectClass="aspect-[16/10]">
-                      <video
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
+                      <BackgroundVideo
+                        src={assetPath(
+                          "/assets/videos/motion_thermal_capacity.mp4",
+                        )}
                         preload="metadata"
-                        aria-hidden="true"
-                        tabIndex={-1}
-                        className="absolute inset-0 h-full w-full object-cover object-[75%_42%] scale-[1.15] origin-right"
-                      >
-                        <source
-                          src={assetPath(
-                            "/assets/videos/motion_thermal_capacity.mp4",
-                          )}
-                          type="video/mp4"
-                        />
-                      </video>
+                        className="absolute inset-0 h-full w-full origin-right scale-[1.15] object-cover object-[75%_42%]"
+                      />
                     </MediaFrame>
                   </div>
                 </div>

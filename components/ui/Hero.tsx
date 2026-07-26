@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 import { ENTRY_Y, glide } from "@/lib/motion";
+import BackgroundVideo from "@/components/ui/BackgroundVideo";
 
 type HeroProps = {
   eyebrow?: string;
@@ -31,7 +32,7 @@ export default function Hero({
   headlineContinued,
   bridgeLine = "Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución.",
   videoSrc,
-  poster = assetPath("/assets/images/exploded_view_components.png"),
+  poster = assetPath("/assets/images/exploded_view_components.webp"),
 }: HeroProps) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -57,19 +58,13 @@ export default function Hero({
                 }
           }
         >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
+          <BackgroundVideo
+            src={videoSrc}
             poster={poster}
-            aria-hidden="true"
-            tabIndex={-1}
+            preload="auto"
+            playback={{ enabled: !prefersReducedMotion, threshold: 0.05 }}
             className="absolute inset-0 h-full w-full object-cover"
-          >
-            <source src={videoSrc} type="video/mp4" />
-          </video>
+          />
         </motion.div>
         {/* Light full-field scrim for nav / overall legibility */}
         <div aria-hidden="true" className="absolute inset-0 bg-carbon/10" />

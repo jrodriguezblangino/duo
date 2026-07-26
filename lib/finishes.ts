@@ -14,25 +14,25 @@ export const FINISH_TONES: {
   {
     key: "carbon",
     label: "Carbón",
-    src: assetPath("/assets/images/gallery_color_options.png"),
+    src: assetPath("/assets/images/gallery_color_options.webp"),
     objectPosition: "12% 18%",
   },
   {
     key: "roble",
     label: "Roble",
-    src: assetPath("/assets/images/gallery_color_options.png"),
+    src: assetPath("/assets/images/gallery_color_options.webp"),
     objectPosition: "38% 28%",
   },
   {
     key: "aluminio",
     label: "Aluminio",
-    src: assetPath("/assets/images/gallery_color_options.png"),
+    src: assetPath("/assets/images/gallery_color_options.webp"),
     objectPosition: "58% 32%",
   },
   {
     key: "nogal",
     label: "Nogal",
-    src: assetPath("/assets/images/gallery_color_options.png"),
+    src: assetPath("/assets/images/gallery_color_options.webp"),
     objectPosition: "78% 42%",
   },
 ];

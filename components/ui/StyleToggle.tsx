@@ -12,14 +12,14 @@ import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 
-const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.png");
-const METAL_SRC = assetPath("/assets/images/detail_internal_45deg_alt_metal.png");
+const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.webp");
+const METAL_SRC = assetPath("/assets/images/detail_internal_45deg_alt_metal.webp");
 
 const DEFAULT_POSITION = 50;
 const HINT_OUT = 35;
 const STEP = 2;
-const HINT_MS = 900;
-const HELPER_FADE_MS = 4000;
+const HINT_MS = 1100;
+const HELPER_FADE_MS = 7000;
 
 /**
  * Both sources are square; panel content spans ~0–62% x (rest is black void).
@@ -76,7 +76,6 @@ export default function StyleToggle() {
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showHelper, setShowHelper] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
 
   const commitPosition = useCallback((pct: number) => {
     const next = Math.min(100, Math.max(0, pct));
@@ -251,8 +250,7 @@ export default function StyleToggle() {
   };
 
   const woodClip = `inset(0 ${100 - position}% 0 0)`;
-  const inviteMotion =
-    !prefersReducedMotion && !hasInteracted && isHovering;
+  const inviteMotion = !prefersReducedMotion && !hasInteracted;
 
   return (
     <div className="flex w-full flex-col gap-6 pb-4 lg:gap-7 lg:pb-8">
@@ -264,8 +262,6 @@ export default function StyleToggle() {
       <div
         ref={containerRef}
         className="relative aspect-[16/10] w-full cursor-ew-resize touch-none overflow-hidden bg-carbon select-none"
-        onPointerEnter={() => setIsHovering(true)}
-        onPointerLeave={() => setIsHovering(false)}
         onPointerDown={onFramePointerDown}
         onPointerMove={(e) => moveDrag(e.clientX)}
         onPointerUp={endDrag}
@@ -275,7 +271,9 @@ export default function StyleToggle() {
         <FinishCropLayer src={WOOD_SRC} clipPath={woodClip} />
 
         <div
-          className="pointer-events-none absolute inset-y-0 z-20 w-px -translate-x-1/2 bg-sand/80"
+          className={`pointer-events-none absolute inset-y-0 z-20 w-px -translate-x-1/2 bg-sand/80 ${
+            inviteMotion ? "animate-finish-divider-breathe" : ""
+          }`}
           style={{ left: `${position}%` }}
           aria-hidden="true"
         />
@@ -298,9 +296,7 @@ export default function StyleToggle() {
         >
           <span
             className={`flex h-9 w-9 items-center justify-center rounded-full border border-sand/70 bg-slate/90 text-sand transition-transform duration-300 ${
-              inviteMotion
-                ? "scale-105 animate-finish-handle-pulse"
-                : "scale-100"
+              inviteMotion ? "animate-finish-handle-pulse" : "scale-100"
             }`}
           >
             {/* Editorial hairline ticks — restrained, not icon-font chevrons */}

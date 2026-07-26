@@ -1,10 +1,11 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 import { ENTRY_Y, STAGGER, glide, precision } from "@/lib/motion";
+import { useBackgroundVideo } from "@/lib/useBackgroundVideo";
 
 type Category = "interior" | "exterior";
 type Filter = "todos" | Category;
@@ -21,14 +22,14 @@ type GalleryItem = {
 
 const ITEMS: GalleryItem[] = [
   {
-    src: assetPath("/assets/images/gallery_color_options.png"),
+    src: assetPath("/assets/images/gallery_color_options.webp"),
     type: "image",
     category: "interior",
     caption: "Acabados: wood-look y metálico — misma geometría de panel.",
     alt: "Paneles Fill Home en acabados wood-look y metálico",
   },
   {
-    src: assetPath("/assets/images/macro_zoom_quality.png"),
+    src: assetPath("/assets/images/macro_zoom_quality.webp"),
     type: "image",
     category: "interior",
     caption: "Macro de textura — cara de aluminio anodizado.",
@@ -39,17 +40,17 @@ const ITEMS: GalleryItem[] = [
     type: "video",
     category: "interior",
     caption: "Recorrido sobre la superficie del panel.",
-    poster: assetPath("/assets/images/macro_zoom_quality.png"),
+    poster: assetPath("/assets/images/macro_zoom_quality.webp"),
   },
   {
     src: assetPath("/assets/videos/motion_interlocking_sparkle.mp4"),
     type: "video",
     category: "interior",
     caption: "Encastre oculto en movimiento.",
-    poster: assetPath("/assets/images/gallery_color_options.png"),
+    poster: assetPath("/assets/images/gallery_color_options.webp"),
   },
   {
-    src: assetPath("/assets/images/durability_water_drops_still.png"),
+    src: assetPath("/assets/images/durability_water_drops_still.webp"),
     type: "image",
     category: "exterior",
     caption: "Rechazo de agua sobre la cara anodizada.",
@@ -60,14 +61,14 @@ const ITEMS: GalleryItem[] = [
     type: "video",
     category: "exterior",
     caption: "Escurrimiento de agua sin marcar el acabado.",
-    poster: assetPath("/assets/images/durability_water_drops_still.png"),
+    poster: assetPath("/assets/images/durability_water_drops_still.webp"),
   },
   {
     src: assetPath("/assets/videos/motion_water_sliding_v2.mp4"),
     type: "video",
     category: "exterior",
     caption: "Comportamiento al agua — vista alternativa.",
-    poster: assetPath("/assets/images/durability_water_drops_still.png"),
+    poster: assetPath("/assets/images/durability_water_drops_still.webp"),
   },
 ];
 
@@ -79,6 +80,73 @@ const FILTERS: { key: Filter; label: string }[] = [
 
 const mediaMotion =
   "h-full w-full object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:group-hover:scale-100 group-hover:scale-[1.03]";
+
+function GalleryVideo({
+  src,
+  poster,
+  className,
+  enabled,
+}: {
+  src: string;
+  poster?: string;
+  className: string;
+  enabled: boolean;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px", threshold: 0.01 },
+    );
+    io.observe(root);
+    return () => io.disconnect();
+  }, []);
+
+  useBackgroundVideo(videoRef, {
+    enabled: enabled && shouldLoad,
+    threshold: 0.2,
+    rootRef,
+  });
+
+  return (
+    <div ref={rootRef} className="absolute inset-0">
+      {shouldLoad ? (
+        <video
+          ref={videoRef}
+          src={src}
+          poster={poster}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          disablePictureInPicture
+          aria-hidden="true"
+          tabIndex={-1}
+          className={className}
+        />
+      ) : poster ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={poster}
+          alt=""
+          decoding="async"
+          className={className}
+        />
+      ) : null}
+    </div>
+  );
+}
 
 export default function GalleryGrid() {
   const [filter, setFilter] = useState<Filter>("todos");
@@ -168,24 +236,19 @@ export default function GalleryGrid() {
                       src={item.src}
                       alt={item.alt ?? ""}
                       fill
-                      priority={index < 3}
+                      priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      decoding="async"
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       className={mediaMotion}
                     />
                   ) : (
-                    <video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
+                    <GalleryVideo
+                      src={item.src}
                       poster={item.poster}
-                      aria-hidden="true"
-                      tabIndex={-1}
+                      enabled={!prefersReducedMotion}
                       className={`absolute inset-0 ${mediaMotion}`}
-                    >
-                      <source src={item.src} type="video/mp4" />
-                    </video>
+                    />
                   )}
                 </div>
                 <figcaption className="font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]">

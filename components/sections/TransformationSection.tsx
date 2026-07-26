@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import {
   motion,
   useReducedMotion,
@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 import { glide } from "@/lib/motion";
+import BackgroundVideo from "@/components/ui/BackgroundVideo";
 
 const VIDEO_SRC = assetPath("/assets/videos/motion-house.mp4");
 const POSTER_SRC = assetPath("/assets/images/motion-house-poster.jpg");
@@ -67,7 +68,6 @@ const CONTENT_CLASS =
 
 export default function TransformationSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
@@ -76,32 +76,6 @@ export default function TransformationSection() {
   });
 
   const videoYParallax = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    const video = videoRef.current;
-    if (!section || !video) return;
-
-    if (prefersReducedMotion) {
-      video.pause();
-      video.removeAttribute("autoplay");
-      return;
-    }
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          void video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.25 },
-    );
-
-    io.observe(section);
-    return () => io.disconnect();
-  }, [prefersReducedMotion]);
 
   return (
     <section
@@ -115,18 +89,17 @@ export default function TransformationSection() {
         className="pointer-events-none absolute inset-x-0 -top-[12%] h-[124%] w-full"
         style={prefersReducedMotion ? undefined : { y: videoYParallax }}
       >
-        <video
-          ref={videoRef}
-          muted
-          loop
-          playsInline
-          preload="metadata"
+        <BackgroundVideo
+          src={VIDEO_SRC}
           poster={POSTER_SRC}
-          tabIndex={-1}
+          preload="metadata"
+          observeRef={sectionRef}
+          playback={{
+            enabled: !prefersReducedMotion,
+            threshold: 0.2,
+          }}
           className="h-full w-full object-cover brightness-[0.7] saturate-[0.9]"
-        >
-          <source src={VIDEO_SRC} type="video/mp4" />
-        </video>
+        />
       </motion.div>
 
       {/* Legibility scrim — stronger left/bottom where copy sits; heavier on mobile */}
