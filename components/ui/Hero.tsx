@@ -66,7 +66,6 @@ export default function Hero({
             poster={poster}
             preload="auto"
             observeRef={sectionRef}
-            detachWhenHidden
             playback={{ enabled: true, threshold: 0.05 }}
             className="absolute inset-0 h-full w-full object-cover"
           />

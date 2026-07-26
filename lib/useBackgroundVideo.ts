@@ -109,14 +109,20 @@ export function useBackgroundVideo(
       }
 
       if (isLooselyVisible(el)) {
+        const wasDetached = detached;
         setDetached(false);
-        // src may reattach on next React commit — retry shortly
+        // Re-attach may land on the next commit — retry play, but never
+        // seek(0): pause/play must resume currentTime.
         tryPlay();
-        window.setTimeout(tryPlay, 50);
-        window.setTimeout(tryPlay, 200);
+        if (wasDetached) {
+          window.setTimeout(tryPlay, 50);
+          window.setTimeout(tryPlay, 200);
+        }
       } else if (isFullyOffscreen(el)) {
         tryPause();
-        setDetached(true);
+        // Detach only when opted in — otherwise keep src so scroll back
+        // resumes mid-clip (Instalación / Hero).
+        if (detachWhenHidden) setDetached(true);
       }
     };
 
