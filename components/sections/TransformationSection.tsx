@@ -94,6 +94,7 @@ export default function TransformationSection() {
           poster={POSTER_SRC}
           preload="metadata"
           observeRef={sectionRef}
+          detachWhenHidden
           playback={{
             enabled: true,
             threshold: 0.15,

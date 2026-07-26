@@ -20,7 +20,6 @@ import {
   HighlightWord,
   HighlightWordStatic,
 } from "@/components/ui/HighlightWord";
-import BackgroundVideo from "@/components/ui/BackgroundVideo";
 import SectionLoopVideo from "@/components/ui/SectionLoopVideo";
 import { useIsDesktop } from "@/lib/useMediaQuery";
 import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";

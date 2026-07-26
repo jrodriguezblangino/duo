@@ -20,8 +20,7 @@ const DEFAULT_POSITION = 50;
 const HINT_OUT = 28;
 const STEP = 2;
 const HINT_MS = 1600;
-const HELPER_FADE_MS = 10000;
-const PULSE_TICK_MS = 40;
+const PULSE_TICK_MS = 50;
 
 const CONTENT_RIGHT = 0.7;
 const CROP_FRAME_WIDTH = `${100 / CONTENT_RIGHT}%`;
@@ -71,12 +70,16 @@ function FinishCropLayer({
 
 /**
  * Finish compare — Aspecto madera ⇄ Metálico.
- * Invite pulse is React-state driven (setInterval) so it always paints on
- * iOS Safari — CSS keyframes and rAF-only style writes were unreliable.
+ *
+ * Invite affordance is intentionally loud on iOS: the image stack stays
+ * overflow-hidden, but the handle / ring / chevrons live in a separate
+ * non-clipped layer so the pulse is never cropped. Interaction is only
+ * marked after a real drag (>2%), so a tap/cancel does not kill the hint.
  */
 export default function StyleToggle() {
   const containerRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef(DEFAULT_POSITION);
+  const dragStartRef = useRef(DEFAULT_POSITION);
   const rafRef = useRef<number | null>(null);
   const draggingRef = useRef(false);
   const hasDraggedRef = useRef(false);
@@ -85,7 +88,6 @@ export default function StyleToggle() {
 
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [showHelper, setShowHelper] = useState(true);
   const [frameWidthPx, setFrameWidthPx] = useState(0);
   /** 0..1 wave for invite pulse — forces React re-render / paint on iOS */
   const [pulseWave, setPulseWave] = useState(0);
@@ -117,7 +119,6 @@ export default function StyleToggle() {
     if (hasDraggedRef.current) return;
     hasDraggedRef.current = true;
     setHasInteracted(true);
-    setShowHelper(false);
     setPulseWave(0);
   }, []);
 
@@ -129,7 +130,10 @@ export default function StyleToggle() {
       rafRef.current = null;
     }
     setPosition(positionRef.current);
-    markInteracted();
+    // Only consume the invite after a real compare gesture
+    if (Math.abs(positionRef.current - dragStartRef.current) > 2) {
+      markInteracted();
+    }
   }, [markInteracted]);
 
   const startDrag = useCallback(
@@ -139,6 +143,7 @@ export default function StyleToggle() {
         hintRafRef.current = null;
       }
       draggingRef.current = true;
+      dragStartRef.current = positionRef.current;
       try {
         target.setPointerCapture(pointerId);
       } catch {
@@ -167,20 +172,13 @@ export default function StyleToggle() {
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!showHelper || hasInteracted) return;
-    const t = window.setTimeout(() => setShowHelper(false), HELPER_FADE_MS);
-    return () => window.clearTimeout(t);
-  }, [showHelper, hasInteracted]);
-
-  // Always-on invite pulse until first drag (not gated on reduced-motion —
-  // this is a functional affordance; iOS often reports reduced-motion oddly).
+  // Always-on invite pulse until first real drag
   useEffect(() => {
     if (hasInteracted) return;
     let t = 0;
     const id = window.setInterval(() => {
-      t = (t + PULSE_TICK_MS) % 1600;
-      const wave = 0.5 - 0.5 * Math.cos((t / 1600) * Math.PI * 2);
+      t = (t + PULSE_TICK_MS) % 1400;
+      const wave = 0.5 - 0.5 * Math.cos((t / 1400) * Math.PI * 2);
       setPulseWave(wave);
     }, PULSE_TICK_MS);
     return () => window.clearInterval(id);
@@ -280,33 +278,65 @@ export default function StyleToggle() {
 
   const woodMaskPct = Math.max(position, 0.5);
   const inviting = !hasInteracted;
-  const handleScale = inviting ? 1 + 0.2 * pulseWave : 1;
-  const handleRing = inviting ? 6 + 14 * pulseWave : 0;
-  const handleAlpha = inviting ? 0.15 + 0.35 * pulseWave : 0;
-  const dividerOpacity = inviting ? 0.4 + 0.6 * pulseWave : 0.8;
+  const handleScale = inviting ? 1 + 0.35 * pulseWave : 1;
+  const ringScale = inviting ? 1 + 0.55 * pulseWave : 1;
+  const ringAlpha = inviting ? 0.35 + 0.45 * pulseWave : 0;
+  const chevronNudge = inviting ? 4 + 10 * pulseWave : 0;
+  const dividerOpacity = inviting ? 0.55 + 0.45 * pulseWave : 0.85;
 
   return (
     <div className="flex w-full flex-col gap-6 pb-4 lg:gap-7 lg:pb-8">
       <div
         ref={containerRef}
-        className="relative aspect-[16/10] w-full cursor-ew-resize touch-none overflow-hidden bg-carbon select-none"
+        className="relative aspect-[16/10] w-full cursor-ew-resize touch-none bg-carbon select-none"
         onPointerDown={onFramePointerDown}
         onPointerMove={(e) => moveDrag(e.clientX)}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        <FinishCropLayer src={METAL_SRC} frameWidthPx={frameWidthPx} />
-        <FinishCropLayer
-          src={WOOD_SRC}
-          maskPct={woodMaskPct}
-          frameWidthPx={frameWidthPx}
-        />
+        {/* Image stack — clipped. Handle/pulse live outside this layer. */}
+        <div className="absolute inset-0 overflow-hidden">
+          <FinishCropLayer src={METAL_SRC} frameWidthPx={frameWidthPx} />
+          <FinishCropLayer
+            src={WOOD_SRC}
+            maskPct={woodMaskPct}
+            frameWidthPx={frameWidthPx}
+          />
+        </div>
 
-        <div
-          className="pointer-events-none absolute inset-y-0 z-20 w-0.5 -translate-x-1/2 bg-sand"
-          style={{ left: `${position}%`, opacity: dividerOpacity }}
-          aria-hidden="true"
-        />
+        {/* Non-clipped invite + control layer */}
+        <div className="pointer-events-none absolute inset-0 z-20 overflow-visible">
+          <div
+            className="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-sand"
+            style={{ left: `${position}%`, opacity: dividerOpacity }}
+            aria-hidden="true"
+          />
+
+          {inviting ? (
+            <>
+              <span
+                className="absolute top-1/2 -translate-x-full -translate-y-1/2 font-mono text-2xl leading-none text-sand"
+                style={{
+                  left: `calc(${position}% - ${12 + chevronNudge}px)`,
+                  opacity: 0.55 + 0.45 * pulseWave,
+                }}
+                aria-hidden="true"
+              >
+                ‹
+              </span>
+              <span
+                className="absolute top-1/2 -translate-y-1/2 font-mono text-2xl leading-none text-sand"
+                style={{
+                  left: `calc(${position}% + ${12 + chevronNudge}px)`,
+                  opacity: 0.55 + 0.45 * pulseWave,
+                }}
+                aria-hidden="true"
+              >
+                ›
+              </span>
+            </>
+          ) : null}
+        </div>
 
         <button
           type="button"
@@ -316,7 +346,7 @@ export default function StyleToggle() {
           aria-valuemax={100}
           aria-valuenow={Math.round(position)}
           aria-valuetext={`${Math.round(position)}% aspecto madera, ${Math.round(100 - position)}% metálico`}
-          className="absolute top-1/2 z-30 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+          className="absolute top-1/2 z-30 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center overflow-visible focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
           style={{ left: `${position}%` }}
           onKeyDown={onKeyDown}
           onPointerDown={onHandlePointerDown}
@@ -324,16 +354,28 @@ export default function StyleToggle() {
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
         >
+          {inviting ? (
+            <span
+              className="pointer-events-none absolute inset-0 rounded-full border-2 border-sand"
+              style={{
+                transform: `scale(${ringScale})`,
+                opacity: ringAlpha,
+              }}
+              aria-hidden="true"
+            />
+          ) : null}
           <span
-            className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-sand bg-slate text-sand"
+            className="relative flex h-12 w-12 items-center justify-center rounded-full border-2 border-sand bg-slate text-sand"
             style={{
               transform: `scale(${handleScale})`,
-              boxShadow: `0 0 0 ${handleRing}px rgba(212, 195, 179, ${handleAlpha})`,
+              boxShadow: inviting
+                ? `0 0 0 ${4 + 10 * pulseWave}px rgba(212, 195, 179, ${0.2 + 0.35 * pulseWave})`
+                : undefined,
             }}
           >
             <svg
-              width="12"
-              height="14"
+              width="14"
+              height="16"
               viewBox="0 0 10 12"
               fill="none"
               aria-hidden="true"
@@ -341,27 +383,28 @@ export default function StyleToggle() {
               <path
                 d="M3 1.5V10.5"
                 stroke="currentColor"
-                strokeWidth="1"
+                strokeWidth="1.25"
                 strokeLinecap="square"
               />
               <path
                 d="M7 1.5V10.5"
                 stroke="currentColor"
-                strokeWidth="1"
+                strokeWidth="1.25"
                 strokeLinecap="square"
               />
             </svg>
           </span>
         </button>
 
-        <p
-          className={`pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-sm bg-carbon/55 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-sand transition-opacity duration-500 sm:bottom-5 ${
-            showHelper && !hasInteracted ? "opacity-100" : "opacity-0"
-          }`}
-          aria-hidden={!showHelper || hasInteracted}
-        >
-          Arrastrá para comparar
-        </p>
+        {inviting ? (
+          <p
+            className="pointer-events-none absolute bottom-4 left-1/2 z-30 -translate-x-1/2 rounded-sm border border-sand/50 bg-carbon/80 px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-sand sm:bottom-5"
+            style={{ opacity: 0.75 + 0.25 * pulseWave }}
+            aria-hidden="true"
+          >
+            Arrastrá para comparar
+          </p>
+        ) : null}
 
         <span className="sr-only">
           Comparación de acabados del panel Fill Home: aspecto madera a la
