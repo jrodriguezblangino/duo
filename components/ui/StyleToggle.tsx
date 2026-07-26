@@ -13,13 +13,16 @@ import { useReducedMotion } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 
 const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.webp");
-const METAL_SRC = assetPath("/assets/images/detail_internal_45deg_alt_metal.webp");
+const METAL_SRC = assetPath(
+  "/assets/images/detail_internal_45deg_alt_metal.webp",
+);
 
 const DEFAULT_POSITION = 50;
-const HINT_OUT = 35;
+const HINT_OUT = 32;
 const STEP = 2;
-const HINT_MS = 1100;
-const HELPER_FADE_MS = 7000;
+const HINT_MS = 1400;
+const HELPER_FADE_MS = 9000;
+const PULSE_MS = 1600;
 
 /**
  * Both sources are square; panel content spans ~0–62% x (rest is black void).
@@ -28,22 +31,40 @@ const HELPER_FADE_MS = 7000;
 const CONTENT_RIGHT = 0.7;
 const CROP_FRAME_WIDTH = `${100 / CONTENT_RIGHT}%`;
 
+/**
+ * Full-bleed finish still. Optional `maskPct` crops from the left via overflow
+ * width (not clip-path — WebKit often fails to repaint clip-path updates).
+ * Inner image is sized to the full frame so the crop doesn’t squash.
+ */
 function FinishCropLayer({
   src,
-  clipPath,
+  maskPct,
+  frameWidthPx,
 }: {
   src: string;
-  clipPath?: string;
+  /** 0–100: visible width from the left. Omit for full layer. */
+  maskPct?: number;
+  frameWidthPx: number;
 }) {
+  const masked = maskPct != null;
   return (
     <div
-      className="absolute inset-0 overflow-hidden"
-      style={clipPath ? { clipPath } : undefined}
-      aria-hidden={clipPath ? true : undefined}
+      className={
+        masked
+          ? "absolute inset-y-0 left-0 z-[1] overflow-hidden"
+          : "absolute inset-0 overflow-hidden"
+      }
+      style={masked ? { width: `${maskPct}%` } : undefined}
+      aria-hidden={masked ? true : undefined}
     >
       <div
         className="absolute left-0 top-1/2 aspect-square -translate-y-1/2"
-        style={{ width: CROP_FRAME_WIDTH }}
+        style={{
+          width:
+            masked && frameWidthPx > 0
+              ? frameWidthPx / CONTENT_RIGHT
+              : CROP_FRAME_WIDTH,
+        }}
       >
         <Image
           src={src}
@@ -61,11 +82,15 @@ function FinishCropLayer({
 
 /**
  * Finish compare — Aspecto madera ⇄ Metálico (§3.4).
- * Draggable before/after slider over aligned detail stills.
+ * Invite pulse uses rAF (CSS keyframes were invisible on real iOS Safari).
  */
 export default function StyleToggle() {
   const prefersReducedMotion = useReducedMotion();
+  const reduceMotion = prefersReducedMotion === true;
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const handleGlowRef = useRef<HTMLSpanElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef(DEFAULT_POSITION);
   const rafRef = useRef<number | null>(null);
   const draggingRef = useRef(false);
@@ -76,6 +101,8 @@ export default function StyleToggle() {
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showHelper, setShowHelper] = useState(true);
+  const [frameWidthPx, setFrameWidthPx] = useState(0);
+  const [inviteActive, setInviteActive] = useState(false);
 
   const commitPosition = useCallback((pct: number) => {
     const next = Math.min(100, Math.max(0, pct));
@@ -105,6 +132,7 @@ export default function StyleToggle() {
     hasDraggedRef.current = true;
     setHasInteracted(true);
     setShowHelper(false);
+    setInviteActive(false);
   }, []);
 
   const endDrag = useCallback(() => {
@@ -143,20 +171,85 @@ export default function StyleToggle() {
     [positionFromClientX, schedulePosition],
   );
 
+  // Measure frame for width-masked wood layer
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => setFrameWidthPx(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     if (!showHelper || hasInteracted) return;
     const t = window.setTimeout(() => setShowHelper(false), HELPER_FADE_MS);
     return () => window.clearTimeout(t);
   }, [showHelper, hasInteracted]);
 
+  // Start invite when the control enters view
   useEffect(() => {
-    if (prefersReducedMotion || hintPlayedRef.current) return;
-
+    if (reduceMotion || hasInteracted) return;
     const el = containerRef.current;
     if (!el) return;
 
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting && e.intersectionRatio > 0.2)) {
+          setInviteActive(true);
+          io.disconnect();
+        }
+      },
+      { threshold: [0.2, 0.35, 0.5] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduceMotion, hasInteracted]);
+
+  // rAF pulse — CSS keyframes did not paint on real iPhone Safari
+  useEffect(() => {
+    if (!inviteActive || hasInteracted || reduceMotion) {
+      const glow = handleGlowRef.current;
+      const line = dividerRef.current;
+      if (glow) {
+        glow.style.transform = "scale(1)";
+        glow.style.boxShadow = "none";
+      }
+      if (line) line.style.opacity = "0.8";
+      return;
+    }
+
+    const glow = handleGlowRef.current;
+    const line = dividerRef.current;
+    if (!glow) return;
+
+    let raf = 0;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const t = ((now - start) % PULSE_MS) / PULSE_MS;
+      const wave = 0.5 - 0.5 * Math.cos(t * Math.PI * 2); // 0→1→0
+      const scale = 1 + 0.16 * wave;
+      const ring = 4 + 10 * wave;
+      const alpha = 0.12 + 0.28 * wave;
+      glow.style.transform = `scale(${scale})`;
+      glow.style.boxShadow = `0 0 0 ${ring}px rgba(212, 195, 179, ${alpha})`;
+      if (line) line.style.opacity = String(0.45 + 0.55 * wave);
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inviteActive, hasInteracted, reduceMotion]);
+
+  // Auto-hint slide once (width mask — visible on iOS)
+  useEffect(() => {
+    if (!inviteActive || reduceMotion || hintPlayedRef.current || hasInteracted)
+      return;
+
     const playHint = () => {
-      if (hintPlayedRef.current || prefersReducedMotion) return;
+      if (hintPlayedRef.current || hasDraggedRef.current) return;
       hintPlayedRef.current = true;
 
       const start = performance.now();
@@ -189,25 +282,16 @@ export default function StyleToggle() {
       hintRafRef.current = requestAnimationFrame(tick);
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          playHint();
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.35 },
-    );
-
-    observer.observe(el);
+    // Small delay so the user sees the pulse before the slide
+    const delay = window.setTimeout(playHint, 400);
     return () => {
-      observer.disconnect();
+      window.clearTimeout(delay);
       if (hintRafRef.current != null) {
         cancelAnimationFrame(hintRafRef.current);
         hintRafRef.current = null;
       }
     };
-  }, [prefersReducedMotion, commitPosition]);
+  }, [inviteActive, reduceMotion, hasInteracted, commitPosition]);
 
   useEffect(() => {
     return () => {
@@ -249,16 +333,11 @@ export default function StyleToggle() {
     startDrag(e.clientX, e.currentTarget, e.pointerId);
   };
 
-  const woodClip = `inset(0 ${100 - position}% 0 0)`;
-  const inviteMotion = !prefersReducedMotion && !hasInteracted;
+  // Keep a minimum mask so the wood layer never collapses to 0px width math
+  const woodMaskPct = Math.max(position, 0.5);
 
   return (
     <div className="flex w-full flex-col gap-6 pb-4 lg:gap-7 lg:pb-8">
-      {/*
-        Width comes from the parent composition (max-w-[62rem]). Aspect only
-        controls frame height — crop/zoom inside FinishCropLayer is untouched.
-        Drag range tracks getBoundingClientRect of this container.
-      */}
       <div
         ref={containerRef}
         className="relative aspect-[16/10] w-full cursor-ew-resize touch-none overflow-hidden bg-carbon select-none"
@@ -267,14 +346,17 @@ export default function StyleToggle() {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        <FinishCropLayer src={METAL_SRC} />
-        <FinishCropLayer src={WOOD_SRC} clipPath={woodClip} />
+        <FinishCropLayer src={METAL_SRC} frameWidthPx={frameWidthPx} />
+        <FinishCropLayer
+          src={WOOD_SRC}
+          maskPct={woodMaskPct}
+          frameWidthPx={frameWidthPx}
+        />
 
         <div
-          className={`pointer-events-none absolute inset-y-0 z-20 w-px -translate-x-1/2 bg-sand/80 ${
-            inviteMotion ? "animate-finish-divider-breathe" : ""
-          }`}
-          style={{ left: `${position}%` }}
+          ref={dividerRef}
+          className="pointer-events-none absolute inset-y-0 z-20 w-px -translate-x-1/2 bg-sand"
+          style={{ left: `${position}%`, opacity: 0.8 }}
           aria-hidden="true"
         />
 
@@ -286,7 +368,7 @@ export default function StyleToggle() {
           aria-valuemax={100}
           aria-valuenow={Math.round(position)}
           aria-valuetext={`${Math.round(position)}% aspecto madera, ${Math.round(100 - position)}% metálico`}
-          className="absolute top-1/2 z-30 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+          className="absolute top-1/2 z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
           style={{ left: `${position}%` }}
           onKeyDown={onKeyDown}
           onPointerDown={onHandlePointerDown}
@@ -295,11 +377,10 @@ export default function StyleToggle() {
           onPointerCancel={endDrag}
         >
           <span
-            className={`flex h-9 w-9 items-center justify-center rounded-full border border-sand/70 bg-slate/90 text-sand transition-transform duration-300 ${
-              inviteMotion ? "animate-finish-handle-pulse" : "scale-100"
-            }`}
+            ref={handleGlowRef}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-sand bg-slate/95 text-sand will-change-transform"
+            style={{ transformOrigin: "center" }}
           >
-            {/* Editorial hairline ticks — restrained, not icon-font chevrons */}
             <svg
               width="10"
               height="12"
@@ -324,7 +405,7 @@ export default function StyleToggle() {
         </button>
 
         <p
-          className={`pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-sand/80 transition-opacity duration-500 sm:bottom-5 sm:text-[11px] ${
+          className={`pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-sand transition-opacity duration-500 sm:bottom-5 sm:text-[11px] ${
             showHelper && !hasInteracted ? "opacity-100" : "opacity-0"
           }`}
           aria-hidden={!showHelper || hasInteracted}

@@ -68,12 +68,22 @@ export function useBackgroundVideo(
 
     const target = () => rootRef?.current ?? video;
 
+    let didKickLoad = false;
+
     const tryPlay = () => {
       if (!enabled) {
         video.pause();
         return;
       }
       lockInlineMuted();
+      if (video.readyState < 2 && !didKickLoad) {
+        didKickLoad = true;
+        try {
+          video.load();
+        } catch {
+          /* ignore */
+        }
+      }
       if (video.paused) {
         void video.play().catch(() => {
           /* Low Power Mode may still block — poster remains. */

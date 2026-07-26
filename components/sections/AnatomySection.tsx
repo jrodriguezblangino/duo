@@ -566,28 +566,22 @@ function MobileAnatomy() {
         </div>
 
         <div ref={explodeVideoRef} className="mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={VIEWPORT}
-            transition={{ ...glide, delay: 0.06 }}
+          <div
+            className={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
           >
-            <div
-              className={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
-            >
-              <BackgroundVideo
-                src={VIDEO_SRC}
-                poster={VIDEO_POSTER}
-                preload="metadata"
-                observeRef={explodeVideoRef}
-                aria-label="Desmontaje de las tres capas del panel Fill Home"
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <p className={`mt-4 ${MONO_MUTED}`}>
-              Desmontaje de capas — ensamble mecánico
-            </p>
-          </motion.div>
+            <BackgroundVideo
+              src={VIDEO_SRC}
+              poster={VIDEO_POSTER}
+              preload="auto"
+              observeRef={explodeVideoRef}
+              playback={{ enabled: true, threshold: 0.08 }}
+              aria-label="Desmontaje de las tres capas del panel Fill Home"
+              className="h-full w-full object-contain"
+            />
+          </div>
+          <p className={`mt-4 ${MONO_MUTED}`}>
+            Desmontaje de capas — ensamble mecánico
+          </p>
         </div>
 
         <ol className="relative mb-12 list-none space-y-10 pl-0">
@@ -630,21 +624,19 @@ function MobileAnatomy() {
 
         <div ref={detailRef} className="grid gap-8">
           <div ref={detailVideoRef}>
-            <motion.div
+            <div
               className={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
-              initial={{ opacity: 0, scale: 1.04 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={VIEWPORT}
-              transition={glide}
             >
               <BackgroundVideo
                 src={DETAIL_VIDEO_SRC}
-                preload="metadata"
+                poster={VIDEO_POSTER}
+                preload="auto"
                 observeRef={detailVideoRef}
+                playback={{ enabled: true, threshold: 0.08 }}
                 aria-label="Detalle de canto del panel Fill Home — tres capas"
                 className="h-full w-full object-contain"
               />
-            </motion.div>
+            </div>
           </div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
