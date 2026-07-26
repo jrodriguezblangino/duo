@@ -14,30 +14,26 @@ export type BackgroundVideoOptions = {
   rootRef?: RefObject<Element | null>;
 };
 
-function isInViewport(el: Element, minRatio: number) {
+function isLooselyVisible(el: Element) {
   const rect = el.getBoundingClientRect();
   const vh = window.innerHeight || document.documentElement.clientHeight;
-  const vw = window.innerWidth || document.documentElement.clientWidth;
-  const visibleH = Math.max(
-    0,
-    Math.min(rect.bottom, vh) - Math.max(rect.top, 0),
-  );
-  const visibleW = Math.max(
-    0,
-    Math.min(rect.right, vw) - Math.max(rect.left, 0),
-  );
-  if (rect.height <= 0 || rect.width <= 0) return false;
-  const ratio = (visibleH * visibleW) / (rect.height * rect.width);
-  return ratio >= minRatio || (rect.top < vh && rect.bottom > 0 && visibleH > 32);
+  // Any overlap with the viewport — iOS chrome collapse makes tight ratios flaky
+  return rect.bottom > 24 && rect.top < vh - 24 && rect.width > 0 && rect.height > 0;
+}
+
+function isFullyOffscreen(el: Element) {
+  const rect = el.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  return rect.bottom < 0 || rect.top > vh;
 }
 
 /**
- * Production autoplay for muted looping background videos.
+ * Production autoplay for muted looping background videos on iOS Safari.
  *
- * iOS Safari needs muted + playsInline *properties* locked before play().
- * IntersectionObserver alone is unreliable when the <video> sits under a
- * CSS-transformed parallax layer — we observe a stable root when provided
- * and also re-check on scroll/resize/visualViewport as a fallback.
+ * - Locks muted + playsInline before every play()
+ * - Retries on scroll / visualViewport / interval while visible
+ * - Unlocks on first user gesture (iOS often needs this after several videos)
+ * - Only pauses when fully off-screen (hysteresis)
  */
 export function useBackgroundVideo(
   videoRef: RefObject<HTMLVideoElement | null>,
@@ -54,6 +50,7 @@ export function useBackgroundVideo(
     const lockInlineMuted = () => {
       video.muted = true;
       video.defaultMuted = true;
+      video.volume = 0;
       video.playsInline = true;
       video.setAttribute("muted", "");
       video.setAttribute("playsinline", "");
@@ -68,26 +65,19 @@ export function useBackgroundVideo(
 
     const target = () => rootRef?.current ?? video;
 
-    let didKickLoad = false;
-
     const tryPlay = () => {
       if (!enabled) {
         video.pause();
         return;
       }
       lockInlineMuted();
-      if (video.readyState < 2 && !didKickLoad) {
-        didKickLoad = true;
-        try {
-          video.load();
-        } catch {
-          /* ignore */
-        }
-      }
       if (video.paused) {
-        void video.play().catch(() => {
-          /* Low Power Mode may still block — poster remains. */
-        });
+        const p = video.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(() => {
+            /* Autoplay blocked — caller may show tap fallback */
+          });
+        }
       }
     };
 
@@ -98,8 +88,8 @@ export function useBackgroundVideo(
     const sync = () => {
       const el = target();
       if (!el) return;
-      if (isInViewport(el, Math.min(threshold, 0.1))) tryPlay();
-      else tryPause();
+      if (isLooselyVisible(el)) tryPlay();
+      else if (isFullyOffscreen(el)) tryPause();
     };
 
     lockInlineMuted();
@@ -111,7 +101,7 @@ export function useBackgroundVideo(
 
     const io = new IntersectionObserver(
       () => sync(),
-      { threshold: [0, 0.05, 0.1, 0.25, 0.5, 1] },
+      { threshold: [0, 0.01, 0.05, 0.1, 0.25, 0.5, 1], rootMargin: "40px 0px 40px 0px" },
     );
 
     const observed = target();
@@ -121,29 +111,47 @@ export function useBackgroundVideo(
       if (document.visibilityState === "visible") sync();
     };
 
+    const onGesture = () => {
+      sync();
+    };
+
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pageshow", sync);
-    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("scroll", sync, { passive: true, capture: true });
     window.addEventListener("resize", sync);
     window.visualViewport?.addEventListener("resize", sync);
     window.visualViewport?.addEventListener("scroll", sync);
+    // First user gesture unlocks subsequent muted plays on iOS
+    document.addEventListener("touchstart", onGesture, { passive: true });
+    document.addEventListener("click", onGesture);
 
     video.addEventListener("loadeddata", sync);
     video.addEventListener("canplay", sync);
+    video.addEventListener("canplaythrough", sync);
 
     sync();
     requestAnimationFrame(sync);
+    const boot = window.setTimeout(sync, 300);
+    const boot2 = window.setTimeout(sync, 1000);
+    // Keep retrying while visible — iOS often rejects the first play()
+    const interval = window.setInterval(sync, 750);
 
     return () => {
       io.disconnect();
+      window.clearTimeout(boot);
+      window.clearTimeout(boot2);
+      window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pageshow", sync);
-      window.removeEventListener("scroll", sync);
+      window.removeEventListener("scroll", sync, true);
       window.removeEventListener("resize", sync);
       window.visualViewport?.removeEventListener("resize", sync);
       window.visualViewport?.removeEventListener("scroll", sync);
+      document.removeEventListener("touchstart", onGesture);
+      document.removeEventListener("click", onGesture);
       video.removeEventListener("loadeddata", sync);
       video.removeEventListener("canplay", sync);
+      video.removeEventListener("canplaythrough", sync);
     };
   }, [videoRef, threshold, enabled, rootRef]);
 }

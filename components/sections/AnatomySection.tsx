@@ -21,6 +21,7 @@ import {
   HighlightWordStatic,
 } from "@/components/ui/HighlightWord";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
+import SectionLoopVideo from "@/components/ui/SectionLoopVideo";
 import { useIsDesktop } from "@/lib/useMediaQuery";
 import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";
 
@@ -530,8 +531,6 @@ function StaticAnatomy() {
 function MobileAnatomy() {
   const introRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
-  const explodeVideoRef = useRef<HTMLDivElement>(null);
-  const detailVideoRef = useRef<HTMLDivElement>(null);
   const scrollYProgress = useSectionScrollProgress(introRef);
   const detailProgress = useSectionScrollProgress(detailRef);
 
@@ -565,20 +564,14 @@ function MobileAnatomy() {
           </FocusText>
         </div>
 
-        <div ref={explodeVideoRef} className="mb-12">
-          <div
-            className={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
-          >
-            <BackgroundVideo
-              src={VIDEO_SRC}
-              poster={VIDEO_POSTER}
-              preload="auto"
-              observeRef={explodeVideoRef}
-              playback={{ enabled: true, threshold: 0.08 }}
-              aria-label="Desmontaje de las tres capas del panel Fill Home"
-              className="h-full w-full object-contain"
-            />
-          </div>
+        <div className="mb-12">
+          <SectionLoopVideo
+            src={VIDEO_SRC}
+            poster={VIDEO_POSTER}
+            wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+            className="h-full w-full object-contain"
+            aria-label="Desmontaje de las tres capas del panel Fill Home"
+          />
           <p className={`mt-4 ${MONO_MUTED}`}>
             Desmontaje de capas — ensamble mecánico
           </p>
@@ -623,20 +616,14 @@ function MobileAnatomy() {
         </ol>
 
         <div ref={detailRef} className="grid gap-8">
-          <div ref={detailVideoRef}>
-            <div
-              className={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
-            >
-              <BackgroundVideo
-                src={DETAIL_VIDEO_SRC}
-                poster={VIDEO_POSTER}
-                preload="auto"
-                observeRef={detailVideoRef}
-                playback={{ enabled: true, threshold: 0.08 }}
-                aria-label="Detalle de canto del panel Fill Home — tres capas"
-                className="h-full w-full object-contain"
-              />
-            </div>
+          <div>
+            <SectionLoopVideo
+              src={DETAIL_VIDEO_SRC}
+              poster={VIDEO_POSTER}
+              wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+              className="h-full w-full object-contain"
+              aria-label="Detalle de canto del panel Fill Home — tres capas"
+            />
           </div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}

@@ -41,9 +41,8 @@ export default function StylesSection() {
             </p>
           </Reveal>
 
-          <Reveal delay={0.08}>
-            <StyleToggle />
-          </Reveal>
+          {/* Not wrapped in Reveal — opacity:0 + transform broke invite pulse / IO on iOS */}
+          <StyleToggle />
         </div>
       </div>
     </section>

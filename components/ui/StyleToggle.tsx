@@ -9,7 +9,6 @@ import {
   type PointerEvent,
 } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 
 const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.webp");
@@ -18,31 +17,21 @@ const METAL_SRC = assetPath(
 );
 
 const DEFAULT_POSITION = 50;
-const HINT_OUT = 32;
+const HINT_OUT = 28;
 const STEP = 2;
-const HINT_MS = 1400;
-const HELPER_FADE_MS = 9000;
-const PULSE_MS = 1600;
+const HINT_MS = 1600;
+const HELPER_FADE_MS = 10000;
+const PULSE_TICK_MS = 40;
 
-/**
- * Both sources are square; panel content spans ~0–62% x (rest is black void).
- * Show a bit past the content edge so the plate isn’t flush-cropped.
- */
 const CONTENT_RIGHT = 0.7;
 const CROP_FRAME_WIDTH = `${100 / CONTENT_RIGHT}%`;
 
-/**
- * Full-bleed finish still. Optional `maskPct` crops from the left via overflow
- * width (not clip-path — WebKit often fails to repaint clip-path updates).
- * Inner image is sized to the full frame so the crop doesn’t squash.
- */
 function FinishCropLayer({
   src,
   maskPct,
   frameWidthPx,
 }: {
   src: string;
-  /** 0–100: visible width from the left. Omit for full layer. */
   maskPct?: number;
   frameWidthPx: number;
 }) {
@@ -81,16 +70,12 @@ function FinishCropLayer({
 }
 
 /**
- * Finish compare — Aspecto madera ⇄ Metálico (§3.4).
- * Invite pulse uses rAF (CSS keyframes were invisible on real iOS Safari).
+ * Finish compare — Aspecto madera ⇄ Metálico.
+ * Invite pulse is React-state driven (setInterval) so it always paints on
+ * iOS Safari — CSS keyframes and rAF-only style writes were unreliable.
  */
 export default function StyleToggle() {
-  const prefersReducedMotion = useReducedMotion();
-  const reduceMotion = prefersReducedMotion === true;
-
   const containerRef = useRef<HTMLDivElement>(null);
-  const handleGlowRef = useRef<HTMLSpanElement>(null);
-  const dividerRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef(DEFAULT_POSITION);
   const rafRef = useRef<number | null>(null);
   const draggingRef = useRef(false);
@@ -102,7 +87,8 @@ export default function StyleToggle() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showHelper, setShowHelper] = useState(true);
   const [frameWidthPx, setFrameWidthPx] = useState(0);
-  const [inviteActive, setInviteActive] = useState(false);
+  /** 0..1 wave for invite pulse — forces React re-render / paint on iOS */
+  const [pulseWave, setPulseWave] = useState(0);
 
   const commitPosition = useCallback((pct: number) => {
     const next = Math.min(100, Math.max(0, pct));
@@ -132,7 +118,7 @@ export default function StyleToggle() {
     hasDraggedRef.current = true;
     setHasInteracted(true);
     setShowHelper(false);
-    setInviteActive(false);
+    setPulseWave(0);
   }, []);
 
   const endDrag = useCallback(() => {
@@ -156,7 +142,7 @@ export default function StyleToggle() {
       try {
         target.setPointerCapture(pointerId);
       } catch {
-        /* capture may fail on some browsers mid-gesture */
+        /* ignore */
       }
       schedulePosition(positionFromClientX(clientX));
     },
@@ -171,7 +157,6 @@ export default function StyleToggle() {
     [positionFromClientX, schedulePosition],
   );
 
-  // Measure frame for width-masked wood layer
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -188,77 +173,34 @@ export default function StyleToggle() {
     return () => window.clearTimeout(t);
   }, [showHelper, hasInteracted]);
 
-  // Start invite when the control enters view
+  // Always-on invite pulse until first drag (not gated on reduced-motion —
+  // this is a functional affordance; iOS often reports reduced-motion oddly).
   useEffect(() => {
-    if (reduceMotion || hasInteracted) return;
+    if (hasInteracted) return;
+    let t = 0;
+    const id = window.setInterval(() => {
+      t = (t + PULSE_TICK_MS) % 1600;
+      const wave = 0.5 - 0.5 * Math.cos((t / 1600) * Math.PI * 2);
+      setPulseWave(wave);
+    }, PULSE_TICK_MS);
+    return () => window.clearInterval(id);
+  }, [hasInteracted]);
+
+  // Auto-hint slide once the control is on screen
+  useEffect(() => {
+    if (hasInteracted || hintPlayedRef.current) return;
     const el = containerRef.current;
     if (!el) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting && e.intersectionRatio > 0.2)) {
-          setInviteActive(true);
-          io.disconnect();
-        }
-      },
-      { threshold: [0.2, 0.35, 0.5] },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [reduceMotion, hasInteracted]);
-
-  // rAF pulse — CSS keyframes did not paint on real iPhone Safari
-  useEffect(() => {
-    if (!inviteActive || hasInteracted || reduceMotion) {
-      const glow = handleGlowRef.current;
-      const line = dividerRef.current;
-      if (glow) {
-        glow.style.transform = "scale(1)";
-        glow.style.boxShadow = "none";
-      }
-      if (line) line.style.opacity = "0.8";
-      return;
-    }
-
-    const glow = handleGlowRef.current;
-    const line = dividerRef.current;
-    if (!glow) return;
-
-    let raf = 0;
-    const start = performance.now();
-
-    const tick = (now: number) => {
-      const t = ((now - start) % PULSE_MS) / PULSE_MS;
-      const wave = 0.5 - 0.5 * Math.cos(t * Math.PI * 2); // 0→1→0
-      const scale = 1 + 0.16 * wave;
-      const ring = 4 + 10 * wave;
-      const alpha = 0.12 + 0.28 * wave;
-      glow.style.transform = `scale(${scale})`;
-      glow.style.boxShadow = `0 0 0 ${ring}px rgba(212, 195, 179, ${alpha})`;
-      if (line) line.style.opacity = String(0.45 + 0.55 * wave);
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inviteActive, hasInteracted, reduceMotion]);
-
-  // Auto-hint slide once (width mask — visible on iOS)
-  useEffect(() => {
-    if (!inviteActive || reduceMotion || hintPlayedRef.current || hasInteracted)
-      return;
 
     const playHint = () => {
       if (hintPlayedRef.current || hasDraggedRef.current) return;
       hintPlayedRef.current = true;
-
       const start = performance.now();
       const from = DEFAULT_POSITION;
       const mid = HINT_OUT;
       const to = DEFAULT_POSITION;
-
-      const easeInOut = (t: number) =>
-        t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const easeInOut = (x: number) =>
+        x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
 
       const tick = (now: number) => {
         if (draggingRef.current || hasDraggedRef.current) {
@@ -266,32 +208,35 @@ export default function StyleToggle() {
           return;
         }
         const elapsed = now - start;
-        const t = Math.min(1, elapsed / HINT_MS);
-        const local = t < 0.5 ? easeInOut(t * 2) : easeInOut((t - 0.5) * 2);
+        const u = Math.min(1, elapsed / HINT_MS);
+        const local = u < 0.5 ? easeInOut(u * 2) : easeInOut((u - 0.5) * 2);
         const pct =
-          t < 0.5 ? from + (mid - from) * local : mid + (to - mid) * local;
+          u < 0.5 ? from + (mid - from) * local : mid + (to - mid) * local;
         commitPosition(pct);
-        if (t < 1) {
-          hintRafRef.current = requestAnimationFrame(tick);
-        } else {
+        if (u < 1) hintRafRef.current = requestAnimationFrame(tick);
+        else {
           hintRafRef.current = null;
           commitPosition(DEFAULT_POSITION);
         }
       };
-
       hintRafRef.current = requestAnimationFrame(tick);
     };
 
-    // Small delay so the user sees the pulse before the slide
-    const delay = window.setTimeout(playHint, 400);
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          window.setTimeout(playHint, 500);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(el);
     return () => {
-      window.clearTimeout(delay);
-      if (hintRafRef.current != null) {
-        cancelAnimationFrame(hintRafRef.current);
-        hintRafRef.current = null;
-      }
+      io.disconnect();
+      if (hintRafRef.current != null) cancelAnimationFrame(hintRafRef.current);
     };
-  }, [inviteActive, reduceMotion, hasInteracted, commitPosition]);
+  }, [hasInteracted, commitPosition]);
 
   useEffect(() => {
     return () => {
@@ -333,8 +278,12 @@ export default function StyleToggle() {
     startDrag(e.clientX, e.currentTarget, e.pointerId);
   };
 
-  // Keep a minimum mask so the wood layer never collapses to 0px width math
   const woodMaskPct = Math.max(position, 0.5);
+  const inviting = !hasInteracted;
+  const handleScale = inviting ? 1 + 0.2 * pulseWave : 1;
+  const handleRing = inviting ? 6 + 14 * pulseWave : 0;
+  const handleAlpha = inviting ? 0.15 + 0.35 * pulseWave : 0;
+  const dividerOpacity = inviting ? 0.4 + 0.6 * pulseWave : 0.8;
 
   return (
     <div className="flex w-full flex-col gap-6 pb-4 lg:gap-7 lg:pb-8">
@@ -354,9 +303,8 @@ export default function StyleToggle() {
         />
 
         <div
-          ref={dividerRef}
-          className="pointer-events-none absolute inset-y-0 z-20 w-px -translate-x-1/2 bg-sand"
-          style={{ left: `${position}%`, opacity: 0.8 }}
+          className="pointer-events-none absolute inset-y-0 z-20 w-0.5 -translate-x-1/2 bg-sand"
+          style={{ left: `${position}%`, opacity: dividerOpacity }}
           aria-hidden="true"
         />
 
@@ -368,7 +316,7 @@ export default function StyleToggle() {
           aria-valuemax={100}
           aria-valuenow={Math.round(position)}
           aria-valuetext={`${Math.round(position)}% aspecto madera, ${Math.round(100 - position)}% metálico`}
-          className="absolute top-1/2 z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+          className="absolute top-1/2 z-30 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
           style={{ left: `${position}%` }}
           onKeyDown={onKeyDown}
           onPointerDown={onHandlePointerDown}
@@ -377,13 +325,15 @@ export default function StyleToggle() {
           onPointerCancel={endDrag}
         >
           <span
-            ref={handleGlowRef}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-sand bg-slate/95 text-sand will-change-transform"
-            style={{ transformOrigin: "center" }}
+            className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-sand bg-slate text-sand"
+            style={{
+              transform: `scale(${handleScale})`,
+              boxShadow: `0 0 0 ${handleRing}px rgba(212, 195, 179, ${handleAlpha})`,
+            }}
           >
             <svg
-              width="10"
-              height="12"
+              width="12"
+              height="14"
               viewBox="0 0 10 12"
               fill="none"
               aria-hidden="true"
@@ -391,13 +341,13 @@ export default function StyleToggle() {
               <path
                 d="M3 1.5V10.5"
                 stroke="currentColor"
-                strokeWidth="0.75"
+                strokeWidth="1"
                 strokeLinecap="square"
               />
               <path
                 d="M7 1.5V10.5"
                 stroke="currentColor"
-                strokeWidth="0.75"
+                strokeWidth="1"
                 strokeLinecap="square"
               />
             </svg>
@@ -405,7 +355,7 @@ export default function StyleToggle() {
         </button>
 
         <p
-          className={`pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-sand transition-opacity duration-500 sm:bottom-5 sm:text-[11px] ${
+          className={`pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-sm bg-carbon/55 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-sand transition-opacity duration-500 sm:bottom-5 ${
             showHelper && !hasInteracted ? "opacity-100" : "opacity-0"
           }`}
           aria-hidden={!showHelper || hasInteracted}
