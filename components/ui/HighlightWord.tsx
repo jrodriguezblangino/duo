@@ -24,8 +24,9 @@ type HighlightWordProps = {
   duration?: number;
 };
 
-const BODY_MUTED = "#b8b3ab";
-const CARBON = "#0D0D0D";
+const BODY_MUTED = "#C9BFAA";
+const INK = "#17140F";
+const CREAM = "#EDE4CF";
 
 function markerClass(surface: HighlightSurface) {
   return surface === "dark"
@@ -102,7 +103,7 @@ function useRafDraw(
 }
 
 /**
- * Primary accent — carbon word, sand highlight bar draws L→R.
+ * Primary accent — ink/cream word, sand highlight bar draws L→R.
  */
 export function HighlightWord({
   children,
@@ -120,8 +121,8 @@ export function HighlightWord({
     progress,
     [0, start, end, 1],
     surface === "dark"
-      ? [BODY_MUTED, BODY_MUTED, CARBON, CARBON]
-      : [CARBON, CARBON, CARBON, CARBON],
+      ? [BODY_MUTED, BODY_MUTED, CREAM, CREAM]
+      : [INK, INK, INK, INK],
   );
   const bar = markerClass(surface);
   const shell = "relative inline-block whitespace-nowrap px-[0.14em]";
@@ -140,7 +141,7 @@ export function HighlightWord({
         ref={shellRef}
         className={shell}
         style={{
-          color: surface === "dark" ? (drawn ? CARBON : BODY_MUTED) : CARBON,
+          color: surface === "dark" ? (drawn ? CREAM : BODY_MUTED) : INK,
         }}
       >
         <span aria-hidden="true" ref={barRef} className={bar} />
@@ -170,7 +171,11 @@ export function HighlightWordStatic({
   surface?: HighlightSurface;
 }) {
   return (
-    <span className="relative inline-block whitespace-nowrap px-[0.14em] text-carbon">
+    <span
+      className={`relative inline-block whitespace-nowrap px-[0.14em] ${
+        surface === "dark" ? "text-offwhite" : "text-carbon"
+      }`}
+    >
       <span aria-hidden="true" className={markerClass(surface)} />
       <span className="relative z-[1]">{children}</span>
     </span>

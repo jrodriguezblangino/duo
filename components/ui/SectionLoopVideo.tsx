@@ -326,7 +326,7 @@ export default function SectionLoopVideo({
             ariaLabel ? `Reproducir: ${ariaLabel}` : "Reproducir video"
           }
         >
-          <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-sand bg-slate text-sand shadow-[0_0_0_8px_rgba(212,195,179,0.25)]">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-sand bg-slate text-sand shadow-[0_0_0_8px_rgba(188,74,38,0.25)]">
             <svg
               width="26"
               height="26"

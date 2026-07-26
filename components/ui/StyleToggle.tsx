@@ -369,7 +369,7 @@ export default function StyleToggle() {
             style={{
               transform: `scale(${handleScale})`,
               boxShadow: inviting
-                ? `0 0 0 ${4 + 10 * pulseWave}px rgba(212, 195, 179, ${0.2 + 0.35 * pulseWave})`
+                ? `0 0 0 ${4 + 10 * pulseWave}px rgba(188, 74, 38, ${0.2 + 0.35 * pulseWave})`
                 : undefined,
             }}
           >

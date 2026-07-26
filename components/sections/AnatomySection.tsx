@@ -101,9 +101,9 @@ const SCENE1_EYEBROW =
 const SCENE1_HEADLINE =
   "font-headline text-[2.95rem] font-normal leading-[0.98] tracking-[-0.02em] text-offwhite lg:text-[3.5rem] xl:text-[4.25rem]";
 const SCENE1_BODY_CLASS =
-  "mt-6 max-w-[58ch] text-base leading-[1.6] text-[#b8b3ab] lg:text-[17px]";
+  "mt-6 max-w-[58ch] text-base leading-[1.6] text-muted lg:text-[17px]";
 const SCENE3_BODY_CLASS =
-  "mt-6 max-w-measure text-base leading-[1.65] text-[#b8b3ab] lg:text-[17px]";
+  "mt-6 max-w-measure text-base leading-[1.65] text-muted lg:text-[17px]";
 
 const MONO_MUTED =
   "font-mono text-xs tracking-[0.02em] text-offwhite/50 lg:text-[13px]";

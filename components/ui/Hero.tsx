@@ -18,8 +18,8 @@ type HeroProps = {
 };
 
 const heroTokens = {
-  "--hero-scrim-peak": "rgba(0, 0, 0, 0.55)",
-  "--hero-scrim-mid": "rgba(0, 0, 0, 0.28)",
+  "--hero-scrim-peak": "rgba(10, 7, 4, 0.55)",
+  "--hero-scrim-mid": "rgba(10, 7, 4, 0.28)",
 } as CSSProperties;
 
 /**

@@ -29,8 +29,9 @@ const BASE =
   "inline-flex items-center justify-center font-medium uppercase tracking-[0.08em] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand disabled:pointer-events-none disabled:opacity-50";
 
 const VARIANTS: Record<Variant, string> = {
-  primary: "bg-sand text-carbon hover:bg-offwhite",
-  outline: "border border-sand text-sand hover:bg-sand hover:text-carbon",
+  primary: "bg-sand text-offwhite hover:bg-sand-hover",
+  outline:
+    "border border-sand text-sand hover:bg-sand hover:text-offwhite",
   ghost:
     "relative text-offwhite/80 hover:text-sand after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-sand after:transition-transform after:duration-300 hover:after:scale-x-100",
 };

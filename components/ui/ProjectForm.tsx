@@ -484,7 +484,7 @@ export default function ProjectForm() {
       </AnimatePresence>
 
       {submitState.status === "error" && (
-        <p role="alert" className="text-sm text-[#8B3A3A]">
+        <p role="alert" className="text-sm text-[#9C4530]">
           {submitState.message}
         </p>
       )}

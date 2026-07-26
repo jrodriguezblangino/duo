@@ -13,13 +13,13 @@
   }
 
   ::selection {
-    background-color: #d4c3b3; /* sand */
-    color: #0d0d0d; /* carbon */
+    background-color: #bc4a26; /* sand / brand accent */
+    color: #ede4cf; /* offwhite */
   }
 
-  /* Sand 2px outline offset — keyboard focus floor (§5) */
+  /* Accent 2px outline offset — keyboard focus floor (§5) */
   :focus-visible {
-    outline: 2px solid #d4c3b3;
+    outline: 2px solid #bc4a26;
     outline-offset: 4px;
   }
 
@@ -36,11 +36,11 @@
     0%,
     100% {
       transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(212, 195, 179, 0);
+      box-shadow: 0 0 0 0 rgba(188, 74, 38, 0);
     }
     50% {
       transform: scale(1.08);
-      box-shadow: 0 0 0 6px rgba(212, 195, 179, 0.18);
+      box-shadow: 0 0 0 6px rgba(188, 74, 38, 0.18);
     }
   }
 

@@ -108,8 +108,8 @@ export default function TransformationSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           background: [
-            "linear-gradient(105deg, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.55) 42%, rgba(10,10,10,0.28) 72%, rgba(10,10,10,0.18) 100%)",
-            "linear-gradient(to top, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.2) 38%, transparent 70%)",
+            "linear-gradient(105deg, rgba(10,7,4,0.82) 0%, rgba(10,7,4,0.55) 42%, rgba(10,7,4,0.28) 72%, rgba(10,7,4,0.18) 100%)",
+            "linear-gradient(to top, rgba(10,7,4,0.55) 0%, rgba(10,7,4,0.2) 38%, transparent 70%)",
           ].join(", "),
         }}
       />
@@ -147,7 +147,7 @@ export default function TransformationSection() {
           </motion.h2>
 
           <motion.p
-            className="mb-10 max-w-[52ch] text-base leading-[1.6] text-[#d8d4cc] lg:text-[17px]"
+            className="mb-10 max-w-[52ch] text-base leading-[1.6] text-muted lg:text-[17px]"
             initial={revealInitial(prefersReducedMotion)}
             whileInView={revealVisible}
             viewport={revealViewport}
@@ -184,7 +184,7 @@ export default function TransformationSection() {
                     <span className="sr-only">{index} · </span>
                     {title}
                   </h3>
-                  <p className="max-w-[42ch] text-sm leading-relaxed text-[#d8d4cc]">
+                  <p className="max-w-[42ch] text-sm leading-relaxed text-muted">
                     {description}
                   </p>
                 </div>

@@ -35,7 +35,7 @@ export default function StylesSection() {
             >
               Un panel, dos acabados.
             </h2>
-            <p className="mx-auto max-w-[58ch] text-base leading-[1.6] text-[#b8b3ab] lg:text-[17px]">
+            <p className="mx-auto max-w-[58ch] text-base leading-[1.6] text-muted lg:text-[17px]">
               Misma estructura de tres capas. La cara cambia; el núcleo y el
               acero no.
             </p>

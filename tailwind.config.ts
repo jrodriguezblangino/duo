@@ -21,12 +21,19 @@ const config: Config = {
     },
     extend: {
       colors: {
-        carbon: "#0D0D0D",
-        slate: "#1A1A1A",
-        sand: "#D4C3B3",
+        // Fill Home Import — warm industrial-premium palette
+        carbon: "#17140F", // primary dark bg
+        slate: "#2A211A", // panel / secondary bg
+        surface: "#3A2C20", // elevated card
+        sand: "#BC4A26", // brand accent (CTAs, links, key highlights)
+        "sand-hover": "#D6602F", // accent hover / active
+        walnut: "#8C5A3A", // secondary accent
+        muted: "#C9BFAA", // secondary / body text on dark
+        border: "#4A3B2C", // divider on dark
+        "border-light": "#D8CBB0", // divider on light
         // Canonical token; `offwhite` kept as alias for existing class usage
-        "off-white": "#F5F5F5",
-        offwhite: "#F5F5F5",
+        "off-white": "#EDE4CF",
+        offwhite: "#EDE4CF",
       },
       fontFamily: {
         // Self-hosted / next/font CSS variables — see app/layout.tsx

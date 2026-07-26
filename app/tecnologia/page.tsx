@@ -232,7 +232,7 @@ export default function TecnologiaPage() {
 
       <div
         aria-hidden="true"
-        className="h-28 bg-gradient-to-b from-carbon via-[#1f1f1f] to-offwhite sm:h-36"
+        className="h-28 bg-gradient-to-b from-carbon via-slate to-offwhite sm:h-36"
       />
 
       {/* 05 Especificaciones */}
