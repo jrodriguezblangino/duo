@@ -2,14 +2,10 @@
 @config "../tailwind.config.ts";
 
 @layer base {
+  /* Avoid smooth scrolling — it fights Framer useScroll / sticky scrub
+     on iOS Safari (delayed settle, collapsed chrome, rubber-banding). */
   html {
-    scroll-behavior: smooth;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
+    scroll-behavior: auto;
   }
 
   body {
@@ -64,12 +60,5 @@
 
   .animate-finish-divider-breathe {
     animation: finish-divider-breathe 1.8s ease-in-out infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .animate-finish-handle-pulse,
-    .animate-finish-divider-breathe {
-      animation: none;
-    }
   }
 }

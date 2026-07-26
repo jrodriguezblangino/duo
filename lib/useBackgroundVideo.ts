@@ -14,15 +14,30 @@ export type BackgroundVideoOptions = {
   rootRef?: RefObject<Element | null>;
 };
 
+function isInViewport(el: Element, minRatio: number) {
+  const rect = el.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  const vw = window.innerWidth || document.documentElement.clientWidth;
+  const visibleH = Math.max(
+    0,
+    Math.min(rect.bottom, vh) - Math.max(rect.top, 0),
+  );
+  const visibleW = Math.max(
+    0,
+    Math.min(rect.right, vw) - Math.max(rect.left, 0),
+  );
+  if (rect.height <= 0 || rect.width <= 0) return false;
+  const ratio = (visibleH * visibleW) / (rect.height * rect.width);
+  return ratio >= minRatio || (rect.top < vh && rect.bottom > 0 && visibleH > 32);
+}
+
 /**
  * Production autoplay for muted looping background videos.
  *
- * iOS Safari / Chrome require the muted + playsInline *properties* (not just
- * attributes) before play(), and reject autoplay when an audio track is present
- * unless muted is locked in early. This hook:
- * - forces muted / defaultMuted / playsInline
- * - plays on intersection, pauses when off-screen
- * - retries on visibility / pageshow (bfcache)
+ * iOS Safari needs muted + playsInline *properties* locked before play().
+ * IntersectionObserver alone is unreliable when the <video> sits under a
+ * CSS-transformed parallax layer — we observe a stable root when provided
+ * and also re-check on scroll/resize/visualViewport as a fallback.
  */
 export function useBackgroundVideo(
   videoRef: RefObject<HTMLVideoElement | null>,
@@ -51,6 +66,8 @@ export function useBackgroundVideo(
       }
     };
 
+    const target = () => rootRef?.current ?? video;
+
     const tryPlay = () => {
       if (!enabled) {
         video.pause();
@@ -59,13 +76,20 @@ export function useBackgroundVideo(
       lockInlineMuted();
       if (video.paused) {
         void video.play().catch(() => {
-          /* Autoplay may still fail under Low Power Mode — poster remains. */
+          /* Low Power Mode may still block — poster remains. */
         });
       }
     };
 
     const tryPause = () => {
       if (!video.paused) video.pause();
+    };
+
+    const sync = () => {
+      const el = target();
+      if (!el) return;
+      if (isInViewport(el, Math.min(threshold, 0.1))) tryPlay();
+      else tryPause();
     };
 
     lockInlineMuted();
@@ -75,56 +99,41 @@ export function useBackgroundVideo(
       return;
     }
 
-    let intersecting = false;
-
-    const observeTarget = rootRef?.current ?? video;
     const io = new IntersectionObserver(
-      ([entry]) => {
-        intersecting =
-          entry.isIntersecting &&
-          entry.intersectionRatio >= Math.min(threshold, 0.05);
-        if (intersecting) {
-          tryPlay();
-        } else {
-          tryPause();
-        }
-      },
-      { threshold: [0, 0.05, threshold, 0.5, 1] },
+      () => sync(),
+      { threshold: [0, 0.05, 0.1, 0.25, 0.5, 1] },
     );
-    io.observe(observeTarget);
+
+    const observed = target();
+    if (observed) io.observe(observed);
 
     const onVisibility = () => {
-      if (document.visibilityState === "visible" && intersecting) tryPlay();
-    };
-    const onPageShow = () => {
-      if (intersecting) tryPlay();
+      if (document.visibilityState === "visible") sync();
     };
 
     document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pageshow", onPageShow);
+    window.addEventListener("pageshow", sync);
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    window.visualViewport?.addEventListener("resize", sync);
+    window.visualViewport?.addEventListener("scroll", sync);
 
-    const ready = () => {
-      if (intersecting) tryPlay();
-    };
-    video.addEventListener("loadeddata", ready);
-    video.addEventListener("canplay", ready);
+    video.addEventListener("loadeddata", sync);
+    video.addEventListener("canplay", sync);
 
-    /* Sync once in case the observer callback is delayed a frame */
-    requestAnimationFrame(() => {
-      const rect = observeTarget.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      if (rect.bottom > 0 && rect.top < vh) {
-        intersecting = true;
-        tryPlay();
-      }
-    });
+    sync();
+    requestAnimationFrame(sync);
 
     return () => {
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pageshow", onPageShow);
-      video.removeEventListener("loadeddata", ready);
-      video.removeEventListener("canplay", ready);
+      window.removeEventListener("pageshow", sync);
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+      window.visualViewport?.removeEventListener("resize", sync);
+      window.visualViewport?.removeEventListener("scroll", sync);
+      video.removeEventListener("loadeddata", sync);
+      video.removeEventListener("canplay", sync);
     };
   }, [videoRef, threshold, enabled, rootRef]);
 }

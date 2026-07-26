@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
 import { ENTRY_Y, glide } from "@/lib/motion";
@@ -35,9 +35,11 @@ export default function Hero({
   poster = assetPath("/assets/images/exploded_view_components.webp"),
 }: HeroProps) {
   const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="hero-heading"
       className="relative h-[100vh] overflow-hidden bg-carbon max-md:h-[100dvh]"
       style={heroTokens}
@@ -58,11 +60,13 @@ export default function Hero({
                 }
           }
         >
+          {/* Observe the section — not the video under the Ken Burns transform */}
           <BackgroundVideo
             src={videoSrc}
             poster={poster}
             preload="auto"
-            playback={{ enabled: !prefersReducedMotion, threshold: 0.05 }}
+            observeRef={sectionRef}
+            playback={{ enabled: true, threshold: 0.05 }}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </motion.div>

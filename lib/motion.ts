@@ -24,11 +24,12 @@ export const ENTRY_Y = 24;
 export const STAGGER = 0.08;
 
 /**
- * Accent highlight / underline — fire when the word sits mid-viewport
- * (~40–50% in), not on first entry. Shared by HighlightWord + AccentEcho.
+ * Accent highlight / underline — fire when the word sits mid-viewport.
+ * Margins keep the trigger away from the fold so iOS layout settle
+ * (after fonts/video) doesn't mark the animation as already done.
  */
 export const ACCENT_VIEWPORT = {
   once: true,
-  amount: 0.5,
-  margin: "-40% 0px -45% 0px",
+  amount: 0.35,
+  margin: "0px 0px -20% 0px",
 } as const;

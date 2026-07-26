@@ -95,8 +95,8 @@ export default function TransformationSection() {
           preload="metadata"
           observeRef={sectionRef}
           playback={{
-            enabled: !prefersReducedMotion,
-            threshold: 0.2,
+            enabled: true,
+            threshold: 0.15,
           }}
           className="h-full w-full object-cover brightness-[0.7] saturate-[0.9]"
         />

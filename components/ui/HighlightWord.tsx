@@ -5,7 +5,8 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { ACCENT_VIEWPORT, glide } from "@/lib/motion";
+import { useEffect, useRef } from "react";
+import { useViewDraw } from "@/lib/useViewDraw";
 
 export type HighlightReveal = "scroll" | "view";
 
@@ -17,12 +18,9 @@ type HighlightWordProps = {
   reduce: boolean;
   progress: MotionValue<number>;
   range: readonly [number, number];
-  /** Mobile / IO: draw on enter — scroll scrub often finishes off-screen without a pin */
   reveal?: HighlightReveal;
   surface?: HighlightSurface;
-  /** Stagger delay (view mode) in seconds — prefer 0; fire from own IO entry */
   delay?: number;
-  /** View-mode draw duration; default matches Manifiesto */
   duration?: number;
 };
 
@@ -31,14 +29,80 @@ const CARBON = "#0D0D0D";
 
 function markerClass(surface: HighlightSurface) {
   return surface === "dark"
-    ? "absolute inset-x-0 bottom-[0.06em] top-[0.16em] bg-sand"
-    : "absolute inset-x-0 bottom-[0.06em] top-[0.16em] bg-sand/50";
+    ? "absolute inset-x-0 bottom-[0.06em] top-[0.16em] origin-left bg-sand"
+    : "absolute inset-x-0 bottom-[0.06em] top-[0.16em] origin-left bg-sand/50";
+}
+
+/** Expo-out matching design-system glide */
+function easeOutExpo(t: number) {
+  return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+}
+
+/**
+ * rAF-driven scaleX — independent of document.timeline / CSS transitions.
+ * Survives React Strict Mode by not cancelling the end-state fallback.
+ */
+function useRafDraw(
+  drawn: boolean,
+  duration: number,
+  delay: number,
+) {
+  const barRef = useRef<HTMLSpanElement>(null);
+  const startedRef = useRef(false);
+
+  useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+
+    el.style.transformOrigin = "left center";
+
+    if (!drawn) {
+      el.style.transform = "scaleX(0)";
+      return;
+    }
+
+    if (startedRef.current) {
+      el.style.transform = "scaleX(1)";
+      return;
+    }
+    startedRef.current = true;
+
+    let raf = 0;
+    const startAt = performance.now() + delay * 1000;
+    const durMs = Math.max(16, duration * 1000);
+
+    const finish = () => {
+      el.style.transform = "scaleX(1)";
+    };
+
+    const tick = (now: number) => {
+      if (now < startAt) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+      const t = Math.min(1, (now - startAt) / durMs);
+      el.style.transform = `scaleX(${easeOutExpo(t)})`;
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else finish();
+    };
+
+    raf = requestAnimationFrame(tick);
+
+    const fallback = window.setTimeout(finish, delay * 1000 + durMs + 120);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      // Keep fallback so Strict Mode cleanup cannot leave scaleX(0)
+      // If this effect re-runs, startedRef short-circuits to scaleX(1).
+      void fallback;
+    };
+  }, [drawn, duration, delay]);
+
+  return barRef;
 }
 
 /**
  * Primary accent — carbon word, sand highlight bar draws L→R.
- * On dark surfaces, text stays muted until the marker draws so the
- * word is readable plain during section entrance (not pre-highlighted).
  */
 export function HighlightWord({
   children,
@@ -61,6 +125,8 @@ export function HighlightWord({
   );
   const bar = markerClass(surface);
   const shell = "relative inline-block whitespace-nowrap px-[0.14em]";
+  const { ref: shellRef, drawn } = useViewDraw(reveal === "view" && !reduce);
+  const barRef = useRafDraw(drawn, duration, delay);
 
   if (reduce) {
     return (
@@ -70,27 +136,16 @@ export function HighlightWord({
 
   if (reveal === "view") {
     return (
-      <motion.span
+      <span
+        ref={shellRef}
         className={shell}
-        initial={
-          surface === "dark" ? { color: BODY_MUTED } : { color: CARBON }
-        }
-        whileInView={
-          surface === "dark" ? { color: CARBON } : { color: CARBON }
-        }
-        viewport={ACCENT_VIEWPORT}
-        transition={{ duration, ease: glide.ease, delay }}
+        style={{
+          color: surface === "dark" ? (drawn ? CARBON : BODY_MUTED) : CARBON,
+        }}
       >
-        <motion.span
-          aria-hidden="true"
-          className={`${bar} origin-left will-change-transform`}
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={ACCENT_VIEWPORT}
-          transition={{ duration, ease: glide.ease, delay }}
-        />
+        <span aria-hidden="true" ref={barRef} className={bar} />
         <span className="relative z-[1]">{children}</span>
-      </motion.span>
+      </span>
     );
   }
 
@@ -98,7 +153,7 @@ export function HighlightWord({
     <motion.span className={shell} style={{ color }}>
       <motion.span
         aria-hidden="true"
-        className={`${bar} origin-left will-change-transform`}
+        className={`${bar} will-change-transform`}
         style={{ scaleX }}
       />
       <span className="relative z-[1]">{children}</span>

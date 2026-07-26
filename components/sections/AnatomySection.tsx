@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/HighlightWord";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
 import { useIsDesktop } from "@/lib/useMediaQuery";
+import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";
 
 /**
  * Anatomy — scroll-driven composition story (desktop pin).
@@ -529,14 +530,10 @@ function StaticAnatomy() {
 function MobileAnatomy() {
   const introRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: introRef,
-    offset: ["start 0.9", "end 0.35"],
-  });
-  const { scrollYProgress: detailProgress } = useScroll({
-    target: detailRef,
-    offset: ["start 0.85", "end 0.4"],
-  });
+  const explodeVideoRef = useRef<HTMLDivElement>(null);
+  const detailVideoRef = useRef<HTMLDivElement>(null);
+  const scrollYProgress = useSectionScrollProgress(introRef);
+  const detailProgress = useSectionScrollProgress(detailRef);
 
   return (
     <section
@@ -559,35 +556,39 @@ function MobileAnatomy() {
           <FocusText progress={scrollYProgress} range={[0.28, 0.55]}>
             <Scene1Support
               progress={scrollYProgress}
-              highlightReveal="scroll"
+              highlightReveal="view"
               ranges={[
-                [0.52, 0.66],
-                [0.7, 0.84],
+                [0.3, 0.5],
+                [0.45, 0.65],
               ]}
             />
           </FocusText>
         </div>
 
-        <motion.div
-          className="mb-12"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={VIEWPORT}
-          transition={{ ...glide, delay: 0.06 }}
-        >
-          <div className={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}>
-            <BackgroundVideo
-              src={VIDEO_SRC}
-              poster={VIDEO_POSTER}
-              preload="metadata"
-              aria-label="Desmontaje de las tres capas del panel Fill Home"
-              className="h-full w-full object-contain"
-            />
-          </div>
-          <p className={`mt-4 ${MONO_MUTED}`}>
-            Desmontaje de capas — ensamble mecánico
-          </p>
-        </motion.div>
+        <div ref={explodeVideoRef} className="mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{ ...glide, delay: 0.06 }}
+          >
+            <div
+              className={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+            >
+              <BackgroundVideo
+                src={VIDEO_SRC}
+                poster={VIDEO_POSTER}
+                preload="metadata"
+                observeRef={explodeVideoRef}
+                aria-label="Desmontaje de las tres capas del panel Fill Home"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <p className={`mt-4 ${MONO_MUTED}`}>
+              Desmontaje de capas — ensamble mecánico
+            </p>
+          </motion.div>
+        </div>
 
         <ol className="relative mb-12 list-none space-y-10 pl-0">
           <span
@@ -628,20 +629,23 @@ function MobileAnatomy() {
         </ol>
 
         <div ref={detailRef} className="grid gap-8">
-          <motion.div
-            className={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
-            initial={{ opacity: 0, scale: 1.04 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={VIEWPORT}
-            transition={glide}
-          >
-            <BackgroundVideo
-              src={DETAIL_VIDEO_SRC}
-              preload="metadata"
-              aria-label="Detalle de canto del panel Fill Home — tres capas"
-              className="h-full w-full object-contain"
-            />
-          </motion.div>
+          <div ref={detailVideoRef}>
+            <motion.div
+              className={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+              initial={{ opacity: 0, scale: 1.04 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={VIEWPORT}
+              transition={glide}
+            >
+              <BackgroundVideo
+                src={DETAIL_VIDEO_SRC}
+                preload="metadata"
+                observeRef={detailVideoRef}
+                aria-label="Detalle de canto del panel Fill Home — tres capas"
+                className="h-full w-full object-contain"
+              />
+            </motion.div>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -654,7 +658,7 @@ function MobileAnatomy() {
             <Scene3Headline />
             <Scene3Body
               progress={detailProgress}
-              highlightReveal="scroll"
+              highlightReveal="view"
               ranges={[
                 [0.22, 0.4],
                 [0.45, 0.62],
@@ -850,16 +854,6 @@ export default function AnatomySection() {
 
   if (prefersReducedMotion) {
     return <StaticAnatomy />;
-  }
-
-  /* Avoid mounting both sticky desktop track + mobile media on small screens */
-  if (isDesktop === null) {
-    return (
-      <section
-        aria-labelledby="anatomia-heading"
-        className="min-h-[50vh] bg-carbon"
-      />
-    );
   }
 
   return isDesktop ? <DesktopAnatomy /> : <MobileAnatomy />;

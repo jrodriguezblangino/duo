@@ -15,6 +15,7 @@ import {
   HighlightWordStatic,
 } from "@/components/ui/HighlightWord";
 import { useIsDesktop } from "@/lib/useMediaQuery";
+import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";
 
 /**
  * Manifesto — typographic break between Hero and Anatomy.
@@ -123,8 +124,9 @@ function LeadBlock({
         <HighlightWord
           reduce={reduce}
           progress={progress}
-          range={compact ? [0.35, 0.55] : [0.28, 0.42]}
-          reveal="scroll"
+          range={compact ? [0.25, 0.55] : [0.28, 0.42]}
+          reveal={compact ? "view" : "scroll"}
+          {...(compact ? { duration: 0.85 } : {})}
         >
           búsqueda.
         </HighlightWord>
@@ -135,8 +137,8 @@ function LeadBlock({
         <EchoWord
           reduce={reduce}
           progress={progress}
-          range={compact ? [0.5, 0.7] : [0.38, 0.52]}
-          reveal="scroll"
+          range={compact ? [0.4, 0.7] : [0.38, 0.52]}
+          reveal={compact ? "view" : "scroll"}
         >
           arte
         </EchoWord>
@@ -212,11 +214,8 @@ function StaticBody() {
 
 function MobileManifesto() {
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.9", "end 0.25"],
-  });
-  const spine = useTransform(scrollYProgress, [0.02, 0.45], [0, 1]);
+  const scrollYProgress = useSectionScrollProgress(sectionRef);
+  const spine = useTransform(scrollYProgress, [0.05, 0.55], [0, 1]);
 
   return (
     <section
@@ -232,6 +231,12 @@ function MobileManifesto() {
         />
 
         <div className="flex flex-col gap-8 pl-7 md:gap-10 md:pl-9">
+          {/*
+            Mobile uses timed view-draw (not scroll scrub). After removing the
+            empty useIsDesktop placeholder, IO fires once when the word is
+            actually mid-viewport — matching desktop feel on iPhone without
+            relying on Framer useScroll, which stalls under Safari chrome.
+          */}
           <LeadBlock reduce={false} progress={scrollYProgress} compact />
           <BodyBlocks
             progress={scrollYProgress}
@@ -312,15 +317,6 @@ export default function ManifestoSection() {
           </div>
         </div>
       </section>
-    );
-  }
-
-  if (isDesktop === null) {
-    return (
-      <section
-        aria-labelledby="manifiesto-heading"
-        className="min-h-[40vh] bg-offwhite"
-      />
     );
   }
 
