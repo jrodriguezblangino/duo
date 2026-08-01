@@ -1,5 +1,6 @@
 import Hero from "@/components/ui/Hero";
 import ManifestoSection from "@/components/sections/ManifestoSection";
+import WhyNowSection from "@/components/sections/WhyNowSection";
 import AnatomySection from "@/components/sections/AnatomySection";
 import TransformationSection from "@/components/sections/TransformationSection";
 import StylesSection from "@/components/sections/StylesSection";
@@ -17,6 +18,7 @@ export default function HomePage() {
         videoSrc={assetPath("/assets/videos/hero_cinematic_scan.mp4")}
       />
       <ManifestoSection />
+      <WhyNowSection />
       <AnatomySection />
       <TransformationSection />
       <StylesSection />
