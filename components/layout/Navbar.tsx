@@ -5,9 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/ui/Button";
-import { SITE_NAME } from "@/lib/brand.config";
+import WhatsAppCTA from "@/components/ui/WhatsAppCTA";
+import { BRAND, SITE_NAME } from "@/lib/brand.config";
 import { CTA, NAV_LINKS } from "@/lib/site";
 import { ENTRY_Y, STAGGER, glide } from "@/lib/motion";
+
+const PHONE_HREF = `tel:${BRAND.phoneDisplay.replace(/[^\d+]/g, "")}`;
+
+const contactLinkClass =
+  "text-sm font-medium uppercase tracking-[0.08em] text-offwhite/80 transition-colors duration-300 hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,11 +37,16 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen) {
+      delete document.body.dataset.mobileMenuOpen;
+      return;
+    }
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    document.body.dataset.mobileMenuOpen = "true";
     return () => {
       document.body.style.overflow = prev;
+      delete document.body.dataset.mobileMenuOpen;
     };
   }, [menuOpen]);
 
@@ -66,7 +77,7 @@ export default function Navbar() {
           {SITE_NAME}
         </Link>
 
-        <div className="hidden items-center gap-10 md:flex">
+        <div className="hidden items-center gap-8 md:flex lg:gap-10">
           <ul className="flex items-center gap-8">
             {NAV_LINKS.map(({ href, label }) => (
               <li key={href}>
@@ -90,9 +101,15 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <Button href={CTA.href} variant="primary" size="sm">
-            {CTA.label}
-          </Button>
+          <div className="flex items-center gap-4">
+            <a href={PHONE_HREF} className={contactLinkClass}>
+              {BRAND.phoneDisplay}
+            </a>
+            <WhatsAppCTA variant="outline" size="sm" label="WhatsApp" />
+            <Button href={CTA.href} variant="primary" size="sm">
+              {CTA.label}
+            </Button>
+          </div>
         </div>
 
         <button
@@ -176,7 +193,7 @@ export default function Navbar() {
                 </ul>
 
                 <motion.div
-                  className="mt-12"
+                  className="mt-12 flex w-full flex-col items-center gap-4"
                   initial={
                     prefersReducedMotion ? false : { opacity: 0, y: ENTRY_Y }
                   }
@@ -187,12 +204,26 @@ export default function Navbar() {
                       : { ...glide, delay: NAV_LINKS.length * STAGGER }
                   }
                 >
+                  <a
+                    href={PHONE_HREF}
+                    onClick={closeMenu}
+                    className={contactLinkClass}
+                  >
+                    {BRAND.phoneDisplay}
+                  </a>
+                  <WhatsAppCTA
+                    variant="outline"
+                    size="md"
+                    label="WhatsApp"
+                    onClick={closeMenu}
+                    className="w-full border-sand/40 !px-6 !py-3.5 !text-[13px] tracking-[0.14em]"
+                  />
                   <Button
                     href={CTA.href}
                     onClick={closeMenu}
                     variant="primary"
                     size="md"
-                    className="border border-sand/40 !px-6 !py-3.5 !text-[13px] tracking-[0.14em] transition-[colors,transform,filter] duration-300 hover:border-offwhite hover:brightness-105 active:scale-[0.98] active:brightness-95"
+                    className="w-full border border-sand/40 !px-6 !py-3.5 !text-[13px] tracking-[0.14em] transition-[colors,transform,filter] duration-300 hover:border-offwhite hover:brightness-105 active:scale-[0.98] active:brightness-95"
                   >
                     {CTA.label}
                   </Button>

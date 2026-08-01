@@ -1,7 +1,13 @@
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { SITE_NAME } from "@/lib/brand.config";
+import WhatsAppCTA from "@/components/ui/WhatsAppCTA";
+import { BRAND, SITE_NAME } from "@/lib/brand.config";
 import { CTA, NAV_LINKS } from "@/lib/site";
+
+const PHONE_HREF = `tel:${BRAND.phoneDisplay.replace(/[^\d+]/g, "")}`;
+
+const contactLinkClass =
+  "text-sm text-offwhite/70 transition-colors hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand";
 
 export default function Footer() {
   return (
@@ -45,9 +51,24 @@ export default function Footer() {
             Cotización y plan de paneles a partir de tipo de obra, acabado y
             superficie.
           </p>
-          <Button href={CTA.href} variant="primary" size="sm">
-            {CTA.label}
-          </Button>
+          <ul className="mb-6 flex flex-col gap-2">
+            <li>
+              <a href={PHONE_HREF} className={contactLinkClass}>
+                {BRAND.phoneDisplay}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${BRAND.email}`} className={contactLinkClass}>
+                {BRAND.email}
+              </a>
+            </li>
+          </ul>
+          <div className="flex flex-col items-start gap-3">
+            <WhatsAppCTA variant="primary" size="sm" />
+            <Button href={CTA.href} variant="primary" size="sm">
+              {CTA.label}
+            </Button>
+          </div>
         </div>
       </div>
 

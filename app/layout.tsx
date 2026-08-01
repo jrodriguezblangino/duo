@@ -3,6 +3,7 @@ import { Fraunces, IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 import { SITE_NAME } from "@/lib/brand.config";
 import "./globals.css";
 
@@ -69,6 +70,7 @@ export default function RootLayout({
         <main id="contenido-principal" className="flex-1">
           {children}
         </main>
+        <WhatsAppFloat />
         <Footer />
       </body>
     </html>
