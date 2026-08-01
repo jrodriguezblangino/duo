@@ -46,7 +46,7 @@ export default function Navbar() {
   }, [menuOpen]);
 
   const navSurface = scrolledPastHero
-    ? "bg-slate border-b border-offwhite/10"
+    ? "bg-surface border-b border-sand/40"
     : "bg-transparent border-b border-transparent";
 
   return (

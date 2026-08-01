@@ -455,7 +455,7 @@ function StaticAnatomy() {
           <SectionLoopVideo
             src={VIDEO_SRC}
             poster={VIDEO_POSTER}
-            wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto w-full max-w-[min(100%,560px)] overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+            wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto w-full max-w-[min(100%,560px)] overflow-hidden rounded-sm bg-slate`}
             className="h-full w-full object-contain"
             aria-label="Desmontaje de las tres capas del panel Fill Home"
           />
@@ -503,7 +503,7 @@ function StaticAnatomy() {
             <SectionLoopVideo
               src={DETAIL_VIDEO_SRC}
               poster={DETAIL_VIDEO_POSTER}
-              wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+              wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm bg-slate`}
               className="h-full w-full object-contain"
               aria-label="Detalle de canto del panel Fill Home — tres capas"
             />
@@ -564,7 +564,7 @@ function MobileAnatomy() {
           <SectionLoopVideo
             src={VIDEO_SRC}
             poster={VIDEO_POSTER}
-            wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+            wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm bg-slate`}
             className="h-full w-full object-contain"
             aria-label="Desmontaje de las tres capas del panel Fill Home"
           />
@@ -616,7 +616,7 @@ function MobileAnatomy() {
             <SectionLoopVideo
               src={DETAIL_VIDEO_SRC}
               poster={DETAIL_VIDEO_POSTER}
-              wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+              wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm bg-slate`}
               className="h-full w-full object-contain"
               aria-label="Detalle de canto del panel Fill Home — tres capas"
             />
@@ -716,7 +716,7 @@ function DesktopAnatomy() {
                 className={`relative ${VIDEO_ASPECT} w-full max-h-[min(560px,68vh)] max-w-[min(100%,68vh)]`}
               >
                 <motion.div
-                  className="absolute inset-0 overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate"
+                  className="absolute inset-0 overflow-hidden rounded-sm bg-slate"
                   style={{ opacity: videoOpacity }}
                 >
                   <video
@@ -739,7 +739,7 @@ function DesktopAnatomy() {
                   style={{ opacity: detailOpacity, scale: detailScale }}
                 >
                   <div
-                    className={`relative ${DETAIL_ASPECT} w-full overflow-hidden rounded-sm border border-offwhite/[0.08] bg-slate`}
+                    className={`relative ${DETAIL_ASPECT} w-full overflow-hidden rounded-sm bg-slate`}
                   >
                     <video
                       ref={detailVideoRef}
