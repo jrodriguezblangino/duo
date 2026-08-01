@@ -33,18 +33,11 @@ export default function WhatsAppFloat() {
           : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
       }
     >
-      {/* Mobile: icon-only circle */}
       <WhatsAppCTA
         iconOnly
         size="sm"
         label="Hablar por WhatsApp"
-        className="h-14 w-14 rounded-full !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:hidden"
-      />
-      {/* Desktop: pill with label */}
-      <WhatsAppCTA
-        size="sm"
-        label="WhatsApp"
-        className="hidden rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:inline-flex"
+        className="h-14 w-14 rounded-full !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
       />
     </motion.div>
   );
