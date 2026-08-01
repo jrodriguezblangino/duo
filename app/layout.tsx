@@ -3,6 +3,7 @@ import { Fraunces, IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { SITE_NAME } from "@/lib/brand.config";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -39,8 +40,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Fill Home | Revestimientos de alta gama",
-    template: "%s | Fill Home",
+    default: `${SITE_NAME} | Revestimientos de alta gama`,
+    template: `%s | ${SITE_NAME}`,
   },
   description:
     "Paneles de revestimiento madera-look sobre núcleo de poliuretano y respaldo de acero. Ingeniería de tres capas para proyectos exigentes.",

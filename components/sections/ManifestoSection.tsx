@@ -24,10 +24,10 @@ import { useSectionScrollProgress } from "@/lib/useSectionScrollProgress";
  */
 
 const BODY_LEAD =
-  "Tras viajar a la Expo de Cantón, identificamos una oportunidad única: la intersección entre la ingeniería de vanguardia y la calidez de los materiales naturales.";
+  "Importamos ingeniería de revestimiento y la adaptamos al estándar local.";
 
 const PULL_QUOTE =
-  "En Fill Home, no solo importamos paneles; curamos soluciones.";
+  "No solo importamos paneles; curamos soluciones.";
 
 const BODY_CLOSE =
   "Creemos que la arquitectura de alta gama no debería ser compleja. Nuestra misión es simplificar lo sofisticado, ofreciendo revestimientos que combinan la resistencia industrial del metal con la calidez orgánica de la madera.";

@@ -1,6 +1,6 @@
-import { assetPath } from "@/lib/assetPath";
+import { BRAND, BRAND_LOGO, SITE_NAME } from "@/lib/brand.config";
 
-export const SITE_NAME = "Fill Home";
+export { BRAND_LOGO, SITE_NAME };
 
 export const NAV_LINKS = [
   { href: "/", label: "Inicio" },
@@ -10,9 +10,6 @@ export const NAV_LINKS = [
 ] as const;
 
 export const CTA = {
-  label: "Solicitar Cotización",
+  label: BRAND.ctaLabel,
   href: "/contacto",
 } as const;
-
-/** Legacy stamp asset — not used in chrome; kept for reference until a clean mark exists */
-export const BRAND_LOGO = assetPath("/assets/logos/brand_logo.png");

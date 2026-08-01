@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { CTA, NAV_LINKS, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/brand.config";
+import { CTA, NAV_LINKS } from "@/lib/site";
 
 export default function Footer() {
   return (

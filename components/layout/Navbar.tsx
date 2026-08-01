@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/ui/Button";
-import { CTA, NAV_LINKS, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/brand.config";
+import { CTA, NAV_LINKS } from "@/lib/site";
 import { ENTRY_Y, STAGGER, glide } from "@/lib/motion";
 
 export default function Navbar() {
