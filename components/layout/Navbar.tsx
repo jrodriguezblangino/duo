@@ -6,14 +6,9 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import WhatsAppCTA from "@/components/ui/WhatsAppCTA";
-import { BRAND, SITE_NAME } from "@/lib/brand.config";
+import { SITE_NAME } from "@/lib/brand.config";
 import { CTA, NAV_LINKS } from "@/lib/site";
 import { ENTRY_Y, STAGGER, glide } from "@/lib/motion";
-
-const PHONE_HREF = `tel:${BRAND.phoneDisplay.replace(/[^\d+]/g, "")}`;
-
-const contactLinkClass =
-  "text-sm font-medium uppercase tracking-[0.08em] text-offwhite/80 transition-colors duration-300 hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -101,10 +96,7 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <div className="flex items-center gap-4">
-            <a href={PHONE_HREF} className={contactLinkClass}>
-              {BRAND.phoneDisplay}
-            </a>
+          <div className="flex items-center gap-3">
             <WhatsAppCTA variant="outline" size="sm" label="WhatsApp" />
             <Button href={CTA.href} variant="primary" size="sm">
               {CTA.label}
@@ -204,13 +196,6 @@ export default function Navbar() {
                       : { ...glide, delay: NAV_LINKS.length * STAGGER }
                   }
                 >
-                  <a
-                    href={PHONE_HREF}
-                    onClick={closeMenu}
-                    className={contactLinkClass}
-                  >
-                    {BRAND.phoneDisplay}
-                  </a>
                   <WhatsAppCTA
                     variant="outline"
                     size="md"

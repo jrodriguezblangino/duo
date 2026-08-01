@@ -9,6 +9,8 @@ type WhatsAppCTAProps = {
   size?: Size;
   variant?: Variant;
   label?: string;
+  /** Hide visible label; aria-label stays for accessibility. */
+  iconOnly?: boolean;
   className?: string;
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
@@ -32,6 +34,7 @@ export default function WhatsAppCTA({
   size = "md",
   variant = "primary",
   label = "Hablar por WhatsApp",
+  iconOnly = false,
   className = "",
   onClick,
 }: WhatsAppCTAProps) {
@@ -42,13 +45,14 @@ export default function WhatsAppCTA({
       href={href}
       variant={variant}
       size={size}
-      className={`gap-2 ${className}`.trim()}
+      aria-label={label}
+      className={`${iconOnly ? "gap-0" : "gap-2"} ${className}`.trim()}
       target="_blank"
       rel="noopener noreferrer"
       onClick={onClick}
     >
-      <WhatsAppIcon />
-      {label}
+      <WhatsAppIcon className={iconOnly ? "h-[22px] w-[22px]" : undefined} />
+      {!iconOnly && <span>{label}</span>}
     </Button>
   );
 }

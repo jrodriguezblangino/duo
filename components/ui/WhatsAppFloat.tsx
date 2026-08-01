@@ -25,7 +25,7 @@ export default function WhatsAppFloat() {
 
   return (
     <motion.div
-      className="fixed right-6 bottom-[max(1.5rem,env(safe-area-inset-bottom))] z-40"
+      className="fixed right-5 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 md:right-6 md:bottom-[max(1.5rem,env(safe-area-inset-bottom))]"
       animate={prefersReducedMotion ? undefined : { y: [0, -6, 0] }}
       transition={
         prefersReducedMotion
@@ -33,10 +33,18 @@ export default function WhatsAppFloat() {
           : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
       }
     >
+      {/* Mobile: icon-only circle */}
+      <WhatsAppCTA
+        iconOnly
+        size="sm"
+        label="Hablar por WhatsApp"
+        className="h-14 w-14 rounded-full !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:hidden"
+      />
+      {/* Desktop: pill with label */}
       <WhatsAppCTA
         size="sm"
         label="WhatsApp"
-        className="rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+        className="hidden rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:inline-flex"
       />
     </motion.div>
   );
