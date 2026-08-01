@@ -27,7 +27,7 @@ export default function WhyNowSection() {
   return (
     <section
       aria-labelledby="por-que-ahora-heading"
-      className="bg-carbon px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
+      className="border-t border-offwhite/10 bg-carbon px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
     >
       <div className="mx-auto max-w-site">
         <Reveal className="mb-12 max-w-[28ch] lg:mb-16">
