@@ -432,31 +432,6 @@ function useProgressGatedPlayback(
 /* ─── Static / reduced-motion layout ─── */
 
 function StaticAnatomy() {
-  // #region agent log
-  useEffect(() => {
-    fetch("http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "5c4445",
-      },
-      body: JSON.stringify({
-        sessionId: "5c4445",
-        runId: "pre-fix",
-        hypothesisId: "A",
-        location: "AnatomySection.tsx:StaticAnatomy",
-        message: "StaticAnatomy mounted",
-        data: {
-          hasSectionLoop: true,
-          detailHasPoster: true,
-          note: "static layout now uses SectionLoopVideo for both clips",
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-  }, []);
-  // #endregion
-
   return (
     <section
       aria-labelledby="anatomia-heading"
@@ -851,41 +826,6 @@ function DesktopAnatomy() {
 export default function AnatomySection() {
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop();
-
-  // #region agent log
-  useEffect(() => {
-    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const branch =
-      prefersReducedMotion && isDesktop
-        ? "static"
-        : isDesktop
-          ? "desktop"
-          : "mobile";
-    fetch("http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "5c4445",
-      },
-      body: JSON.stringify({
-        sessionId: "5c4445",
-        runId: "post-fix",
-        hypothesisId: "A",
-        location: "AnatomySection.tsx:export",
-        message: "Anatomy branch selected",
-        data: {
-          prefersReducedMotion,
-          isDesktop,
-          branch,
-          mqlMatches: mql.matches,
-          vw: window.innerWidth,
-          note: "mobile never uses StaticAnatomy (iOS reduce-motion trap)",
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-  }, [prefersReducedMotion, isDesktop]);
-  // #endregion
 
   // iOS Safari often reports prefers-reduced-motion even when the user
   // expects motion — StaticAnatomy then showed inert videos (poster / black,

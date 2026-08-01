@@ -33,35 +33,6 @@ export default function SectionLoopVideo({
   /** True only after currentTime has advanced — not after play() resolves */
   const [hasFrames, setHasFrames] = useState(false);
 
-  // #region agent log
-  useEffect(() => {
-    fetch("http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "5c4445",
-      },
-      body: JSON.stringify({
-        sessionId: "5c4445",
-        runId: "pre-fix",
-        hypothesisId: "B-C-D",
-        location: "SectionLoopVideo.tsx:state",
-        message: "SectionLoopVideo state",
-        data: {
-          src: src.split("/").pop(),
-          inView,
-          hasFrames,
-          showCover: inView && !hasFrames,
-          videoPaused: videoRef.current?.paused ?? null,
-          currentTime: videoRef.current?.currentTime ?? null,
-          readyState: videoRef.current?.readyState ?? null,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-  }, [inView, hasFrames, src]);
-  // #endregion
-
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -71,33 +42,6 @@ export default function SectionLoopVideo({
         // Do NOT require intersectionRatio — iOS Safari often reports 0
         // while isIntersecting is true (left Composición stuck on poster).
         const hit = entries.some((e) => e.isIntersecting);
-        // #region agent log
-        const e0 = entries[0];
-        fetch(
-          "http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Debug-Session-Id": "5c4445",
-            },
-            body: JSON.stringify({
-              sessionId: "5c4445",
-              runId: "pre-fix",
-              hypothesisId: "B",
-              location: "SectionLoopVideo.tsx:IO",
-              message: "IntersectionObserver",
-              data: {
-                src: src.split("/").pop(),
-                hit,
-                isIntersecting: e0?.isIntersecting ?? null,
-                ratio: e0?.intersectionRatio ?? null,
-              },
-              timestamp: Date.now(),
-            }),
-          },
-        ).catch(() => {});
-        // #endregion
         setInView(hit);
       },
       { threshold: 0, rootMargin: "0px" },
@@ -133,31 +77,6 @@ export default function SectionLoopVideo({
 
     const confirmFrames = () => {
       if (!video.paused && video.currentTime > 0.05) {
-        // #region agent log
-        fetch(
-          "http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Debug-Session-Id": "5c4445",
-            },
-            body: JSON.stringify({
-              sessionId: "5c4445",
-              runId: "pre-fix",
-              hypothesisId: "C",
-              location: "SectionLoopVideo.tsx:confirmFrames",
-              message: "hasFrames set true",
-              data: {
-                src: src.split("/").pop(),
-                currentTime: video.currentTime,
-                paused: video.paused,
-              },
-              timestamp: Date.now(),
-            }),
-          },
-        ).catch(() => {});
-        // #endregion
         setHasFrames(true);
       }
     };
@@ -165,61 +84,7 @@ export default function SectionLoopVideo({
     const tryPlay = () => {
       lock();
       if (video.paused) {
-        void video.play().then(
-          () => {
-            // #region agent log
-            fetch(
-              "http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-Debug-Session-Id": "5c4445",
-                },
-                body: JSON.stringify({
-                  sessionId: "5c4445",
-                  runId: "pre-fix",
-                  hypothesisId: "D",
-                  location: "SectionLoopVideo.tsx:tryPlay",
-                  message: "play() resolved",
-                  data: {
-                    src: src.split("/").pop(),
-                    currentTime: video.currentTime,
-                    paused: video.paused,
-                  },
-                  timestamp: Date.now(),
-                }),
-              },
-            ).catch(() => {});
-            // #endregion
-          },
-          (err) => {
-            // #region agent log
-            fetch(
-              "http://127.0.0.1:7757/ingest/2ca1b4b9-9516-44e4-a778-feaf5b6e0783",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-Debug-Session-Id": "5c4445",
-                },
-                body: JSON.stringify({
-                  sessionId: "5c4445",
-                  runId: "pre-fix",
-                  hypothesisId: "D",
-                  location: "SectionLoopVideo.tsx:tryPlay",
-                  message: "play() rejected",
-                  data: {
-                    src: src.split("/").pop(),
-                    error: String(err),
-                  },
-                  timestamp: Date.now(),
-                }),
-              },
-            ).catch(() => {});
-            // #endregion
-          },
-        );
+        void video.play().catch(() => {});
       }
     };
 
