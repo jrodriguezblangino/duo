@@ -8,7 +8,7 @@ import BackgroundVideo from "@/components/ui/BackgroundVideo";
 
 type HeroProps = {
   eyebrow?: string;
-  /** Primary display line (e.g. "Metal Sliding.") */
+  /** Primary display line (e.g. "Metal Siding.") */
   headline: ReactNode;
   /** Optional second display line — sized to fit longer phrases */
   headlineContinued?: ReactNode;

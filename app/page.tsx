@@ -11,7 +11,7 @@ export default function HomePage() {
     <>
       <Hero
         eyebrow="Revestimiento de ingeniería"
-        headline="Metal Sliding."
+        headline="Metal Siding."
         headlineContinued="El revestimiento que se adapta a tu diseño."
         bridgeLine="Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución."
         videoSrc={assetPath("/assets/videos/hero_cinematic_scan.mp4")}

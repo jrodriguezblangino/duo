@@ -192,7 +192,7 @@ export default function TecnologiaPage() {
                     <p className={HEADLINE_LG}>El ajuste que no se ve.</p>
                     <InstallationBody className={`mt-5 ${BODY}`} />
                     <p className={SPEC_LINE}>
-                      Encastre oculto · tolerancia ± 0.3 mm [VERIFY]
+                      Encastre oculto · tolerancia controlada
                     </p>
                   </div>
                 </div>
