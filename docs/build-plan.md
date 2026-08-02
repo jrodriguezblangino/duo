@@ -198,7 +198,7 @@ components/sections/ProjectsSection.tsx after GuaranteeSection on home. Grid of 
 /galeria or a detail anchor. Use Reveal stagger.
 ```
 
-**Prompt 7.2 — Before/after within gallery**
+**Prompt 7.2 — Before/after within gallery** ✅
 ```
 Extend components/ui/GalleryGrid.tsx (or add GalleryBeforeAfter.tsx) with an optional
 before/after image pair and a draggable divider (pointer events, no dep). Use for 1–2 placeholder

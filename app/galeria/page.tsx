@@ -17,17 +17,17 @@ export default function GaleriaPage() {
       <div className="mx-auto max-w-site">
         <Reveal className="mb-12 max-w-measure lg:mb-16">
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/60 lg:text-[13px]">
-            Material — detalle
+            Galería
           </p>
           <h1
             id="galeria-heading"
             className="mb-6 font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite lg:text-6xl"
           >
-            El material, en detalle.
+            De la obra al detalle.
           </h1>
           <p className="max-w-measure text-base leading-[1.65] text-offwhite/70 lg:text-[17px]">
-            Textura de cara, junta oculta y rechazo de agua — el panel visto
-            de cerca.
+            Comparativas de fachada y el panel de cerca — textura, junta
+            oculta y rechazo de agua.
           </p>
         </Reveal>
         <Reveal delay={0.08}>
