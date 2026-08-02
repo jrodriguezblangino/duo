@@ -222,7 +222,7 @@ ProjectsSection. Accessible accordion (<button aria-expanded> + region), mono qu
 Animate height with Framer Motion, respect reduced-motion. Off-white or carbon bg to alternate rhythm.
 ```
 
-**Prompt 8.2 — JSON-LD for FAQ**
+**Prompt 8.2 — JSON-LD for FAQ** ✅
 ```
 In FaqSection (or app/page.tsx), inject a <script type="application/ld+json"> with FAQPage schema
 built from lib/faq.ts. Keep it server-renderable (no client-only injection that breaks SSR).

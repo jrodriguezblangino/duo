@@ -58,3 +58,19 @@ export const FAQ_ITEMS: FaqItem[] = [
       "Misma geometría de panel en dos familias: wood-look (tonos tipo roble, nogal y similares) y metálico (carbón, aluminio y variantes anodizadas). La carta completa se comparte en la cotización o en muestra física.",
   },
 ];
+
+/** Google FAQPage JSON-LD — safe to stringify into a server-rendered script. */
+export function buildFaqPageJsonLd(items: FaqItem[] = FAQ_ITEMS) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  } as const;
+}
