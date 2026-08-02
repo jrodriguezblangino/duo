@@ -5,6 +5,7 @@ import AnatomySection from "@/components/sections/AnatomySection";
 import TransformationSection from "@/components/sections/TransformationSection";
 import StylesSection from "@/components/sections/StylesSection";
 import ComparisonSection from "@/components/sections/ComparisonSection";
+import GuaranteeSection from "@/components/sections/GuaranteeSection";
 import ConversionSection from "@/components/sections/ConversionSection";
 import { assetPath } from "@/lib/assetPath";
 
@@ -24,6 +25,7 @@ export default function HomePage() {
       <TransformationSection />
       <StylesSection />
       <ComparisonSection />
+      <GuaranteeSection />
       <ConversionSection />
     </>
   );
