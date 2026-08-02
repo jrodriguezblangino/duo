@@ -5,7 +5,7 @@ export default function ConversionSection() {
   return (
     <section
       aria-labelledby="conversion-heading"
-      className="bg-offwhite px-6 py-24 text-carbon lg:px-20 lg:py-section"
+      className="border-t border-carbon/10 bg-offwhite px-6 py-24 text-carbon lg:px-20 lg:py-section"
     >
       <div className="mx-auto max-w-[640px]">
         <Reveal>

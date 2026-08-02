@@ -213,8 +213,9 @@ projects. Keep accessible (keyboard arrow support + aria-label).
 
 📥 **You provide** up to 8 Q&As (or approve this starter set): fire rating, weather resistance,
 install over existing wall, warranty, lead time / import, cleaning, panel dimensions, colors.
+✅ Starter set shipped in `lib/faq.ts` — edit answers there.
 
-**Prompt 8.1 — FAQ accordion**
+**Prompt 8.1 — FAQ accordion** ✅
 ```
 Create lib/faq.ts (Q/A array, BRAND-neutral). Create components/sections/FaqSection.tsx after
 ProjectsSection. Accessible accordion (<button aria-expanded> + region), mono question, body text.
