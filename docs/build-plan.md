@@ -234,13 +234,13 @@ built from lib/faq.ts. Keep it server-renderable (no client-only injection that 
 
 ## PHASE 9 — Calculator → budget output (closes "why pay more")
 
-**Prompt 9.1 — Extend panelCalculator**
+**Prompt 9.1 — Extend panelCalculator** ✅
 ```
 In lib/panelCalculator.ts, add estimateBudget(areaM2) that returns a {min, max} ARS range using a
 placeholder $/m² constant (export BUDGET_PER_M2 for easy editing). Keep estimateFromArea.
 ```
 
-**Prompt 9.2 — Show budget in form**
+**Prompt 9.2 — Show budget in form** ✅
 ```
 In components/ui/ProjectForm.tsx step 3, next to the panel-count preview, also show
 "Presupuesto estimado: $X – $Y (referencial)" using estimateBudget. Add disclaimer.

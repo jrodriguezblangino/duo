@@ -5,8 +5,10 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import {
+  estimateBudget,
   estimateFromArea,
   formatArea,
+  formatArs,
   PANEL_COVERAGE_M2,
 } from "@/lib/panelCalculator";
 import { FINISH_TONES, type FinishTone } from "@/lib/finishes";
@@ -157,6 +159,8 @@ export default function ProjectForm({ tone = "light" }: { tone?: FormTone }) {
   }
 
   const areaPreview = estimateFromArea(Number(form.superficieM2));
+  const budgetPreview = estimateBudget(Number(form.superficieM2));
+  const mutedMono = dark ? "text-offwhite/50" : "text-carbon/50";
   const legendClass = dark
     ? "mb-6 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/55"
     : "mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60";
@@ -459,16 +463,23 @@ export default function ProjectForm({ tone = "light" }: { tone?: FormTone }) {
                     onChange={(e) => update("superficieM2", e.target.value)}
                     className={inputClass}
                   />
-                  {areaPreview && (
-                    <p
-                      className={`mt-2 font-mono text-xs tracking-[0.02em] ${
-                        dark ? "text-offwhite/50" : "text-carbon/50"
-                      }`}
-                    >
-                      ~{areaPreview.paneles} paneles ({formatArea(areaPreview.areaM2)}{" "}
-                      m² · {PANEL_COVERAGE_M2} m²/panel)
-                    </p>
-                  )}
+                  {areaPreview && budgetPreview ? (
+                    <div className={`mt-2 flex flex-col gap-1.5 ${mutedMono}`}>
+                      <p className="font-mono text-xs tracking-[0.02em]">
+                        ~{areaPreview.paneles} paneles (
+                        {formatArea(areaPreview.areaM2)} m² ·{" "}
+                        {PANEL_COVERAGE_M2} m²/panel)
+                      </p>
+                      <p className="font-mono text-xs tracking-[0.02em]">
+                        Presupuesto estimado: {formatArs(budgetPreview.min)} –{" "}
+                        {formatArs(budgetPreview.max)} (referencial)
+                      </p>
+                      <p className="text-[11px] leading-snug tracking-normal">
+                        Referencial — no incluye instalación, flete ni
+                        impuestos. La cotización formal confirma el valor.
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
                 <div>
                   <label htmlFor={`${formId}-timeline`} className={labelClass}>
