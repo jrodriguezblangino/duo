@@ -188,8 +188,9 @@ Big Fraunces line "[X] años de garantía." + 3 small covered/excluded items in 
 
 📥 **You provide** 3–4 project entries: title, location, m², finish (madera/metálico), 1 image each.
 Until real ones exist, use clearly-labeled placeholder projects ("Obra demostrativa").
+✅ Placeholder set shipped: 4 AI demo images in `public/assets/images/project_demo_*.webp` + `lib/projects.ts` — swap when real photos arrive.
 
-**Prompt 7.1 — Projects data + section**
+**Prompt 7.1 — Projects data + section** ✅
 ```
 Create lib/projects.ts (array: id, title, location, m2, finish, image, blurb). Create
 components/sections/ProjectsSection.tsx after GuaranteeSection on home. Grid of project cards

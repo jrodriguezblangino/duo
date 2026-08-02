@@ -6,6 +6,7 @@ import TransformationSection from "@/components/sections/TransformationSection";
 import StylesSection from "@/components/sections/StylesSection";
 import ComparisonSection from "@/components/sections/ComparisonSection";
 import GuaranteeSection from "@/components/sections/GuaranteeSection";
+import ProjectsSection from "@/components/sections/ProjectsSection";
 import ConversionSection from "@/components/sections/ConversionSection";
 import { assetPath } from "@/lib/assetPath";
 
@@ -26,6 +27,7 @@ export default function HomePage() {
       <StylesSection />
       <ComparisonSection />
       <GuaranteeSection />
+      <ProjectsSection />
       <ConversionSection />
     </>
   );
