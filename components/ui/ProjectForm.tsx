@@ -48,8 +48,13 @@ const STEPS = [
   { id: 3, label: "03 Detalles" },
 ] as const;
 
-const INPUT_UNDERLINE =
+const INPUT_UNDERLINE_LIGHT =
   "w-full border-0 border-b border-carbon/30 bg-transparent px-0 py-3 text-base text-carbon placeholder:text-carbon/40 transition-[border-color] duration-300 focus:border-sand focus:outline-none focus-visible:outline-none disabled:opacity-50";
+
+const INPUT_UNDERLINE_DARK =
+  "w-full border-0 border-b border-offwhite/30 bg-transparent px-0 py-3 text-base text-offwhite placeholder:text-offwhite/40 transition-[border-color] duration-300 focus:border-sand focus:outline-none focus-visible:outline-none disabled:opacity-50";
+
+type FormTone = "light" | "dark";
 
 type SubmitState =
   | { status: "idle" }
@@ -61,9 +66,11 @@ type SubmitState =
  * Multi-step Request a Quote form (§3.5).
  * Underline inputs, invert selection cards, Sand progress line — no modal/toast.
  */
-export default function ProjectForm() {
+export default function ProjectForm({ tone = "light" }: { tone?: FormTone }) {
   const formId = useId();
   const prefersReducedMotion = useReducedMotion();
+  const dark = tone === "dark";
+  const inputClass = dark ? INPUT_UNDERLINE_DARK : INPUT_UNDERLINE_LIGHT;
   const [step, setStep] = useState(1);
   const [submitState, setSubmitState] = useState<SubmitState>({
     status: "idle",
@@ -130,10 +137,18 @@ export default function ProjectForm() {
         transition={prefersReducedMotion ? { duration: 0.2 } : { ...glide, duration: 0.4 }}
         className="py-8"
       >
-        <p className="font-headline text-[28px] font-normal italic leading-[1.1] text-carbon lg:text-[40px]">
+        <p
+          className={`font-headline text-[28px] font-normal italic leading-[1.1] lg:text-[40px] ${
+            dark ? "text-offwhite" : "text-carbon"
+          }`}
+        >
           Flujo de cotización (demo).
         </p>
-        <p className="mt-4 max-w-measure text-base leading-[1.65] text-carbon/70">
+        <p
+          className={`mt-4 max-w-measure text-base leading-[1.65] ${
+            dark ? "text-offwhite/70" : "text-carbon/70"
+          }`}
+        >
           Esta maqueta muestra el recorrido del formulario. El envío real y la
           cotización se activarán en la versión de producción.
         </p>
@@ -142,6 +157,12 @@ export default function ProjectForm() {
   }
 
   const areaPreview = estimateFromArea(Number(form.superficieM2));
+  const legendClass = dark
+    ? "mb-6 text-xs font-medium uppercase tracking-[0.18em] text-offwhite/55"
+    : "mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60";
+  const labelClass = dark
+    ? "mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-offwhite/55"
+    : "mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60";
 
   return (
     <form
@@ -150,10 +171,10 @@ export default function ProjectForm() {
       className="flex flex-col gap-10"
       noValidate={false}
     >
-      {/* Progress — 1px Sand over Carbon@20% track */}
+      {/* Progress — 1px Sand over muted track */}
       <div>
         <div
-          className="h-px w-full bg-carbon/20"
+          className={`h-px w-full ${dark ? "bg-offwhite/20" : "bg-carbon/20"}`}
           role="progressbar"
           aria-valuenow={step}
           aria-valuemin={1}
@@ -167,11 +188,21 @@ export default function ProjectForm() {
             transition={prefersReducedMotion ? { duration: 0.15 } : precision}
           />
         </div>
-        <ol className="mt-4 flex flex-wrap gap-4 font-mono text-xs tracking-[0.02em] text-carbon/50 lg:text-[13px]">
+        <ol
+          className={`mt-4 flex flex-wrap gap-4 font-mono text-xs tracking-[0.02em] lg:text-[13px] ${
+            dark ? "text-offwhite/45" : "text-carbon/50"
+          }`}
+        >
           {STEPS.map((s) => (
             <li
               key={s.id}
-              className={step === s.id ? "text-carbon" : undefined}
+              className={
+                step === s.id
+                  ? dark
+                    ? "text-offwhite"
+                    : "text-carbon"
+                  : undefined
+              }
             >
               {s.label}
             </li>
@@ -192,9 +223,7 @@ export default function ProjectForm() {
         >
           {step === 1 && (
             <fieldset disabled={isLoading}>
-              <legend className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60">
-                Tipo de proyecto
-              </legend>
+              <legend className={legendClass}>Tipo de proyecto</legend>
               <div className="grid gap-3 sm:grid-cols-2">
                 {PROJECT_TYPES.map(({ key, label }) => {
                   const selected = form.tipoProyecto === key;
@@ -206,8 +235,12 @@ export default function ProjectForm() {
                       onClick={() => update("tipoProyecto", key)}
                       className={`border px-6 py-5 text-left text-sm font-medium uppercase tracking-[0.08em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
                         selected
-                          ? "border-carbon bg-carbon text-offwhite"
-                          : "border-carbon text-carbon hover:bg-carbon/5"
+                          ? dark
+                            ? "border-offwhite bg-offwhite text-carbon"
+                            : "border-carbon bg-carbon text-offwhite"
+                          : dark
+                            ? "border-offwhite/35 text-offwhite hover:bg-offwhite/5"
+                            : "border-carbon text-carbon hover:bg-carbon/5"
                       }`}
                     >
                       {label}
@@ -221,9 +254,7 @@ export default function ProjectForm() {
           {step === 2 && (
             <div className="flex flex-col gap-10">
               <fieldset disabled={isLoading}>
-                <legend className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60">
-                  Dirección de material
-                </legend>
+                <legend className={legendClass}>Dirección de material</legend>
                 <div
                   role="group"
                   aria-label="Acabado"
@@ -239,7 +270,7 @@ export default function ProjectForm() {
                       {index > 0 && (
                         <span
                           aria-hidden="true"
-                          className="h-4 w-px bg-carbon/30"
+                          className={`h-4 w-px ${dark ? "bg-offwhite/30" : "bg-carbon/30"}`}
                         />
                       )}
                       <button
@@ -251,15 +282,23 @@ export default function ProjectForm() {
                         <span
                           className={
                             form.estilo === key
-                              ? "text-carbon"
-                              : "text-carbon/40"
+                              ? dark
+                                ? "text-offwhite"
+                                : "text-carbon"
+                              : dark
+                                ? "text-offwhite/40"
+                                : "text-carbon/40"
                           }
                         >
                           {label}
                         </span>
                         {form.estilo === key && (
                           <motion.span
-                            layoutId="form-style-underline"
+                            layoutId={
+                              dark
+                                ? "form-style-underline-dark"
+                                : "form-style-underline"
+                            }
                             aria-hidden="true"
                             className="absolute inset-x-0 bottom-0 h-px bg-sand"
                             transition={
@@ -276,9 +315,7 @@ export default function ProjectForm() {
               </fieldset>
 
               <fieldset disabled={isLoading}>
-                <legend className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-carbon/60">
-                  Tono de acabado
-                </legend>
+                <legend className={legendClass}>Tono de acabado</legend>
                 <div className="flex flex-wrap gap-5">
                   {FINISH_TONES.map(({ key, label, src, objectPosition }) => {
                     const selected = form.tono === key;
@@ -297,8 +334,12 @@ export default function ProjectForm() {
                           aria-hidden="true"
                           className={`relative h-14 w-14 overflow-hidden border ${
                             selected
-                              ? "border-carbon"
-                              : "border-carbon/25"
+                              ? dark
+                                ? "border-offwhite"
+                                : "border-carbon"
+                              : dark
+                                ? "border-offwhite/25"
+                                : "border-carbon/25"
                           }`}
                         >
                           <Image
@@ -310,7 +351,11 @@ export default function ProjectForm() {
                             style={{ objectPosition }}
                           />
                         </span>
-                        <span className="font-mono text-xs tracking-[0.02em] text-carbon">
+                        <span
+                          className={`font-mono text-xs tracking-[0.02em] ${
+                            dark ? "text-offwhite" : "text-carbon"
+                          }`}
+                        >
                           {label}
                         </span>
                       </button>
@@ -325,10 +370,7 @@ export default function ProjectForm() {
             <div className="flex flex-col gap-8">
               <div className="grid gap-8 md:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor={`${formId}-nombre`}
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
-                  >
+                  <label htmlFor={`${formId}-nombre`} className={labelClass}>
                     Nombre
                   </label>
                   <input
@@ -340,15 +382,12 @@ export default function ProjectForm() {
                     autoComplete="name"
                     value={form.nombre}
                     onChange={(e) => update("nombre", e.target.value)}
-                    className={INPUT_UNDERLINE}
+                    className={inputClass}
                     style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", transitionDuration: "400ms" }}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor={`${formId}-email`}
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
-                  >
+                  <label htmlFor={`${formId}-email`} className={labelClass}>
                     Email
                   </label>
                   <input
@@ -360,17 +399,14 @@ export default function ProjectForm() {
                     autoComplete="email"
                     value={form.email}
                     onChange={(e) => update("email", e.target.value)}
-                    className={INPUT_UNDERLINE}
+                    className={inputClass}
                   />
                 </div>
               </div>
 
               <div className="grid gap-8 md:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor={`${formId}-telefono`}
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
-                  >
+                  <label htmlFor={`${formId}-telefono`} className={labelClass}>
                     Teléfono
                   </label>
                   <input
@@ -382,14 +418,11 @@ export default function ProjectForm() {
                     autoComplete="tel"
                     value={form.telefono}
                     onChange={(e) => update("telefono", e.target.value)}
-                    className={INPUT_UNDERLINE}
+                    className={inputClass}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor={`${formId}-direccion`}
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
-                  >
+                  <label htmlFor={`${formId}-direccion`} className={labelClass}>
                     Dirección del proyecto
                   </label>
                   <input
@@ -400,7 +433,7 @@ export default function ProjectForm() {
                     autoComplete="street-address"
                     value={form.direccion}
                     onChange={(e) => update("direccion", e.target.value)}
-                    className={INPUT_UNDERLINE}
+                    className={inputClass}
                   />
                 </div>
               </div>
@@ -409,7 +442,7 @@ export default function ProjectForm() {
                 <div>
                   <label
                     htmlFor={`${formId}-superficie`}
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
+                    className={labelClass}
                   >
                     Superficie aprox. (m²)
                   </label>
@@ -424,20 +457,21 @@ export default function ProjectForm() {
                     disabled={isLoading}
                     value={form.superficieM2}
                     onChange={(e) => update("superficieM2", e.target.value)}
-                    className={INPUT_UNDERLINE}
+                    className={inputClass}
                   />
                   {areaPreview && (
-                    <p className="mt-2 font-mono text-xs tracking-[0.02em] text-carbon/50">
+                    <p
+                      className={`mt-2 font-mono text-xs tracking-[0.02em] ${
+                        dark ? "text-offwhite/50" : "text-carbon/50"
+                      }`}
+                    >
                       ~{areaPreview.paneles} paneles ({formatArea(areaPreview.areaM2)}{" "}
                       m² · {PANEL_COVERAGE_M2} m²/panel)
                     </p>
                   )}
                 </div>
                 <div>
-                  <label
-                    htmlFor={`${formId}-timeline`}
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
-                  >
+                  <label htmlFor={`${formId}-timeline`} className={labelClass}>
                     Plazo
                   </label>
                   <select
@@ -447,7 +481,7 @@ export default function ProjectForm() {
                     disabled={isLoading}
                     value={form.timeline}
                     onChange={(e) => update("timeline", e.target.value)}
-                    className={INPUT_UNDERLINE}
+                    className={`${inputClass} ${dark ? "[&>option]:bg-carbon [&>option]:text-offwhite" : ""}`}
                   >
                     <option value="" disabled>
                       Seleccionar
@@ -462,10 +496,7 @@ export default function ProjectForm() {
               </div>
 
               <div>
-                <label
-                  htmlFor={`${formId}-mensaje`}
-                  className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-carbon/60"
-                >
+                <label htmlFor={`${formId}-mensaje`} className={labelClass}>
                   Mensaje
                 </label>
                 <textarea
@@ -475,7 +506,7 @@ export default function ProjectForm() {
                   disabled={isLoading}
                   value={form.mensaje}
                   onChange={(e) => update("mensaje", e.target.value)}
-                  className={`${INPUT_UNDERLINE} resize-y`}
+                  className={`${inputClass} resize-y`}
                 />
               </div>
             </div>
@@ -484,7 +515,10 @@ export default function ProjectForm() {
       </AnimatePresence>
 
       {submitState.status === "error" && (
-        <p role="alert" className="text-sm text-[#9C4530]">
+        <p
+          role="alert"
+          className={`text-sm ${dark ? "text-[#E8A090]" : "text-[#9C4530]"}`}
+        >
           {submitState.message}
         </p>
       )}
@@ -495,7 +529,11 @@ export default function ProjectForm() {
             type="button"
             disabled={isLoading}
             onClick={() => setStep((s) => s - 1)}
-            className="text-sm font-medium uppercase tracking-[0.08em] text-carbon/60 hover:text-carbon focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
+            className={`text-sm font-medium uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
+              dark
+                ? "text-offwhite/60 hover:text-offwhite"
+                : "text-carbon/60 hover:text-carbon"
+            }`}
           >
             Atrás
           </button>

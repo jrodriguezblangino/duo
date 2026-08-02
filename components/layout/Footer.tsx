@@ -11,7 +11,7 @@ const contactLinkClass =
 
 export default function Footer() {
   return (
-    <footer className="border-t border-offwhite/10 bg-carbon">
+    <footer className="border-t border-offwhite/15 bg-carbon">
       <div className="mx-auto grid max-w-site gap-12 px-6 py-16 md:grid-cols-3 lg:px-20">
         <div className="flex flex-col gap-4">
           <Link
