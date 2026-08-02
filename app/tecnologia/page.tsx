@@ -12,11 +12,11 @@ import {
   ManufacturingBody,
 } from "./HighlightedBodies";
 import { SPECS } from "@/lib/specs";
+import { BRAND } from "@/lib/brand.config";
 
 export const metadata: Metadata = {
   title: "Tecnología",
-  description:
-    "Tres capas: aluminio anodizado 0.6 mm, poliuretano de alta densidad y acero galvanizado. Ficha técnica Fill Home.",
+  description: `Tres capas: aluminio anodizado 0.6 mm, poliuretano de alta densidad y acero galvanizado. Ficha técnica ${BRAND.name}.`,
 };
 
 const LAYERS = [
@@ -142,7 +142,7 @@ export default function TecnologiaPage() {
                 <MediaFrame aspectClass="aspect-[2/1]">
                   <Image
                     src={assetPath("/assets/images/exploded_view_components.webp")}
-                    alt="Perfiles y panel Fill Home en vista de taller"
+                    alt={`Perfiles y panel ${BRAND.name} en vista de taller`}
                     fill
                     sizes="(min-width: 1440px) 1024px, 100vw"
                     className="object-cover object-[50%_30%]"
@@ -173,7 +173,7 @@ export default function TecnologiaPage() {
                       <BackgroundVideo
                         src={assetPath("/assets/videos/motion-clipper.mp4")}
                         preload="metadata"
-                        aria-label="Encastre oculto entre paneles Fill Home"
+                        aria-label={`Encastre oculto entre paneles ${BRAND.name}`}
                         className="absolute inset-0 h-full w-full object-cover"
                       />
                     </MediaFrame>
@@ -249,7 +249,7 @@ export default function TecnologiaPage() {
           </h2>
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">
-              Especificaciones técnicas del panel Fill Home
+              Especificaciones técnicas del panel {BRAND.name}
             </caption>
             <tbody>
               {SPECS.map(({ label, value }) => (

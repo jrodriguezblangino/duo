@@ -10,6 +10,7 @@ import {
 } from "react";
 import Image from "next/image";
 import { assetPath } from "@/lib/assetPath";
+import { BRAND } from "@/lib/brand.config";
 
 const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.webp");
 const METAL_SRC = assetPath(
@@ -407,7 +408,7 @@ export default function StyleToggle() {
         ) : null}
 
         <span className="sr-only">
-          Comparación de acabados del panel Fill Home: aspecto madera a la
+          Comparación de acabados del panel {BRAND.name}: aspecto madera a la
           izquierda y metálico a la derecha. Usá las flechas o arrastrá el
           control para revelar cada acabado.
         </span>

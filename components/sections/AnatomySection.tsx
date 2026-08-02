@@ -15,6 +15,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { assetPath } from "@/lib/assetPath";
+import { BRAND } from "@/lib/brand.config";
 import { glide } from "@/lib/motion";
 import {
   HighlightWord,
@@ -457,7 +458,7 @@ function StaticAnatomy() {
             poster={VIDEO_POSTER}
             wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto w-full max-w-[min(100%,560px)] overflow-hidden rounded-sm bg-slate`}
             className="h-full w-full object-contain"
-            aria-label="Desmontaje de las tres capas del panel Fill Home"
+            aria-label={`Desmontaje de las tres capas del panel ${BRAND.name}`}
           />
           <p className={`mt-4 ${MONO_MUTED}`}>
             Desmontaje de capas — ensamble mecánico
@@ -505,7 +506,7 @@ function StaticAnatomy() {
               poster={DETAIL_VIDEO_POSTER}
               wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm bg-slate`}
               className="h-full w-full object-contain"
-              aria-label="Detalle de canto del panel Fill Home — tres capas"
+              aria-label={`Detalle de canto del panel ${BRAND.name} — tres capas`}
             />
           </div>
           <div className="lg:col-span-5">
@@ -566,7 +567,7 @@ function MobileAnatomy() {
             poster={VIDEO_POSTER}
             wrapperClassName={`relative ${VIDEO_ASPECT} mx-auto overflow-hidden rounded-sm bg-slate`}
             className="h-full w-full object-contain"
-            aria-label="Desmontaje de las tres capas del panel Fill Home"
+            aria-label={`Desmontaje de las tres capas del panel ${BRAND.name}`}
           />
           <p className={`mt-4 ${MONO_MUTED}`}>
             Desmontaje de capas — ensamble mecánico
@@ -618,7 +619,7 @@ function MobileAnatomy() {
               poster={DETAIL_VIDEO_POSTER}
               wrapperClassName={`relative ${DETAIL_ASPECT} overflow-hidden rounded-sm bg-slate`}
               className="h-full w-full object-contain"
-              aria-label="Detalle de canto del panel Fill Home — tres capas"
+              aria-label={`Detalle de canto del panel ${BRAND.name} — tres capas`}
             />
           </div>
           <motion.div
@@ -730,7 +731,7 @@ function DesktopAnatomy() {
                     poster={VIDEO_POSTER}
                     disablePictureInPicture
                     className="h-full w-full object-contain"
-                    aria-label="Desmontaje de las tres capas del panel Fill Home"
+                    aria-label={`Desmontaje de las tres capas del panel ${BRAND.name}`}
                   />
                 </motion.div>
 
@@ -750,7 +751,7 @@ function DesktopAnatomy() {
                       preload="metadata"
                       disablePictureInPicture
                       className="h-full w-full object-contain"
-                      aria-label="Detalle de canto del panel Fill Home — tres capas"
+                      aria-label={`Detalle de canto del panel ${BRAND.name} — tres capas`}
                     />
                   </div>
                 </motion.div>

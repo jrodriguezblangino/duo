@@ -267,14 +267,15 @@ twitter card. Add a Product JSON-LD script using BRAND + SPECS. Add a docs TODO 
 
 ## PHASE 11 — Final verify & reskin readiness
 
-**Prompt 11.1 — Build + a11y sweep**
+**Prompt 11.1 — Build + a11y sweep** ✅
 ```
 Run npm run build. Fix any type/lint errors. Audit contrast of text-muted on slate and
 text-offwhite/70 on carbon (aim >= 4.5:1). Confirm skip-link, focus-visible, and reduced-motion
 paths still work after all additions. Confirm no hardcoded "Fill Home" remains outside brand.config.
 ```
+**11.1 notes:** Build green. Contrast: muted/slate 8.65:1, offwhite/70 on carbon 7.58:1 (both ≥4.5). Skip-link + global `:focus-visible` present; reduced-motion via `useReducedMotion` in Reveal/Hero/FAQ/Gallery/etc. Hardcoded brand name cleared from `app/` + `components/` (only `lib/brand.config.ts`).
 
-**Prompt 11.2 — Reskin doc**
+**Prompt 11.2 — Reskin doc** ✅
 ```
 Create docs/reskin.md: 1-page instruction for a new client = "edit lib/brand.config.ts
 (name, whatsapp, email, accentToken, logo) + drop images in /public/assets". List which sections

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import GalleryBeforeAfter from "@/components/ui/GalleryBeforeAfter";
 import { assetPath } from "@/lib/assetPath";
+import { BRAND } from "@/lib/brand.config";
 import { ENTRY_Y, STAGGER, glide, precision } from "@/lib/motion";
 import { useBackgroundVideo } from "@/lib/useBackgroundVideo";
 
@@ -52,7 +53,7 @@ const BEFORE_AFTER: GalleryBeforeAfterItem[] = [
     beforeSrc: assetPath("/assets/images/project_demo_villa_before.webp"),
     afterSrc: assetPath("/assets/images/project_demo_villa_madera.webp"),
     beforeAlt: "Casa de country en Pilar antes del revestimiento",
-    afterAlt: "Misma fachada con paneles wood-look Fill Home",
+    afterAlt: `Misma fachada con paneles wood-look ${BRAND.name}`,
     label: "Comparar antes y después — casa de country en Pilar",
   },
   {
@@ -62,7 +63,7 @@ const BEFORE_AFTER: GalleryBeforeAfterItem[] = [
     beforeSrc: assetPath("/assets/images/project_demo_townhouse_before.webp"),
     afterSrc: assetPath("/assets/images/project_demo_townhouse_metal.webp"),
     beforeAlt: "Casa urbana en Buenos Aires antes del revestimiento",
-    afterAlt: "Misma fachada con paneles metálicos carbón Fill Home",
+    afterAlt: `Misma fachada con paneles metálicos carbón ${BRAND.name}`,
     label: "Comparar antes y después — casa urbana en Buenos Aires",
   },
 ];
@@ -74,7 +75,7 @@ const ITEMS: GalleryMediaItem[] = [
     type: "image",
     category: "interior",
     caption: "Acabados: wood-look y metálico — misma geometría de panel.",
-    alt: "Paneles Fill Home en acabados wood-look y metálico",
+    alt: `Paneles ${BRAND.name} en acabados wood-look y metálico`,
   },
   {
     id: "macro",

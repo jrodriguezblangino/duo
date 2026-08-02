@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import GalleryGrid from "@/components/ui/GalleryGrid";
 import Reveal from "@/components/ui/Reveal";
+import { BRAND } from "@/lib/brand.config";
 
 export const metadata: Metadata = {
   title: "Galería",
-  description:
-    "Macro de textura, acabados aspecto madera y metálico, y comportamiento al agua del panel Fill Home.",
+  description: `Macro de textura, acabados aspecto madera y metálico, y comportamiento al agua del panel ${BRAND.name}.`,
 };
 
 export default function GaleriaPage() {
