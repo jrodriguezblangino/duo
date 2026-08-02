@@ -11,6 +11,7 @@ import {
   InsulationBody,
   ManufacturingBody,
 } from "./HighlightedBodies";
+import { SPECS } from "@/lib/specs";
 
 export const metadata: Metadata = {
   title: "Tecnología",
@@ -38,17 +39,6 @@ const LAYERS = [
       "Rigidez estructural del sistema; estabilidad dimensional en el tiempo.",
   },
 ] as const;
-
-const SPECS = [
-  { label: "Dimensiones", value: "3 m × 40 cm" },
-  { label: "Cobertura", value: "1,5 m² por panel" },
-  { label: "Cara", value: "Aluminio anodizado 0.6 mm" },
-  { label: "Núcleo", value: "Poliuretano HD — aislamiento + adhesión" },
-  { label: "Respaldo", value: "Acero galvanizado" },
-  { label: "Instalación", value: "Encastre oculto sobre muro existente" },
-  { label: "Mantenimiento", value: "Agua y paño suave" },
-  { label: "Acabados", value: "Aspecto madera / Metálico" },
-];
 
 const RAIL = "mx-auto w-full max-w-[64rem]";
 const CHAPTER_Y = "py-16 lg:py-24";

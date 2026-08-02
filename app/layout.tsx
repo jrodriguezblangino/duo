@@ -4,7 +4,13 @@ import localFont from "next/font/local";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
-import { SITE_NAME } from "@/lib/brand.config";
+import { BRAND, SITE_NAME } from "@/lib/brand.config";
+import {
+  OG_IMAGE_PATH,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  buildProductJsonLd,
+} from "@/lib/seo";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -39,13 +45,37 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const siteTitle = `${SITE_NAME} | Revestimientos de alta gama`;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Revestimientos de alta gama`,
+    default: siteTitle,
     template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Paneles de revestimiento madera-look sobre núcleo de poliuretano y respaldo de acero. Ingeniería de tres capas para proyectos exigentes.",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: siteTitle,
+    description: BRAND.tagline,
+    images: [
+      {
+        url: OG_IMAGE_PATH,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} — revestimiento metal siding wood-look`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: BRAND.tagline,
+    images: [OG_IMAGE_PATH],
+  },
 };
 
 export default function RootLayout({
@@ -53,6 +83,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const productJsonLd = buildProductJsonLd();
+
   return (
     <html
       lang="es"
@@ -60,6 +92,12 @@ export default function RootLayout({
       className={`${fraunces.variable} ${generalSans.variable} ${ibmPlexMono.variable} h-full`}
     >
       <body className="flex min-h-full flex-col bg-carbon font-body text-offwhite antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <a
           href="#contenido-principal"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-sand focus:px-4 focus:py-2 focus:text-offwhite"

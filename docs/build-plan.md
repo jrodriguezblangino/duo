@@ -253,8 +253,9 @@ In components/ui/ProjectForm.tsx step 3, next to the panel-count preview, also s
 ## PHASE 10 — SEO & OG (so prospects find it)
 
 📥 **You provide** one hero OG image (1200×630) — or I can note it as a TODO.
+✅ Placeholder `public/og.png` shipped; replace with final brand art — see `docs/og-image.md`.
 
-**Prompt 10.1 — OG + structured data**
+**Prompt 10.1 — OG + structured data** ✅
 ```
 In app/layout.tsx metadata, add openGraph {title, description, url, images:[/og.png]} and
 twitter card. Add a Product JSON-LD script using BRAND + SPECS. Add a docs TODO for the real OG image.
