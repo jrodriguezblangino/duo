@@ -10,20 +10,19 @@ export const BRAND = {
   /** One-line brand promise */
   tagline: "Sistema constructivo PIR — techo y fachada",
   /** International digits only — no + or spaces (wa.me) */
-  // ⚠️ Confirmar WA real de su IG antes de deploy. Placeholder hasta entonces:
-  whatsapp: "54911XXXXXXX",
+  whatsapp: "5491164594688",
   /** Pre-filled Spanish text, already URL-encoded for wa.me ?text= */
   whatsappMessage: encodeURIComponent(
     "Hola, vi el prototipo de mi marca y quiero saber más",
   ),
   email: "hola@duopaneles.com.ar",
-  phoneDisplay: "11 XXXX-XXXX",
+  phoneDisplay: "11 6459-4688",
   ctaLabel: "Hablar por WhatsApp",
-  /** Tailwind color token used as the brand accent */
+  /** Tailwind color token used as the brand accent (hex = mint §0) */
   accentToken: "sand",
-  logoLightPath: assetPath("/assets/logos/duopaneles-light.png"),
-  logoDarkPath: assetPath("/assets/logos/duopaneles-dark.png"),
-  socialProofNote: "Representante oficial Arneg · paneles PIR",
+  logoLightPath: assetPath("/assets/logos/duo.png"),
+  logoDarkPath: assetPath("/assets/logos/duo.png"),
+  socialProofNote: "Partner oficial Arneg · +3.000 proyectos",
 } as const;
 
 /** Compatibility aliases — prefer BRAND.* in new code */
