@@ -221,8 +221,11 @@ function MobileManifesto() {
     <section
       ref={sectionRef}
       aria-labelledby="manifiesto-heading"
-      className="box-border bg-offwhite px-6 py-section-mobile text-carbon"
+      className="box-border bg-offwhite px-6 py-section-mobile text-carbon relative"
     >
+      {/* Composed light-break seams */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-20 h-20 bg-gradient-to-b from-carbon to-offwhite" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-20 bg-gradient-to-t from-carbon to-offwhite" />
       <div className="relative mx-auto w-full max-w-site">
         <motion.div
           aria-hidden="true"
@@ -259,8 +262,11 @@ function DesktopManifesto() {
   return (
     <section
       aria-labelledby="manifiesto-heading-desktop"
-      className="box-border bg-offwhite text-carbon"
+      className="box-border bg-offwhite text-carbon relative"
     >
+      {/* Composed light-break seams: dark→light (top) and light→dark (bottom) */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-20 h-24 bg-gradient-to-b from-carbon to-offwhite" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-24 bg-gradient-to-t from-carbon to-offwhite" />
       <div ref={trackRef} className="relative h-[150vh]">
         <div className="sticky top-0 flex h-dvh items-center overflow-x-hidden py-24">
           <div className="relative mx-auto w-full max-w-site px-20">
@@ -304,8 +310,11 @@ export default function ManifestoSection() {
     return (
       <section
         aria-labelledby="manifiesto-heading"
-        className="box-border bg-offwhite px-6 py-section-mobile text-carbon lg:px-20 lg:py-section"
+        className="box-border bg-offwhite px-6 py-section-mobile text-carbon lg:px-20 lg:py-section relative"
       >
+        {/* Composed light-break seams */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-20 h-20 bg-gradient-to-b from-carbon to-offwhite" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-20 bg-gradient-to-t from-carbon to-offwhite" />
         <div className="relative mx-auto box-border w-full max-w-site">
           <div
             aria-hidden="true"

@@ -52,35 +52,35 @@ const DETAIL_ASPECT = "aspect-video";
 
 const LAYERS = [
   {
-    id: "aluminum",
+    id: "steel-face",
     index: "01",
     role: "Cara vista",
-    name: "Aluminio anodizado",
-    spec: "Una superficie diseñada para conservar su carácter. Acabado wood-look con resistencia frente al sol, la humedad y el desgaste cotidiano.",
+    name: "Chapa de acero",
+    spec: "La superficie que se ve y resiste. Acero conformado (calibre #25) con terminación para exterior, lista para enfrentar sol, lluvia y el uso diario.",
   },
   {
-    id: "polyurethane",
+    id: "pir",
     index: "02",
     role: "Núcleo",
-    name: "Poliuretano HD",
-    spec: "El corazón del sistema. Aporta aislamiento térmico, confort acústico y una estructura sólida que se percibe desde el primer contacto.",
+    name: "Poliisocianurato (PIR)",
+    spec: "El corazón del sistema. Aporta aislamiento térmico superior, confort acústico y retardo al fuego — la eficiencia energética del panel.",
   },
   {
-    id: "steel",
+    id: "steel-back",
     index: "03",
     role: "Respaldo",
     name: "Acero galvanizado",
-    spec: "La estructura que sostiene el rendimiento. Rigidez, estabilidad y protección para una placa preparada para acompañar cada proyecto durante años.",
+    spec: "La estructura que sostiene el rendimiento. Rigidez, estabilidad y protección para un panel preparado para acompañar cada proyecto durante años.",
   },
 ] as const;
 
 const SCENE3_COPY = {
   label: "Detalle constructivo",
-  headlineLine1: "Tres materiales.",
+  headlineLine1: "Tres capas.",
   headlineLine2: "Una sola solución.",
-  lead: "Cada capa fue elegida por una razón. El ",
-  afterAluminum: " protege la superficie y mantiene su acabado. El ",
-  afterPoly: " aporta aislamiento y consistencia. El ",
+  lead: "Cada capa fue elegida por una razón. La ",
+  afterAluminum: " enfrenta la intemperie y mantiene su terminación. El ",
+  afterPoly: " aporta aislamiento y retardo al fuego. El ",
   afterSteel:
     " entrega la rigidez estructural que define el sistema. Todo integrado mediante un encastre oculto que elimina fijaciones visibles y consigue una superficie limpia, continua y precisa.",
 } as const;
@@ -142,9 +142,9 @@ function Scene3Spec({ className = "mt-10" }: { className?: string }) {
         className="mb-4 block h-px w-full max-w-measure bg-offwhite/15"
       />
       <p className="font-mono text-[11px] tracking-[0.06em] text-offwhite/45 lg:text-xs">
-        <span className="text-sand">0.6 mm</span>
-        {" aluminio anodizado · núcleo "}
-        <span className="text-sand">HD</span>
+        <span className="text-sand">calibre #25</span>
+        {" chapa de acero · núcleo "}
+        <span className="text-sand">PIR</span>
         {" · acero galvanizado"}
       </p>
     </div>

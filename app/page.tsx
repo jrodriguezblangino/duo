@@ -18,8 +18,8 @@ export default function HomePage() {
       <Hero
         eyebrow="dúoPANELES"
         headline="Un sistema constructivo superior."
-        headlineContinued="La solución sustentable que garantiza ahorro de energía, velocidad de obra, durabilidad y seguridad."
-        bridgeLine="Aislamiento térmico superior y óptimo aislamiento acústico para todos los proyectos — partner oficial Arneg."
+        headlineContinued="Panel aislante PIR para techo y fachada."
+        bridgeLine="La solución sustentable que garantiza ahorro de energía, velocidad de obra, durabilidad y seguridad — partner oficial Arneg."
         videoSrc={assetPath("/assets/videos/duo.mp4")}
       />
       <StatsBand />
