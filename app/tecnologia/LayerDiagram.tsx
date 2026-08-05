@@ -122,7 +122,7 @@ export default function LayerDiagram({ layers }: LayerDiagramProps) {
                   onFocus={() => activate(i)}
                   className={`relative flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border font-mono text-[10px] tracking-[0.06em] transition-[border-color,background-color,color,transform] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand ${
                     isActive
-                      ? "scale-105 border-sand bg-sand text-offwhite"
+                      ? "scale-105 border-sand bg-sand text-carbon"
                       : isHot
                         ? "border-sand bg-slate/95 text-sand"
                         : "border-sand/65 bg-carbon/80 text-sand hover:border-sand"

@@ -83,7 +83,7 @@ export default function GuaranteeSection() {
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_15%_20%,rgba(188,74,38,0.14),transparent_55%),radial-gradient(ellipse_70%_50%_at_90%_80%,rgba(58,44,32,0.55),transparent_50%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_15%_20%,rgba(144,238,144,0.14),transparent_55%),radial-gradient(ellipse_70%_50%_at_90%_80%,rgba(58,44,32,0.55),transparent_50%)]"
       />
 
       {/* Living glow behind the numeral */}
