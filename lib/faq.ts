@@ -10,10 +10,22 @@ export type FaqItem = {
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
+    id: "pir",
+    question: "¿Qué es PIR?",
+    answer:
+      "PIR (poliisocianurato) es el núcleo aislante del panel. Ofrece aislamiento térmico superior, confort acústico y retardo al fuego frente al poliuretano común, en un sistema de chapa de acero calibre #25 con respaldo galvanizado.",
+  },
+  {
     id: "fuego",
     question: "¿Qué comportamiento tiene frente al fuego?",
     answer:
       "El núcleo de poliisocianurato (PIR) aporta retardo a la propagación del fuego, superior al poliuretano común. La cara de chapa de acero y el respaldo galvanizado no alimentan la combustión. La clasificación exacta depende del sistema y la normativa local; se entrega con la ficha técnica del lote.",
+  },
+  {
+    id: "bim",
+    question: "¿Hay biblioteca BIM?",
+    answer:
+      "Sí. Disponemos de familias y fichas técnicas para modelar paneles de techo y muro en el proyecto. Pedilas por WhatsApp o desde la sección Tecnología.",
   },
   {
     id: "clima",

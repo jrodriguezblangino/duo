@@ -20,16 +20,15 @@ export default function ProjectsSection() {
       className="bg-carbon px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
     >
       <div className="mx-auto max-w-site">
-        <Reveal className="mb-12 max-w-[32ch] lg:mb-16">
+        <Reveal className="mb-12 max-w-[20ch] lg:mb-16">
           <h2
             id="proyectos-heading"
             className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
           >
-            Obra real, misma ingeniería.
+            Obras.
           </h2>
           <p className="mt-5 max-w-measure text-base leading-relaxed text-offwhite/60 lg:text-lg">
-            Referencias demostrativas hasta publicar instalaciones reales. El
-            sistema de panel es el mismo.
+            Referencias demostrativas hasta publicar instalaciones reales.
           </p>
         </Reveal>
 

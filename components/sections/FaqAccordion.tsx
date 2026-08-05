@@ -85,15 +85,15 @@ export default function FaqAccordion() {
           id="faq-heading"
           className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
         >
-          Antes de cotizar.
+          Preguntas frecuentes.
         </h2>
         <p className="mt-5 max-w-measure text-base leading-relaxed text-offwhite/65 lg:text-lg">
-          Respuestas cortas sobre instalación, garantía y el sistema de panel.
+          PIR, fuego, instalación, BIM y plazos.
         </p>
       </Reveal>
 
       <Reveal delay={0.08} className="lg:col-span-8">
-        <div className="border-t border-carbon/10">
+        <div className="border-t border-offwhite/10">
           {FAQ_ITEMS.map((item) => (
             <FaqItemRow
               key={item.id}

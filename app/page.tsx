@@ -1,17 +1,20 @@
 import Hero from "@/components/ui/Hero";
-import StatsBand from "@/components/sections/StatsBand";
-import ManifestoSection from "@/components/sections/ManifestoSection";
-import WhyNowSection from "@/components/sections/WhyNowSection";
+import ProductSystemSection from "@/components/sections/ProductSystemSection";
+import ProductLinesSection from "@/components/sections/ProductLinesSection";
+import ApplicationsSection from "@/components/sections/ApplicationsSection";
 import AnatomySection from "@/components/sections/AnatomySection";
-import TransformationSection from "@/components/sections/TransformationSection";
-import StylesSection from "@/components/sections/StylesSection";
-import ComparisonSection from "@/components/sections/ComparisonSection";
-import GuaranteeSection from "@/components/sections/GuaranteeSection";
+import BimSection from "@/components/sections/BimSection";
+import StatsBand from "@/components/sections/StatsBand";
+import BrandValuesSection from "@/components/sections/BrandValuesSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import FaqSection from "@/components/sections/FaqSection";
 import ConversionSection from "@/components/sections/ConversionSection";
 import { assetPath } from "@/lib/assetPath";
 
+/**
+ * Home IA — dúoPANELES (reconversión total).
+ * Comps: docs/comps/duo-home/
+ */
 export default function HomePage() {
   return (
     <>
@@ -22,14 +25,13 @@ export default function HomePage() {
         bridgeLine="Ahorro energético, velocidad de obra y durabilidad. Partner oficial Arneg."
         videoSrc={assetPath("/assets/videos/duo.mp4")}
       />
-      <StatsBand />
-      <ManifestoSection />
-      <WhyNowSection />
+      <ProductSystemSection />
+      <ProductLinesSection />
+      <ApplicationsSection />
       <AnatomySection />
-      <TransformationSection />
-      <StylesSection />
-      <ComparisonSection />
-      <GuaranteeSection />
+      <BimSection />
+      <StatsBand />
+      <BrandValuesSection />
       <ProjectsSection />
       <FaqSection />
       <ConversionSection />
