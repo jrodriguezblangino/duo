@@ -27,10 +27,10 @@ const heroTokens = {
  * content clipped within bounds; nav owns the sole CTA.
  */
 export default function Hero({
-  eyebrow = "Revestimiento de ingeniería",
+  eyebrow = "dúoPANELES",
   headline,
   headlineContinued,
-  bridgeLine = "Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución.",
+  bridgeLine = "Aislamiento térmico superior y óptimo aislamiento acústico para todos los proyectos — partner oficial Arneg.",
   videoSrc,
   poster = assetPath("/assets/images/exploded_view_components.webp"),
 }: HeroProps) {

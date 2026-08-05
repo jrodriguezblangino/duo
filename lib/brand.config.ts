@@ -8,7 +8,7 @@ export const BRAND = {
   name: "dúoPANELES",
   legalName: "dúoPANELES",
   /** One-line brand promise */
-  tagline: "Sistema constructivo PIR — techo y fachada",
+  tagline: "Un sistema constructivo superior.",
   /** International digits only — no + or spaces (wa.me) */
   whatsapp: "5491164594688",
   /** Pre-filled Spanish text, already URL-encoded for wa.me ?text= */

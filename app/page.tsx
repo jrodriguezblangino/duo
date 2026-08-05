@@ -1,4 +1,5 @@
 import Hero from "@/components/ui/Hero";
+import StatsBand from "@/components/sections/StatsBand";
 import ManifestoSection from "@/components/sections/ManifestoSection";
 import WhyNowSection from "@/components/sections/WhyNowSection";
 import AnatomySection from "@/components/sections/AnatomySection";
@@ -15,12 +16,13 @@ export default function HomePage() {
   return (
     <>
       <Hero
-        eyebrow="Revestimiento de ingeniería"
-        headline="Metal Siding."
-        headlineContinued="El revestimiento que se adapta a tu diseño."
-        bridgeLine="Ingeniería de revestimiento para fachadas e interiores — múltiples terminaciones, una sola solución."
-        videoSrc={assetPath("/assets/videos/hero_cinematic_scan.mp4")}
+        eyebrow="dúoPANELES"
+        headline="Un sistema constructivo superior."
+        headlineContinued="La solución sustentable que garantiza ahorro de energía, velocidad de obra, durabilidad y seguridad."
+        bridgeLine="Aislamiento térmico superior y óptimo aislamiento acústico para todos los proyectos — partner oficial Arneg."
+        videoSrc={assetPath("/assets/videos/duo.mp4")}
       />
+      <StatsBand />
       <ManifestoSection />
       <WhyNowSection />
       <AnatomySection />
