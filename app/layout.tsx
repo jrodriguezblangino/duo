@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
+import CursorGlow from "@/components/ui/CursorGlow";
 import { BRAND, SITE_NAME } from "@/lib/brand.config";
 import {
   OG_IMAGE_PATH,
@@ -45,7 +46,7 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const siteTitle = `${SITE_NAME} | Revestimientos de alta gama`;
+const siteTitle = `${SITE_NAME} | Paneles aislantes PIR`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -108,6 +109,7 @@ export default function RootLayout({
         <main id="contenido-principal" className="flex-1">
           {children}
         </main>
+        <CursorGlow />
         <WhatsAppFloat />
         <Footer />
       </body>

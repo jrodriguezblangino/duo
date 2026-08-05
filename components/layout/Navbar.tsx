@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import WhatsAppCTA from "@/components/ui/WhatsAppCTA";
+import Magnetic from "@/components/ui/Magnetic";
 import { SITE_NAME } from "@/lib/brand.config";
 import { CTA, NAV_LINKS } from "@/lib/site";
 import { ENTRY_Y, STAGGER, glide } from "@/lib/motion";
@@ -97,10 +98,14 @@ export default function Navbar() {
             ))}
           </ul>
           <div className="flex items-center gap-3">
-            <WhatsAppCTA variant="outline" size="sm" label="WhatsApp" />
-            <Button href={CTA.href} variant="primary" size="sm">
-              {CTA.label}
-            </Button>
+            <Magnetic strength={8}>
+              <WhatsAppCTA variant="outline" size="sm" label="WhatsApp" />
+            </Magnetic>
+            <Magnetic strength={10}>
+              <Button href={CTA.href} variant="primary" size="sm">
+                {CTA.label}
+              </Button>
+            </Magnetic>
           </div>
         </div>
 

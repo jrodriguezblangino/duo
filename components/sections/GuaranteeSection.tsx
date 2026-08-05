@@ -106,16 +106,6 @@ export default function GuaranteeSection() {
         <div className="grid items-end gap-12 lg:grid-cols-12 lg:gap-16">
           {/* "15 años" as one unit */}
           <div className="relative lg:col-span-5">
-            <motion.p
-              aria-hidden="true"
-              className="mb-6 font-mono text-xs uppercase tracking-[0.18em] text-sand lg:text-[13px]"
-              initial={reduce ? false : { opacity: 0, y: ENTRY_Y }}
-              animate={show ? { opacity: 1, y: 0 } : undefined}
-              transition={{ ...glide, delay: 0 }}
-            >
-              Cobertura
-            </motion.p>
-
             <motion.div style={{ y: numeralY }} className="relative w-fit">
               {/* Clip reveal on the numeral stack */}
               <motion.div

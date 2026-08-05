@@ -30,7 +30,7 @@ const PULL_QUOTE =
   "No solo importamos paneles; curamos soluciones.";
 
 const BODY_CLOSE =
-  "Creemos que la arquitectura de alta gama no debería ser compleja. Nuestra misión es simplificar lo sofisticado, ofreciendo revestimientos que combinan la resistencia industrial del metal con la calidez orgánica de la madera.";
+  "Creemos que la arquitectura de alta gama no debería ser compleja. Nuestra misión es simplificar lo sofisticado: paneles PIR que combinan aislamiento térmico, retardo al fuego y la resistencia del acero.";
 
 const BLUR_MAX = 14;
 
@@ -95,8 +95,6 @@ const closeParaClass =
 const italicClass =
   "max-w-[28ch] font-headline text-[1.125rem] font-normal italic leading-[1.4] tracking-[-0.01em] text-carbon/85 md:text-xl lg:text-[1.375rem]";
 
-const eyebrowClass =
-  "text-xs font-medium uppercase tracking-[0.18em] text-carbon/65 lg:text-[13px]";
 
 function LeadBlock({
   reduce,
@@ -112,10 +110,6 @@ function LeadBlock({
 }) {
   return (
     <div className="flex min-w-0 max-w-full flex-col lg:col-span-7">
-      <p className={`${eyebrowClass} ${compact ? "mb-3" : "mb-4 lg:mb-7"}`}>
-        Manifiesto
-      </p>
-
       <h2
         id={headingId}
         className="box-border w-full max-w-[14ch] break-words font-headline text-[clamp(2.125rem,7.2vw+0.5rem,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-carbon"
@@ -181,7 +175,6 @@ function BodyBlocks({
 function StaticLead() {
   return (
     <div className="flex min-w-0 max-w-full flex-col lg:col-span-7">
-      <p className={`${eyebrowClass} mb-4 lg:mb-7`}>Manifiesto</p>
       <h2
         id="manifiesto-heading"
         className="box-border w-full max-w-[14ch] break-words font-headline text-[clamp(2.125rem,7.2vw+0.5rem,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-carbon"

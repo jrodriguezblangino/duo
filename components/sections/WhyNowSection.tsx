@@ -7,19 +7,19 @@ const CARDS = [
     index: "01",
     title: "Mantenimiento casi nulo",
     description:
-      "Sin barniz ni repintado periódico — la cara anodizada aguanta sol, lluvia y uso.",
+      "Cara de chapa de acero: sin barniz ni repintado periódico. Aguanta sol, lluvia y uso diario.",
   },
   {
     index: "02",
     title: "Instalación rápida sobre existente",
     description:
-      "Se monta sobre muro o revestimiento previo; obra limpia en días, no semanas.",
+      "Se monta sobre estructura o muro previo; obra limpia en días, no semanas.",
   },
   {
     index: "03",
     title: "Durabilidad de décadas",
     description:
-      "Núcleo de poliuretano y respaldo de acero: vida útil proyectada de 30+ años.",
+      "Núcleo PIR y respaldo de acero galvanizado: vida útil proyectada de 30+ años.",
   },
 ] as const;
 
@@ -31,14 +31,11 @@ export default function WhyNowSection() {
     >
       <div className="mx-auto max-w-site">
         <Reveal className="mb-12 max-w-[28ch] lg:mb-16">
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-sand lg:text-[13px]">
-            Por qué ahora
-          </p>
           <h2
             id="por-que-ahora-heading"
             className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
           >
-            El revestimiento cambió.
+            El aislamiento cambió.
           </h2>
         </Reveal>
 

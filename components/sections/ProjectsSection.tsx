@@ -21,9 +21,6 @@ export default function ProjectsSection() {
     >
       <div className="mx-auto max-w-site">
         <Reveal className="mb-12 max-w-[32ch] lg:mb-16">
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-sand lg:text-[13px]">
-            Proyectos
-          </p>
           <h2
             id="proyectos-heading"
             className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
@@ -31,7 +28,7 @@ export default function ProjectsSection() {
             Obra real, misma ingeniería.
           </h2>
           <p className="mt-5 max-w-measure text-base leading-relaxed text-offwhite/60 lg:text-lg">
-            Referencias demostrativas hasta publicar instalaciones reales — el
+            Referencias demostrativas hasta publicar instalaciones reales. El
             sistema de panel es el mismo.
           </p>
         </Reveal>

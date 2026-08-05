@@ -9,9 +9,6 @@ export default function ConversionSection() {
     >
       <div className="mx-auto max-w-[640px]">
         <Reveal>
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-sand lg:text-[13px]">
-            Solicitud de cotización
-          </p>
           <h2
             id="conversion-heading"
             className="mb-6 font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.01em] text-offwhite lg:text-6xl"

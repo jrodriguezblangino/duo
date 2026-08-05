@@ -5,7 +5,7 @@ import { BRAND } from "@/lib/brand.config";
 
 export const metadata: Metadata = {
   title: "Galería",
-  description: `Macro de textura, acabados aspecto madera y metálico, y comportamiento al agua del panel ${BRAND.name}.`,
+  description: `Macro de textura, acabados metálicos y comportamiento al agua del panel ${BRAND.name}.`,
 };
 
 export default function GaleriaPage() {

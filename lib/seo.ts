@@ -7,7 +7,7 @@ import { SPECS } from "@/lib/specs";
  */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-  "https://fillhome.com";
+  "https://duopaneles.com.ar";
 
 export const SITE_DESCRIPTION =
   "Paneles aislantes PIR para techo y fachada: chapa de acero, núcleo con retardo al fuego y encastre oculto. Partner oficial Arneg.";
@@ -19,13 +19,13 @@ export function buildProductJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: `${BRAND.name} Metal Siding`,
+    name: `${BRAND.name} Panel PIR`,
     description: SITE_DESCRIPTION,
     brand: {
       "@type": "Brand",
       name: BRAND.name,
     },
-    category: "Revestimiento metálico / metal siding",
+    category: "Panel aislante PIR / techo y fachada",
     material: "Chapa de acero, poliisocianurato (PIR), acero galvanizado",
     additionalProperty: SPECS.map(({ label, value }) => ({
       "@type": "PropertyValue",

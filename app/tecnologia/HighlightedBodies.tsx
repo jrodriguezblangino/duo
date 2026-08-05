@@ -46,8 +46,8 @@ export function ManufacturingBody({ className }: { className: string }) {
 
   return (
     <p className={className}>
-      La cara nace por extrusión de aluminio; el núcleo se inyecta en
-      poliuretano; el respaldo se lamina en acero galvanizado. El{" "}
+      La cara nace en chapa de acero conformada; el núcleo se inyecta en
+      poliisocianurato (PIR); el respaldo se lamina en acero galvanizado. El{" "}
       <ViewMark reduce={reduce}>proceso</ViewMark> está calibrado para la
       tolerancia del encastre oculto.
     </p>
@@ -74,8 +74,8 @@ export function InsulationBody({ className }: { className: string }) {
 
   return (
     <p className={className}>
-      El poliuretano de alta densidad reduce la transferencia térmica, aporta
-      confort acústico y es la capa que{" "}
+      El poliisocianurato (PIR) reduce la transferencia térmica, aporta confort
+      acústico y retardo al fuego, y es la capa que{" "}
       <ViewMark reduce={reduce} delay={0.35}>
         adhiere
       </ViewMark>{" "}

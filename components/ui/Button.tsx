@@ -26,7 +26,7 @@ type ButtonAsButton = CommonProps & {
 export type ButtonProps = ButtonAsLink | ButtonAsButton;
 
 const BASE =
-  "inline-flex items-center justify-center font-medium uppercase tracking-[0.08em] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center font-medium uppercase tracking-[0.08em] transition-colors duration-200 ease-out active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand disabled:pointer-events-none disabled:opacity-50";
 
 const VARIANTS: Record<Variant, string> = {
   primary: "bg-sand text-carbon hover:bg-sand-hover",

@@ -11,7 +11,7 @@ export default function FaqSection() {
   return (
     <section
       aria-labelledby="faq-heading"
-      className="bg-offwhite px-6 py-section-mobile text-carbon lg:px-20 lg:py-section"
+      className="bg-slate px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
     >
       <script
         type="application/ld+json"

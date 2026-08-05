@@ -1,7 +1,7 @@
 import { assetPath } from "@/lib/assetPath";
 
-/** Finish tones cropped from existing product photography (no invented hex fills). */
-export type FinishTone = "carbon" | "roble" | "aluminio" | "nogal";
+/** Metallic finish tones for dúoPANELES — no wood-look. */
+export type FinishTone = "carbon" | "blanco" | "gris";
 
 export const FINISH_TONES: {
   key: FinishTone;
@@ -18,21 +18,15 @@ export const FINISH_TONES: {
     objectPosition: "12% 18%",
   },
   {
-    key: "roble",
-    label: "Roble",
-    src: assetPath("/assets/images/gallery_color_options.webp"),
-    objectPosition: "38% 28%",
-  },
-  {
-    key: "aluminio",
-    label: "Aluminio",
+    key: "blanco",
+    label: "Blanco",
     src: assetPath("/assets/images/gallery_color_options.webp"),
     objectPosition: "58% 32%",
   },
   {
-    key: "nogal",
-    label: "Nogal",
+    key: "gris",
+    label: "Gris",
     src: assetPath("/assets/images/gallery_color_options.webp"),
-    objectPosition: "78% 42%",
+    objectPosition: "38% 28%",
   },
 ];

@@ -79,9 +79,9 @@ const SCENE3_COPY = {
   headlineLine1: "Tres capas.",
   headlineLine2: "Una sola solución.",
   lead: "Cada capa fue elegida por una razón. La ",
-  afterAluminum: " enfrenta la intemperie y mantiene su terminación. El ",
-  afterPoly: " aporta aislamiento y retardo al fuego. El ",
-  afterSteel:
+  afterFace: " enfrenta la intemperie y mantiene su terminación. El ",
+  afterCore: " aporta aislamiento y retardo al fuego. El ",
+  afterBack:
     " entrega la rigidez estructural que define el sistema. Todo integrado mediante un encastre oculto que elimina fijaciones visibles y consigue una superficie limpia, continua y precisa.",
 } as const;
 
@@ -91,9 +91,9 @@ const LAYER_RANGES: readonly (readonly [number, number])[] = [
   [0.33, 0.36],
 ];
 
-/** Scene 1 supporting copy — single-word markers on Calidez / acero */
+/** Scene 1 supporting copy — markers on Aislamiento / acero */
 const SCENE1_BODY = {
-  mid: " que no se desvanece. Resistencia que no se nota — hasta que la necesitás. Cada panel une un acabado real con la solidez del ",
+  mid: " que se siente en la factura energética. Resistencia que no se nota hasta que la necesitás. Cada panel une terminación metálica con la solidez del ",
   end: ", sin mantenimiento y sin complicar la obra.",
 } as const;
 
@@ -119,7 +119,7 @@ function Scene1Eyebrow() {
   return (
     <p className={SCENE1_EYEBROW}>
       <span aria-hidden="true" className="h-px w-4 shrink-0 bg-sand" />
-      Composición — tres capas
+      Tres capas
     </p>
   );
 }
@@ -170,18 +170,16 @@ function Scene3Body({
     return (
       <p className={SCENE3_BODY_CLASS}>
         {SCENE3_COPY.lead}
+        <HighlightWordStatic surface="dark">chapa de acero</HighlightWordStatic>
+        {SCENE3_COPY.afterFace}
         <HighlightWordStatic surface="dark">
-          aluminio anodizado
+          poliisocianurato (PIR)
         </HighlightWordStatic>
-        {SCENE3_COPY.afterAluminum}
-        <HighlightWordStatic surface="dark">
-          poliuretano de alta densidad
-        </HighlightWordStatic>
-        {SCENE3_COPY.afterPoly}
+        {SCENE3_COPY.afterCore}
         <HighlightWordStatic surface="dark">
           acero galvanizado
         </HighlightWordStatic>
-        {SCENE3_COPY.afterSteel}
+        {SCENE3_COPY.afterBack}
       </p>
     );
   }
@@ -199,9 +197,9 @@ function Scene3Body({
         surface="dark"
         {...(isView ? { duration: 0.6, delay: 0 } : {})}
       >
-        aluminio anodizado
+        chapa de acero
       </HighlightWord>
-      {SCENE3_COPY.afterAluminum}
+      {SCENE3_COPY.afterFace}
       <HighlightWord
         reduce={false}
         progress={progress}
@@ -210,9 +208,9 @@ function Scene3Body({
         surface="dark"
         {...(isView ? { duration: 0.6, delay: 0.8 } : {})}
       >
-        poliuretano de alta densidad
+        poliisocianurato (PIR)
       </HighlightWord>
-      {SCENE3_COPY.afterPoly}
+      {SCENE3_COPY.afterCore}
       <HighlightWord
         reduce={false}
         progress={progress}
@@ -223,7 +221,7 @@ function Scene3Body({
       >
         acero galvanizado
       </HighlightWord>
-      {SCENE3_COPY.afterSteel}
+      {SCENE3_COPY.afterBack}
     </p>
   );
 }
@@ -245,7 +243,7 @@ function Scene1Support({
   if (!progress || reduce) {
     return (
       <p className={SCENE1_BODY_CLASS}>
-        <HighlightWordStatic surface="dark">Calidez</HighlightWordStatic>
+        <HighlightWordStatic surface="dark">Aislamiento</HighlightWordStatic>
         {SCENE1_BODY.mid}
         <HighlightWordStatic surface="dark">acero</HighlightWordStatic>
         {SCENE1_BODY.end}
@@ -265,7 +263,7 @@ function Scene1Support({
         surface="dark"
         {...(isView ? { duration: 0.45, delay: 0 } : {})}
       >
-        Calidez
+        Aislamiento
       </HighlightWord>
       {SCENE1_BODY.mid}
       <HighlightWord

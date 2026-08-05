@@ -1,7 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 
 const COLUMNS = [
-  { id: "metal", label: "Metal Siding", recommended: true },
+  { id: "pir", label: "Panel PIR", recommended: true },
   { id: "pintura", label: "Pintura", recommended: false },
   { id: "ladrillo", label: "Ladrillo", recommended: false },
   { id: "pvc", label: "PVC", recommended: false },
@@ -11,46 +14,46 @@ const ROWS = [
   {
     label: "Durabilidad",
     values: {
-      metal: "30+ años",
-      pintura: "5–8 años",
+      pir: "30+ años",
+      pintura: "5-8 años",
       ladrillo: "50+ años",
-      pvc: "15–20 años",
+      pvc: "15-20 años",
     },
   },
   {
     label: "Mantenimiento",
     values: {
-      metal: "Casi nulo",
-      pintura: "Repintado cada 5–7 años",
+      pir: "Casi nulo",
+      pintura: "Repintado cada 5-7 años",
       ladrillo: "Bajo",
-      pvc: "Bajo–medio",
+      pvc: "Bajo-medio",
     },
   },
   {
     label: "Tiempo de instalación",
     values: {
-      metal: "2–5 días",
-      pintura: "1–2 semanas",
-      ladrillo: "Semanas–meses",
-      pvc: "3–7 días",
+      pir: "2-5 días",
+      pintura: "1-2 semanas",
+      ladrillo: "Semanas-meses",
+      pvc: "3-7 días",
     },
   },
   {
     label: "Costo a 10 años",
     values: {
-      metal: "Bajo",
+      pir: "Bajo",
       pintura: "Alto (ciclos)",
-      ladrillo: "Medio–alto",
+      ladrillo: "Medio-alto",
       pvc: "Medio",
     },
   },
   {
-    label: "Resistencia al agua",
+    label: "Aislamiento térmico",
     values: {
-      metal: "Excelente",
-      pintura: "Media",
-      ladrillo: "Alta",
-      pvc: "Media",
+      pir: "Excelente (PIR)",
+      pintura: "Nulo",
+      ladrillo: "Bajo",
+      pvc: "Medio",
     },
   },
 ] as const;
@@ -58,13 +61,16 @@ const ROWS = [
 type ColumnId = (typeof COLUMNS)[number]["id"];
 
 const thBase =
-  "py-5 align-bottom font-mono text-xs font-normal tracking-[0.02em] text-offwhite/50";
-const tdBase = "py-5 text-base leading-relaxed text-offwhite/80";
+  "py-5 align-bottom font-mono text-xs font-normal tracking-[0.02em] text-offwhite/50 transition-colors duration-200";
+const tdBase =
+  "py-5 text-base leading-relaxed text-offwhite/80 transition-colors duration-200";
 const rowBorder = "border-b border-offwhite/10";
 const labelCell =
   "align-top font-mono text-xs font-normal tracking-[0.02em] text-offwhite/50";
 
 export default function ComparisonSection() {
+  const [hovered, setHovered] = useState<ColumnId | null>(null);
+
   return (
     <section
       aria-labelledby="comparacion-heading"
@@ -72,52 +78,53 @@ export default function ComparisonSection() {
     >
       <div className="mx-auto max-w-site">
         <Reveal className="mb-12 max-w-[28ch] lg:mb-16">
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-sand lg:text-[13px]">
-            Comparativa
-          </p>
           <h2
             id="comparacion-heading"
             className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
           >
-            ¿Por qué no solo pintar?
+            ¿Por qué panel PIR?
           </h2>
         </Reveal>
 
         <Reveal delay={0.08}>
-          {/* Desktop table */}
           <div className="hidden md:block">
             <table className="w-full border-collapse text-left">
               <caption className="sr-only">
-                Comparativa de revestimientos: Metal Siding, pintura, ladrillo y
-                PVC
+                Comparativa de sistemas: Panel PIR, pintura, ladrillo y PVC
               </caption>
               <thead>
                 <tr className={rowBorder}>
                   <th scope="col" className={`${thBase} pr-6 text-left`}>
                     <span className="sr-only">Criterio</span>
                   </th>
-                  {COLUMNS.map((col) => (
-                    <th
-                      key={col.id}
-                      scope="col"
-                      className={`${thBase} px-4 text-left ${
-                        col.recommended
-                          ? "bg-sand/[0.1] text-sand"
-                          : "text-offwhite/50"
-                      }`}
-                    >
-                      <span className="flex flex-col items-start gap-2">
-                        <span className="font-mono text-xs tracking-[0.02em] uppercase">
-                          {col.label}
-                        </span>
-                        {col.recommended && (
-                          <span className="inline-block border border-sand/50 bg-sand/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-sand">
-                            Recomendado
+                  {COLUMNS.map((col) => {
+                    const active =
+                      hovered === col.id || (hovered == null && col.recommended);
+                    return (
+                      <th
+                        key={col.id}
+                        scope="col"
+                        onMouseEnter={() => setHovered(col.id)}
+                        onMouseLeave={() => setHovered(null)}
+                        className={`${thBase} cursor-default px-4 text-left ${
+                          active
+                            ? "bg-sand/[0.14] text-sand"
+                            : "text-offwhite/50"
+                        }`}
+                      >
+                        <span className="flex flex-col items-start gap-2">
+                          <span className="font-mono text-xs uppercase tracking-[0.02em]">
+                            {col.label}
                           </span>
-                        )}
-                      </span>
-                    </th>
-                  ))}
+                          {col.recommended && (
+                            <span className="inline-block border border-sand/50 bg-sand/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-sand">
+                              Recomendado
+                            </span>
+                          )}
+                        </span>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -129,25 +136,31 @@ export default function ComparisonSection() {
                     >
                       {row.label}
                     </th>
-                    {COLUMNS.map((col) => (
-                      <td
-                        key={col.id}
-                        className={`${tdBase} px-4 ${
-                          col.recommended
-                            ? "bg-sand/[0.1] text-offwhite"
-                            : ""
-                        }`}
-                      >
-                        {row.values[col.id as ColumnId]}
-                      </td>
-                    ))}
+                    {COLUMNS.map((col) => {
+                      const active =
+                        hovered === col.id ||
+                        (hovered == null && col.recommended);
+                      return (
+                        <td
+                          key={col.id}
+                          onMouseEnter={() => setHovered(col.id)}
+                          onMouseLeave={() => setHovered(null)}
+                          className={`${tdBase} cursor-default px-4 ${
+                            active
+                              ? "bg-sand/[0.14] text-offwhite"
+                              : "text-offwhite/55"
+                          }`}
+                        >
+                          {row.values[col.id as ColumnId]}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Mobile: stacked product blocks */}
           <div className="flex flex-col gap-8 md:hidden">
             {COLUMNS.map((col) => (
               <div

@@ -84,7 +84,7 @@ export default function LayerDiagram({ layers }: LayerDiagramProps) {
       <div className="lg:col-span-7">
         <CroppedPanelImage
           src={assetPath("/assets/images/detail_internal_45deg_alt.webp")}
-          alt={`Diagrama anotado del canto del panel ${BRAND.name}: tres capas — aluminio anodizado, poliuretano de alta densidad y acero galvanizado.`}
+          alt={`Diagrama anotado del canto del panel ${BRAND.name}: tres capas - chapa de acero, poliisocianurato (PIR) y acero galvanizado.`}
           aspectClass="aspect-[16/10]"
           sizes="(min-width: 1024px) 58vw, 100vw"
           priority

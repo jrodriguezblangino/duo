@@ -12,8 +12,8 @@ import Image from "next/image";
 import { assetPath } from "@/lib/assetPath";
 import { BRAND } from "@/lib/brand.config";
 
-const WOOD_SRC = assetPath("/assets/images/detail_internal_45deg_alt.webp");
-const METAL_SRC = assetPath(
+const CARBON_SRC = assetPath("/assets/images/detail_internal_45deg_alt.webp");
+const BLANCO_SRC = assetPath(
   "/assets/images/detail_internal_45deg_alt_metal.webp",
 );
 
@@ -70,7 +70,7 @@ function FinishCropLayer({
 }
 
 /**
- * Finish compare — Aspecto madera ⇄ Metálico.
+ * Finish compare — Carbón ⇄ Blanco (acabados metálicos).
  *
  * Invite affordance is intentionally loud on iOS: the image stack stays
  * overflow-hidden, but the handle / ring / chevrons live in a separate
@@ -277,7 +277,7 @@ export default function StyleToggle() {
     startDrag(e.clientX, e.currentTarget, e.pointerId);
   };
 
-  const woodMaskPct = Math.max(position, 0.5);
+  const finishMaskPct = Math.max(position, 0.5);
   const inviting = !hasInteracted;
   const handleScale = inviting ? 1 + 0.35 * pulseWave : 1;
   const ringScale = inviting ? 1 + 0.55 * pulseWave : 1;
@@ -297,10 +297,10 @@ export default function StyleToggle() {
       >
         {/* Image stack — clipped. Handle/pulse live outside this layer. */}
         <div className="absolute inset-0 overflow-hidden">
-          <FinishCropLayer src={METAL_SRC} frameWidthPx={frameWidthPx} />
+          <FinishCropLayer src={BLANCO_SRC} frameWidthPx={frameWidthPx} />
           <FinishCropLayer
-            src={WOOD_SRC}
-            maskPct={woodMaskPct}
+            src={CARBON_SRC}
+            maskPct={finishMaskPct}
             frameWidthPx={frameWidthPx}
           />
         </div>
@@ -342,11 +342,11 @@ export default function StyleToggle() {
         <button
           type="button"
           role="slider"
-          aria-label="Comparar acabados: arrastrá para revelar aspecto madera o metálico"
+          aria-label="Comparar acabados: arrastrá para revelar carbón o blanco"
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(position)}
-          aria-valuetext={`${Math.round(position)}% aspecto madera, ${Math.round(100 - position)}% metálico`}
+          aria-valuetext={`${Math.round(position)}% carbón, ${Math.round(100 - position)}% blanco`}
           className="absolute top-1/2 z-30 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center overflow-visible focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
           style={{ left: `${position}%` }}
           onKeyDown={onKeyDown}
@@ -408,9 +408,9 @@ export default function StyleToggle() {
         ) : null}
 
         <span className="sr-only">
-          Comparación de acabados del panel {BRAND.name}: aspecto madera a la
-          izquierda y metálico a la derecha. Usá las flechas o arrastrá el
-          control para revelar cada acabado.
+          Comparación de acabados del panel {BRAND.name}: carbón a la izquierda
+          y blanco a la derecha. Usá las flechas o arrastrá el control para
+          revelar cada acabado.
         </span>
       </div>
 

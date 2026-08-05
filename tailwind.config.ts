@@ -21,7 +21,7 @@ const config: Config = {
     },
     extend: {
       colors: {
-        // Fill Home Import — warm industrial-premium palette
+        // dúoPANELES — warm industrial-premium palette (mint accent)
         carbon: "#17140F", // primary dark bg
         slate: "#2A211A", // panel / secondary bg
         surface: "#3A2C20", // elevated card

@@ -121,27 +121,13 @@ export default function TransformationSection() {
       {/* Content */}
       <div className={CONTENT_CLASS}>
         <div className="w-full max-w-xl lg:max-w-[41rem]">
-          <motion.p
-            className="mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.14em] text-sand lg:text-[13px]"
-            initial={revealInitial(prefersReducedMotion)}
-            whileInView={revealVisible}
-            viewport={revealViewport}
-            transition={revealTransition(0, prefersReducedMotion)}
-          >
-            <span
-              aria-hidden="true"
-              className="h-px w-4 shrink-0 bg-sand"
-            />
-            Instalación
-          </motion.p>
-
           <motion.h2
             id="transformacion-heading"
             className="mb-6 font-headline text-[2.95rem] font-normal leading-[0.98] tracking-[-0.02em] text-offwhite lg:text-[3.5rem] xl:text-[4.25rem]"
             initial={revealInitial(prefersReducedMotion)}
             whileInView={revealVisible}
             viewport={revealViewport}
-            transition={revealTransition(REVEAL_STAGGER, prefersReducedMotion)}
+            transition={revealTransition(0, prefersReducedMotion)}
           >
             Renovación sin obra pesada.
           </motion.h2>

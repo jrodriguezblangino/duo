@@ -15,7 +15,7 @@ import { FINISH_TONES, type FinishTone } from "@/lib/finishes";
 import { ENTRY_Y, glide, precision } from "@/lib/motion";
 
 type ProjectType = "obra-nueva" | "renovacion" | "interior" | "exterior";
-type StyleKey = "madera" | "metalico";
+type StyleKey = "metalico";
 
 type FormState = {
   tipoProyecto: ProjectType | null;
@@ -79,8 +79,8 @@ export default function ProjectForm({ tone = "light" }: { tone?: FormTone }) {
   });
   const [form, setForm] = useState<FormState>({
     tipoProyecto: null,
-    estilo: "madera",
-    tono: "roble",
+    estilo: "metalico",
+    tono: "carbon",
     nombre: "",
     email: "",
     telefono: "",
@@ -99,7 +99,7 @@ export default function ProjectForm({ tone = "light" }: { tone?: FormTone }) {
 
   const canAdvance = () => {
     if (step === 1) return form.tipoProyecto !== null;
-    if (step === 2) return Boolean(form.estilo && form.tono);
+    if (step === 2) return Boolean(form.tono);
     return true;
   };
 
@@ -258,68 +258,7 @@ export default function ProjectForm({ tone = "light" }: { tone?: FormTone }) {
           {step === 2 && (
             <div className="flex flex-col gap-10">
               <fieldset disabled={isLoading}>
-                <legend className={legendClass}>Dirección de material</legend>
-                <div
-                  role="group"
-                  aria-label="Acabado"
-                  className="flex items-center gap-6"
-                >
-                  {(
-                    [
-                      { key: "madera" as const, label: "Aspecto madera" },
-                      { key: "metalico" as const, label: "Metálico" },
-                    ] as const
-                  ).map(({ key, label }, index) => (
-                    <div key={key} className="flex items-center gap-6">
-                      {index > 0 && (
-                        <span
-                          aria-hidden="true"
-                          className={`h-4 w-px ${dark ? "bg-offwhite/30" : "bg-carbon/30"}`}
-                        />
-                      )}
-                      <button
-                        type="button"
-                        aria-pressed={form.estilo === key}
-                        onClick={() => update("estilo", key)}
-                        className="relative pb-2 text-sm font-medium uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand"
-                      >
-                        <span
-                          className={
-                            form.estilo === key
-                              ? dark
-                                ? "text-offwhite"
-                                : "text-carbon"
-                              : dark
-                                ? "text-offwhite/40"
-                                : "text-carbon/40"
-                          }
-                        >
-                          {label}
-                        </span>
-                        {form.estilo === key && (
-                          <motion.span
-                            layoutId={
-                              dark
-                                ? "form-style-underline-dark"
-                                : "form-style-underline"
-                            }
-                            aria-hidden="true"
-                            className="absolute inset-x-0 bottom-0 h-px bg-sand"
-                            transition={
-                              prefersReducedMotion
-                                ? { duration: 0.15 }
-                                : precision
-                            }
-                          />
-                        )}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </fieldset>
-
-              <fieldset disabled={isLoading}>
-                <legend className={legendClass}>Tono de acabado</legend>
+                <legend className={legendClass}>Tono de acabado metálico</legend>
                 <div className="flex flex-wrap gap-5">
                   {FINISH_TONES.map(({ key, label, src, objectPosition }) => {
                     const selected = form.tono === key;

@@ -15,33 +15,19 @@ export default function StylesSection() {
     >
       <div className="mx-auto max-w-site">
         <div className={COMPOSITION}>
-          {/*
-            Text shares the slider's width. Extra right padding offsets the
-            left-weighted panel mass in the crop (black void on the right)
-            so title/caption optically center on the visible product, not the
-            empty frame edge — crop itself stays untouched.
-          */}
           <Reveal className="mb-10 w-full text-center lg:mb-12 lg:pr-[12%]">
-            <p className="mb-4 flex items-center justify-center gap-3 text-xs font-medium uppercase tracking-[0.14em] text-sand lg:text-[13px]">
-              <span
-                aria-hidden="true"
-                className="h-px w-4 shrink-0 bg-sand"
-              />
-              Colección — aspecto madera / metálico
-            </p>
             <h2
               id="estilos-heading"
               className="mb-6 scroll-mt-32 font-headline text-[2.95rem] font-normal leading-[0.98] tracking-[-0.02em] text-offwhite lg:scroll-mt-44 lg:text-[3.5rem] xl:text-[4.25rem]"
             >
-              Un panel, dos acabados.
+              Acabados metálicos.
             </h2>
             <p className="mx-auto max-w-[58ch] text-base leading-[1.6] text-muted lg:text-[17px]">
-              Misma estructura de tres capas. La cara cambia; el núcleo y el
-              acero no.
+              Misma estructura de tres capas. La cara cambia de tono; el núcleo
+              PIR y el acero no.
             </p>
           </Reveal>
 
-          {/* Not wrapped in Reveal — opacity:0 + transform broke invite pulse / IO on iOS */}
           <StyleToggle />
         </div>
       </div>
