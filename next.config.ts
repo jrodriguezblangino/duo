@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 /**
  * GitHub Pages base path.
  * - Local / preview root: unset
- * - fill-home live: GITHUB_PAGES=true → /fill-home
- * - fill-home-duo preview: GITHUB_PAGES=true + GITHUB_PAGES_BASE=/fill-home-duo
+ * - CI: GITHUB_PAGES=true + GITHUB_PAGES_BASE=/<repo>
+ *   (fill-home → /fill-home, duo → /duo)
  */
 const isGithubPages = process.env.GITHUB_PAGES === "true";
 const basePath = isGithubPages
