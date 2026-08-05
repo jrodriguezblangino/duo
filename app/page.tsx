@@ -22,7 +22,11 @@ export default function HomePage() {
         eyebrow="dúoPANELES"
         headline="Un sistema constructivo superior."
         headlineContinued="Panel aislante PIR para techo y fachada."
-        bridgeLine="Ahorro energético, velocidad de obra y durabilidad. Partner oficial Arneg."
+        bridgeLine={
+          <>
+            Partner oficial <span className="text-sand">Arneg</span>.
+          </>
+        }
         videoSrc={assetPath("/assets/videos/duo.mp4")}
       />
       <ProductSystemSection />

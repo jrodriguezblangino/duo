@@ -31,8 +31,8 @@ const STATS = [
   {
     index: "03",
     kind: "static" as const,
-    value: "Arneg",
-    label: "Partner oficial 2024",
+    value: "2024",
+    label: "Partner oficial Arneg",
   },
 ] as const;
 
@@ -111,13 +111,16 @@ export default function StatsBand() {
             initial={reduce ? false : { opacity: 0, y: ENTRY_Y }}
             animate={show ? { opacity: 1, y: 0 } : undefined}
             transition={glide}
-            className="max-w-[18ch]"
+            className="max-w-[22ch] lg:max-w-[28ch]"
           >
+            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-sand">
+              Nosotros
+            </p>
             <h2
               id="stats-band-heading"
               className="font-headline text-[2.5rem] font-normal leading-[1.02] tracking-[-0.02em] text-offwhite lg:text-[3.5rem]"
             >
-              Una década de obra.
+              Construimos confianza con resultados.
             </h2>
           </motion.div>
 
@@ -127,8 +130,8 @@ export default function StatsBand() {
             transition={{ ...glide, delay: STAGGER }}
             className="max-w-[34ch] text-sm leading-relaxed text-offwhite/55 lg:pb-1.5 lg:text-base"
           >
-            Partner oficial Arneg. Paneles PIR para techo y fachada: la misma
-            calidad, contada a la altura del material.
+            Partner oficial Arneg. +3.000 proyectos y más de una década con
+            paneles PIR para techo y fachada.
           </motion.p>
         </div>
 

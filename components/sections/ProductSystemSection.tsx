@@ -6,17 +6,16 @@ import { STAGGER } from "@/lib/motion";
 const PANEL_IMAGE = assetPath("/assets/images/macro_zoom_quality.webp");
 
 /**
- * Sistema Paneles PIR — macro product proof (comp 02).
- * Layout: left visual / right caption. No eyebrow.
+ * Sistema Paneles PIR — edge-to-edge split (comp 02).
  */
 export default function ProductSystemSection() {
   return (
     <section
       aria-labelledby="paneles-heading"
-      className="bg-carbon px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
+      className="bg-carbon text-offwhite"
     >
-      <div className="mx-auto grid max-w-site items-center gap-10 lg:grid-cols-12 lg:gap-16">
-        <Reveal className="relative aspect-[4/5] overflow-hidden bg-slate lg:col-span-7 lg:aspect-[5/4]">
+      <div className="mx-auto grid max-w-site lg:grid-cols-12">
+        <div className="relative min-h-[360px] lg:col-span-7 lg:min-h-[560px]">
           <Image
             src={PANEL_IMAGE}
             alt="Detalle macro de panel aislante PIR: chapa de acero y núcleo"
@@ -25,47 +24,49 @@ export default function ProductSystemSection() {
             className="object-cover"
             priority={false}
           />
+        </div>
+
+        <div className="relative flex flex-col justify-center border-t border-border px-6 py-14 lg:col-span-5 lg:border-l lg:border-t-0 lg:px-12 lg:py-20">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-carbon/50 via-transparent to-transparent"
+            className="pointer-events-none absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #90EE90 1px, transparent 1px), linear-gradient(to bottom, #90EE90 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
+            }}
           />
-        </Reveal>
 
-        <div className="lg:col-span-5">
-          <Reveal delay={STAGGER}>
+          <Reveal className="relative">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-offwhite/45">
+              Sistema Paneles PIR
+            </p>
             <h2
               id="paneles-heading"
-              className="font-headline text-[2.5rem] font-normal leading-[1.02] tracking-[-0.02em] text-offwhite lg:text-[3.25rem]"
+              className="mt-6 font-headline text-[2.5rem] font-normal leading-[1.02] tracking-[-0.02em] text-offwhite lg:text-[3.25rem]"
             >
-              Panel aislante PIR.
+              Panel aislante{" "}
+              <span className="text-sand">PIR</span>
             </h2>
-          </Reveal>
-          <Reveal delay={STAGGER * 2}>
-            <p className="mt-6 max-w-[36ch] text-base leading-relaxed text-offwhite/65 lg:text-[17px]">
-              Núcleo de poliisocianurato con retardo al fuego, cara de chapa de
-              acero calibre #25 y respaldo galvanizado. Aislación térmica y
-              acústica, velocidad de obra y durabilidad en un solo sistema.
+            <div
+              aria-hidden="true"
+              className="mt-5 h-px w-16 bg-sand"
+            />
+            <p className="mt-6 max-w-[34ch] text-base leading-relaxed text-offwhite/65 lg:text-[17px]">
+              Aislamiento térmico y acústico de alto desempeño que optimiza la
+              eficiencia energética y el confort en cada proyecto.
             </p>
           </Reveal>
-          <Reveal delay={STAGGER * 3}>
-            <ul className="mt-10 space-y-4 border-t border-border pt-8">
-              {[
-                "Aislación térmica superior",
-                "Aislación acústica",
-                "Velocidad de obra",
-                "Retardo al fuego (PIR)",
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-baseline gap-4 font-mono text-xs uppercase tracking-[0.12em] text-offwhite/70 lg:text-[13px]"
-                >
-                  <span aria-hidden="true" className="text-sand">
-                    /
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+
+          <Reveal delay={STAGGER} className="relative mt-10 border-t border-border pt-8">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-sand">
+              Construcción limpia y rápida
+            </p>
+            <p className="mt-3 max-w-[32ch] text-sm leading-relaxed text-offwhite/55">
+              Sistemas prefabricados que reducen tiempos de montaje en obra, con
+              acabado metálico superior. Núcleo PIR, chapa acero #25, respaldo
+              galvanizado.
+            </p>
           </Reveal>
         </div>
       </div>

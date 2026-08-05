@@ -1,6 +1,6 @@
 /**
  * Product lines from duopaneles.com.ar — techo + muro.
- * Do not invent SKUs beyond this list.
+ * Do not invent SKUs or unverified crest counts.
  */
 
 export type ProductLine = {
@@ -15,31 +15,31 @@ export const TECHO_LINES: ProductLine[] = [
     id: "wave-ls",
     name: "WAVE LS",
     application: "techo",
-    blurb: "Línea de cubierta con perfil WAVE.",
+    blurb: "Panel metálico tipo onda.",
   },
   {
     id: "cover-ls",
     name: "COVER LS",
     application: "techo",
-    blurb: "Línea de cubierta COVER LS.",
+    blurb: "Panel metálico de cubierta COVER LS.",
   },
   {
     id: "cover-lt",
     name: "COVER LT",
     application: "techo",
-    blurb: "Línea de cubierta COVER LT.",
+    blurb: "Panel metálico de cubierta COVER LT.",
   },
   {
     id: "cover-lx",
     name: "COVER LX",
     application: "techo",
-    blurb: "Línea de cubierta COVER LX.",
+    blurb: "Panel metálico de cubierta COVER LX.",
   },
   {
     id: "maximma",
     name: "MAXIMMA",
     application: "techo",
-    blurb: "Línea de cubierta MAXIMMA.",
+    blurb: "Panel metálico de cubierta MAXIMMA.",
   },
 ];
 

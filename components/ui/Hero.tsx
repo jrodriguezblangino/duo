@@ -14,7 +14,7 @@ type HeroProps = {
   headline: ReactNode;
   /** Optional second display line — sized to fit longer phrases */
   headlineContinued?: ReactNode;
-  bridgeLine?: string;
+  bridgeLine?: ReactNode;
   videoSrc: string;
   poster?: string;
 };
@@ -27,7 +27,11 @@ export default function Hero({
   eyebrow = "dúoPANELES",
   headline,
   headlineContinued,
-  bridgeLine = "Aislamiento térmico superior para techo y fachada. Partner oficial Arneg.",
+  bridgeLine = (
+    <>
+      Partner oficial <span className="text-sand">Arneg</span>.
+    </>
+  ),
   videoSrc,
   poster = assetPath("/assets/images/exploded_view_components.webp"),
 }: HeroProps) {
@@ -66,7 +70,7 @@ export default function Hero({
         />
       </div>
 
-      <div className="relative z-10 flex min-h-[100dvh] w-full flex-col justify-end px-6 pb-8 pt-24 md:pb-10 md:pt-28 lg:px-20 lg:pb-12 lg:pt-32">
+      <div className="relative z-10 flex min-h-[100dvh] w-full flex-col justify-center px-6 pb-16 pt-28 md:pb-20 md:pt-32 lg:px-20 lg:pb-24">
         <motion.div
           className="relative w-full max-w-xl md:max-w-2xl lg:max-w-3xl"
           initial={
@@ -85,18 +89,16 @@ export default function Hero({
             id="hero-heading"
             className="font-headline font-normal tracking-[-0.02em]"
           >
-            <span className="block text-[3.25rem] leading-[0.95] text-offwhite md:text-7xl lg:text-[6.5rem]">
+            <span className="block text-[3.25rem] leading-[0.95] text-offwhite md:text-7xl lg:text-[5.5rem]">
               {headline}
             </span>
             {headlineContinued && (
-              <span className="mt-3 block text-[0.9375rem] font-normal leading-[1.3] text-offwhite/70 md:mt-4 md:text-[1.375rem] md:leading-[1.3] lg:text-2xl">
-                {headlineContinued}
-              </span>
+              <span className="sr-only">{headlineContinued}</span>
             )}
           </h1>
 
           {bridgeLine && (
-            <p className="mt-5 max-w-[32rem] text-sm leading-[1.6] text-offwhite/70 md:mt-6 md:max-w-[520px] md:text-[15px] lg:text-base">
+            <p className="mt-5 max-w-[32rem] text-sm leading-[1.6] text-offwhite/75 md:mt-6 md:text-[15px] lg:text-base">
               {bridgeLine}
             </p>
           )}

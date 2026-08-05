@@ -56,7 +56,7 @@ export default function BrandValuesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.6 }}
               transition={{ ...glide, delay: reduce ? 0 : i * 0.1 }}
-              className="font-headline text-[clamp(2.5rem,8vw,6.5rem)] font-normal uppercase leading-[0.95] tracking-[-0.03em] text-carbon"
+              className="font-headline text-[clamp(2.5rem,8vw,6.5rem)] font-normal uppercase leading-[0.95] tracking-[0.12em] text-carbon sm:tracking-[0.18em]"
             >
               {value}
             </motion.li>
