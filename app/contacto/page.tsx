@@ -5,7 +5,7 @@ import Reveal from "@/components/ui/Reveal";
 export const metadata: Metadata = {
   title: "Contacto",
   description:
-    "Solicitá cotización: tipo de proyecto, acabado wood-look o metálico, y superficie aproximada.",
+  "Solicitá cotización: tipo de proyecto, acabado metálico y superficie aproximada.",
 };
 
 export default function ContactoPage() {

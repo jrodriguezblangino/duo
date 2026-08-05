@@ -5,8 +5,9 @@ import { PROJECTS, type ProjectFinish } from "@/lib/projects";
 import { STAGGER } from "@/lib/motion";
 
 const FINISH_LABEL: Record<ProjectFinish, string> = {
-  madera: "Madera",
-  metálico: "Metálico",
+  blanco: "Blanco",
+  carbón: "Carbón",
+  gris: "Gris",
 };
 
 const mediaMotion =

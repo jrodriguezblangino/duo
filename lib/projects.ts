@@ -1,6 +1,6 @@
 import { assetPath } from "@/lib/assetPath";
 
-export type ProjectFinish = "madera" | "metálico";
+export type ProjectFinish = "blanco" | "carbón" | "gris";
 
 export type Project = {
   id: string;
@@ -17,46 +17,47 @@ export type Project = {
 /**
  * Demo projects until real installs are photographed.
  * Replace image paths and copy; keep `id` stable if URLs depend on it.
+ * Duo finishes are metallic (blanco / carbón / gris) — no wood-look.
  */
 export const PROJECTS: Project[] = [
   {
-    id: "demo-villa-madera",
-    title: "Casa de country",
-    location: "Pilar · Obra demostrativa",
-    m2: 180,
-    finish: "madera",
-    image: assetPath("/assets/images/project_demo_villa_madera.webp"),
-    blurb: "Fachada completa en wood-look — misma geometría de panel, lectura de madera.",
-    href: "/galeria",
-  },
-  {
-    id: "demo-townhouse-metal",
-    title: "Casa urbana",
+    id: "demo-nave-industrial",
+    title: "Nave industrial",
     location: "Buenos Aires · Obra demostrativa",
-    m2: 95,
-    finish: "metálico",
-    image: assetPath("/assets/images/project_demo_townhouse_metal.webp"),
-    blurb: "Volumen contemporáneo en acabado metálico carbón, juntas ocultas.",
+    m2: 1800,
+    finish: "carbón",
+    image: assetPath("/assets/images/project_demo_villa_madera.webp"),
+    blurb: "Cubierta y fachada en panel PIR carbón — cierre estanco sin filtraciones.",
     href: "/galeria",
   },
   {
-    id: "demo-interior-madera",
-    title: "Muro interior",
-    location: "Córdoba · Obra demostrativa",
-    m2: 42,
-    finish: "madera",
-    image: assetPath("/assets/images/project_demo_interior_madera.webp"),
-    blurb: "Pared acento en nogal wood-look — instalación limpia sobre existente.",
-    href: "/galeria",
-  },
-  {
-    id: "demo-pavilion-metal",
-    title: "Pabellón comercial",
+    id: "demo-galpon-blanco",
+    title: "Galpón logístico",
     location: "Rosario · Obra demostrativa",
+    m2: 2200,
+    finish: "blanco",
+    image: assetPath("/assets/images/project_demo_townhouse_metal.webp"),
+    blurb: "Panel metálico blanco — máxima reflexión lumínica y menor carga térmica.",
+    href: "/galeria",
+  },
+  {
+    id: "demo-fachada-gris",
+    title: "Fachada institucional",
+    location: "Córdoba · Obra demostrativa",
+    m2: 420,
+    finish: "gris",
+    image: assetPath("/assets/images/project_demo_interior_madera.webp"),
+    blurb: "Fachada gris sobre muro existente — instalación limpia, sin demolición.",
+    href: "/galeria",
+  },
+  {
+    id: "demo-pabellon-metal",
+    title: "Pabellón comercial",
+    location: "Pilar · Obra demostrativa",
     m2: 220,
-    finish: "metálico",
+    finish: "carbón",
     image: assetPath("/assets/images/project_demo_pavilion_metal.webp"),
-    blurb: "Anexo comercial en aluminio anodizado — durabilidad sin mantenimiento de pintura.",
+    blurb: "Anexo comercial en chapa de acero — durabilidad sin mantenimiento de pintura.",
     href: "/galeria",
   },
 ];

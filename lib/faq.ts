@@ -13,25 +13,25 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "fuego",
     question: "¿Qué comportamiento tiene frente al fuego?",
     answer:
-      "La cara de aluminio y el respaldo de acero no alimentan la combustión como la madera o muchos revestimientos plásticos. La clasificación exacta depende del sistema de montaje y de la normativa local — se entrega con la ficha técnica del lote.",
+      "El núcleo de poliisocianurato (PIR) aporta retardo a la propagación del fuego, superior al poliuretano común. La cara de chapa de acero y el respaldo galvanizado no alimentan la combustión. La clasificación exacta depende del sistema y la normativa local; se entrega con la ficha técnica del lote.",
   },
   {
     id: "clima",
     question: "¿Resiste sol, lluvia y humedad?",
     answer:
-      "Sí. La cara anodizada está pensada para exterior: rechaza agua, mantiene el color frente a UV y no requiere barniz ni repintado periódico. Es apto para fachadas expuestas en clima templado y húmedo.",
+      "Sí. La chapa de acero conformada está pensada para exterior: rechaza agua, mantiene el color frente a UV y no requiere pintura de mantenimiento periódica. Es apto para fachadas y cubiertas expuestas en clima templado y húmedo.",
   },
   {
     id: "muro-existente",
     question: "¿Se puede instalar sobre un muro o revestimiento existente?",
     answer:
-      "En la mayoría de los casos sí. El sistema se monta sobre la superficie actual (mampostería, revoque o revestimiento previo) con subestructura adecuada, sin demolición estructural. Cada obra se evalúa en cotización.",
+      "En la mayoría de los casos sí. El panel se monta sobre la superficie actual (mampostería, revoque o estructura previa) con la subestructura adecuada, sin demolición. Al ser autoportante, reduce la necesidad de cielorrasos y mampuestos. Cada obra se evalúa en cotización.",
   },
   {
     id: "garantia",
     question: "¿Qué cubre la garantía?",
     answer:
-      "Cobertura de 15 años sobre la estructura del panel y el acabado de cara, según condiciones de instalación y uso. Quedan fuera el daño mecánico, golpes y modificaciones no autorizadas. El detalle contractual acompaña cada pedido.",
+      "Cobertura sobre la estructura del panel y el acabado de cara, según condiciones de instalación y uso. Quedan fuera el daño mecánico, golpes y modificaciones no autorizadas. El detalle contractual acompaña cada pedido.",
   },
   {
     id: "plazo",
@@ -43,19 +43,19 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "limpieza",
     question: "¿Cómo se limpia el panel?",
     answer:
-      "Agua y detergente neutro, con paño suave. Evitar abrasivos, solventes agresivos y hidrolavado a alta presión sobre las juntas. El mantenimiento periódico es mínimo comparado con madera o pintura.",
+      "Agua y detergente neutro, con paño suave. Evitar abrasivos, solventes agresivos e hidrolavado a alta presión sobre las juntas. El mantenimiento periódico es mínimo comparado con pintura o revestimientos porosos.",
   },
   {
     id: "dimensiones",
     question: "¿Qué medidas tiene el panel?",
     answer:
-      "El módulo de cobertura de referencia es 1,5 m² por panel (útil para estimar cantidad). Cara de aluminio anodizado de 0,6 mm; largo y ancho exactos constan en la ficha técnica del sistema.",
+      "Las líneas de techo y fachada varían en ancho útil y largo según la aplicación; el sistema es autoportante y permite ahorro de estructura secundaria. Las medidas exactas constan en la ficha técnica de cada línea.",
   },
   {
     id: "colores",
     question: "¿Qué acabados y colores hay?",
     answer:
-      "Misma geometría de panel en dos familias: wood-look (tonos tipo roble, nogal y similares) y metálico (carbón, aluminio y variantes anodizadas). La carta completa se comparte en la cotización o en muestra física.",
+      "Acabados metálicos (blanco, carbón, gris y variantes) para techo y fachada. La carta completa se comparte en la cotización o en muestra física.",
   },
 ];
 

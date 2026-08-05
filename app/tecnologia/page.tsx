@@ -16,21 +16,21 @@ import { BRAND } from "@/lib/brand.config";
 
 export const metadata: Metadata = {
   title: "Tecnología",
-  description: `Tres capas: aluminio anodizado 0.6 mm, poliuretano de alta densidad y acero galvanizado. Ficha técnica ${BRAND.name}.`,
+  description: `Tres capas: chapa de acero (calibre #25), núcleo PIR con retardo al fuego y acero galvanizado. Ficha técnica ${BRAND.name}.`,
 };
 
 const LAYERS = [
   {
     role: "Cara vista",
-    name: "Aluminio anodizado",
+    name: "Chapa de acero",
     description:
-      "0.6 mm de cara anodizada. Wood-look o metálico — es lo que se ve y se toca.",
+      "Calibre #25. La cara que se ve y resiste la intemperie — terminación metálica para exterior.",
   },
   {
     role: "Núcleo",
-    name: "Poliuretano de alta densidad",
+    name: "Poliisocianurato (PIR)",
     description:
-      "Aislamiento térmico y acústico, y la capa que adhiere cara y respaldo.",
+      "Aislamiento térmico y acústico, con retardo al fuego; la capa que adhiere cara y respaldo.",
   },
   {
     role: "Respaldo",

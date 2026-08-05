@@ -5,12 +5,12 @@ export type SpecRow = {
 };
 
 export const SPECS: SpecRow[] = [
-  { label: "Dimensiones", value: "3 m × 40 cm" },
-  { label: "Cobertura", value: "1,5 m² por panel" },
-  { label: "Cara", value: "Aluminio anodizado 0.6 mm" },
-  { label: "Núcleo", value: "Poliuretano HD — aislamiento + adhesión" },
+  { label: "Dimensiones", value: "Largo y ancho según línea (techo/fachada)" },
+  { label: "Cobertura", value: "Autoportante — sin cielorrasos ni mampuestos" },
+  { label: "Cara", value: "Chapa de acero conformado (calibre #25)" },
+  { label: "Núcleo", value: "Poliisocianurato (PIR) — retardo al fuego" },
   { label: "Respaldo", value: "Acero galvanizado" },
-  { label: "Instalación", value: "Encastre oculto sobre muro existente" },
+  { label: "Instalación", value: "Encastre oculto, estanco, sin filtraciones" },
   { label: "Mantenimiento", value: "Agua y paño suave" },
-  { label: "Acabados", value: "Aspecto madera / Metálico" },
+  { label: "Acabados", value: "Metálicos (blanco, carbón, gris)" },
 ];

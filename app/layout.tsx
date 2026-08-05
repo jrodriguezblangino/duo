@@ -66,7 +66,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE_PATH,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} — revestimiento metal siding wood-look`,
+        alt: `${SITE_NAME} — panel aislante PIR para techo y fachada`,
       },
     ],
   },

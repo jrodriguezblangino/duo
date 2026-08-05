@@ -21,7 +21,7 @@ export default function Footer() {
             {SITE_NAME}
           </Link>
           <p className="max-w-measure text-sm leading-relaxed text-offwhite/60">
-            Aluminio anodizado sobre núcleo de poliuretano y respaldo de acero.
+            Panel aislante PIR: chapa de acero, núcleo con retardo al fuego y encastre oculto.
           </p>
         </div>
 

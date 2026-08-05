@@ -49,11 +49,11 @@ const BEFORE_AFTER: GalleryBeforeAfterItem[] = [
   {
     id: "ba-country-pilar",
     category: "exterior",
-    caption: "Pilar — antes / después, fachada wood-look.",
+    caption: "Pilar — antes / después, panel PIR carbón.",
     beforeSrc: assetPath("/assets/images/project_demo_villa_before.webp"),
     afterSrc: assetPath("/assets/images/project_demo_villa_madera.webp"),
     beforeAlt: "Casa de country en Pilar antes del revestimiento",
-    afterAlt: `Misma fachada con paneles wood-look ${BRAND.name}`,
+    afterAlt: `Misma fachada con paneles PIR ${BRAND.name}`,
     label: "Comparar antes y después — casa de country en Pilar",
   },
   {
@@ -74,15 +74,15 @@ const ITEMS: GalleryMediaItem[] = [
     src: assetPath("/assets/images/gallery_color_options.webp"),
     type: "image",
     category: "interior",
-    caption: "Acabados: wood-look y metálico — misma geometría de panel.",
-    alt: `Paneles ${BRAND.name} en acabados wood-look y metálico`,
+    caption: "Acabados: blanco, carbón y gris — misma geometría de panel.",
+    alt: `Paneles ${BRAND.name} en acabados metálicos`,
   },
   {
     id: "macro",
     src: assetPath("/assets/images/macro_zoom_quality.webp"),
     type: "image",
     category: "interior",
-    caption: "Macro de textura — cara de aluminio anodizado.",
+    caption: "Macro de textura — cara de chapa de acero.",
     alt: "Primer plano de la textura del panel",
   },
   {
