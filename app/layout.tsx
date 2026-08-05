@@ -100,7 +100,7 @@ export default function RootLayout({
         />
         <a
           href="#contenido-principal"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-sand focus:px-4 focus:py-2 focus:text-offwhite"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-sand focus:px-4 focus:py-2 focus:text-carbon"
         >
           Saltar al contenido principal
         </a>

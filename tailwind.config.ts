@@ -25,8 +25,8 @@ const config: Config = {
         carbon: "#17140F", // primary dark bg
         slate: "#2A211A", // panel / secondary bg
         surface: "#3A2C20", // elevated card
-        sand: "#BC4A26", // brand accent (CTAs, links, key highlights)
-        "sand-hover": "#D6602F", // accent hover / active
+        sand: "#90EE90", // brand accent (dúoPANELES mint from logo)
+        "sand-hover": "#B6F5DA", // accent hover / active
         walnut: "#8C5A3A", // secondary accent
         muted: "#C9BFAA", // secondary / body text on dark
         border: "#4A3B2C", // divider on dark

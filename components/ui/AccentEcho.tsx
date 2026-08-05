@@ -21,7 +21,7 @@ type AccentEchoProps = {
   fromColor?: string;
 };
 
-const SAND = "#BC4A26";
+const SAND = "#90EE90";
 const CARBON = "#17140F";
 
 function easeOutExpo(t: number) {

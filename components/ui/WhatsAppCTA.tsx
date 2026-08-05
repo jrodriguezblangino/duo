@@ -33,7 +33,7 @@ function WhatsAppIcon({ className = "" }: { className?: string }) {
 export default function WhatsAppCTA({
   size = "md",
   variant = "primary",
-  label = "Hablar por WhatsApp",
+  label = BRAND.ctaLabel,
   iconOnly = false,
   className = "",
   onClick,

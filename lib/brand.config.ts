@@ -5,25 +5,25 @@ import { assetPath } from "@/lib/assetPath";
  * without rewriting components.
  */
 export const BRAND = {
-  name: "Fill Home",
-  legalName: "Fill Home",
+  name: "dúoPANELES",
+  legalName: "dúoPANELES",
   /** One-line brand promise */
-  tagline: "Calidez de madera. Resistencia de metal.",
+  tagline: "Sistema constructivo PIR — techo y fachada",
   /** International digits only — no + or spaces (wa.me) */
-  whatsapp: "5491100000000",
+  // ⚠️ Confirmar WA real de su IG antes de deploy. Placeholder hasta entonces:
+  whatsapp: "54911XXXXXXX",
   /** Pre-filled Spanish text, already URL-encoded for wa.me ?text= */
   whatsappMessage: encodeURIComponent(
-    "Hola, me interesa cotizar revestimiento metálico Fill Home.",
+    "Hola, vi el prototipo de mi marca y quiero saber más",
   ),
-  email: "hola@fillhome.com",
-  phoneDisplay: "+54 11 0000-0000",
-  ctaLabel: "Solicitar Cotización",
+  email: "hola@duopaneles.com.ar",
+  phoneDisplay: "11 XXXX-XXXX",
+  ctaLabel: "Hablar por WhatsApp",
   /** Tailwind color token used as the brand accent */
   accentToken: "sand",
-  logoLightPath: assetPath("/assets/logos/brand_logo.png"),
-  logoDarkPath: assetPath("/assets/logos/brand_logo.png"),
-  socialProofNote:
-    "Para importadores y distribuidores de revestimiento metálico.",
+  logoLightPath: assetPath("/assets/logos/duopaneles-light.png"),
+  logoDarkPath: assetPath("/assets/logos/duopaneles-dark.png"),
+  socialProofNote: "Representante oficial Arneg · paneles PIR",
 } as const;
 
 /** Compatibility aliases — prefer BRAND.* in new code */

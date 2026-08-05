@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import WhatsAppCTA from "@/components/ui/WhatsAppCTA";
+import { BRAND } from "@/lib/brand.config";
 
 export default function WhatsAppFloat() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,7 +37,7 @@ export default function WhatsAppFloat() {
       <WhatsAppCTA
         iconOnly
         size="sm"
-        label="Hablar por WhatsApp"
+        label={BRAND.ctaLabel}
         className="h-14 w-14 rounded-full !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
       />
     </motion.div>
