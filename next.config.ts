@@ -1,9 +1,15 @@
 import type { NextConfig } from "next";
 
-/** Set `GITHUB_PAGES=true` in CI so assets resolve under /fill-home. Local stays at /. */
+/**
+ * GitHub Pages base path.
+ * - Local / preview root: unset
+ * - fill-home live: GITHUB_PAGES=true → /fill-home
+ * - fill-home-duo preview: GITHUB_PAGES=true + GITHUB_PAGES_BASE=/fill-home-duo
+ */
 const isGithubPages = process.env.GITHUB_PAGES === "true";
-
-const basePath = isGithubPages ? "/fill-home" : "";
+const basePath = isGithubPages
+  ? (process.env.GITHUB_PAGES_BASE?.replace(/\/$/, "") || "/fill-home")
+  : "";
 
 const nextConfig: NextConfig = {
   output: "export",
