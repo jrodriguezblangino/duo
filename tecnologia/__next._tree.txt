@@ -1,0 +1,7 @@
+:HL["/duo/_next/static/chunks/30fljka97gy-7.css","style"]
+:HL["/duo/_next/static/media/791bf8c4bb753ed6-s.p.0ggqn9ig56u4s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/duo/_next/static/media/8010b10db0d5feb2-s.p.1q-jjomgjvbjf.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/duo/_next/static/media/99e609270109b47d-s.p.40sczeszzbjw1.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/duo/_next/static/media/GeneralSans_Medium-s.p.2csf5ddxy62r4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/duo/_next/static/media/GeneralSans_Regular-s.p.0ypr6tn8ewkor.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"tecnologia","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"9gn1_8FzXQaigsYmuiHR7"}
