@@ -125,6 +125,31 @@ export default function ProductLinesSection() {
   );
 }
 
+function ProfileGlyph({ id }: { id: string }) {
+  /** Abstract profile silhouettes — decorative, not technical drawings. */
+  const paths: Record<string, string> = {
+    "wave-ls": "M0 12 Q8 2 16 12 T32 12 T48 12 T64 12",
+    "cover-ls": "M0 14 L8 4 H12 L16 14 L24 4 H28 L32 14 L40 4 H44 L48 14 L56 4 H60 L64 14",
+    "cover-lt": "M0 14 L16 4 H22 L32 14 L48 4 H54 L64 14",
+    "cover-lx": "M0 14 L20 4 H28 L40 14 L52 4 H60 L64 14",
+    maximma: "M0 14 L4 4 H8 L12 14 L16 4 H20 L24 14 L28 4 H32 L36 14 L40 4 H44 L48 14 L52 4 H56 L60 14 L64 8",
+    "fachada-pir": "M0 8 H64 M0 12 H64",
+  };
+  const d = paths[id] ?? "M0 10 H64";
+  return (
+    <svg
+      viewBox="0 0 64 16"
+      className="hidden h-4 w-20 shrink-0 text-sand sm:block"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
 function LineRow({
   line,
   index,
@@ -139,7 +164,7 @@ function LineRow({
       initial={reduce ? false : { opacity: 0, y: ENTRY_Y }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ ...glide, delay: reduce ? 0 : index * STAGGER }}
-      className="group grid grid-cols-[1fr_auto] items-center gap-4 border-b border-border py-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_5.5rem_auto] sm:gap-6 lg:py-6"
+      className="group grid grid-cols-[1fr_auto] items-center gap-4 border-b border-border py-5 sm:grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1fr)_5.5rem_auto] sm:gap-5 lg:py-6"
     >
       <div>
         <h3 className="font-headline text-xl tracking-[-0.02em] text-offwhite lg:text-2xl">
@@ -147,6 +172,8 @@ function LineRow({
         </h3>
         <p className="mt-1 text-sm text-offwhite/50">{line.blurb}</p>
       </div>
+
+      <ProfileGlyph id={line.id} />
 
       <div className="relative hidden h-16 overflow-hidden bg-slate sm:block sm:h-20">
         <Image

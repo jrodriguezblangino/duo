@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import Button from "@/components/ui/Button";
 import WhatsAppCTA from "@/components/ui/WhatsAppCTA";
 import Magnetic from "@/components/ui/Magnetic";
 import { SITE_NAME } from "@/lib/brand.config";
-import { CTA, NAV_LINKS } from "@/lib/site";
+import { NAV_LINKS } from "@/lib/site";
 import { ENTRY_Y, STAGGER, glide } from "@/lib/motion";
 
 export default function Navbar() {
@@ -98,13 +97,8 @@ export default function Navbar() {
             ))}
           </ul>
           <div className="flex items-center gap-3">
-            <Magnetic strength={8}>
-              <WhatsAppCTA variant="outline" size="sm" label="WhatsApp" />
-            </Magnetic>
             <Magnetic strength={10}>
-              <Button href={CTA.href} variant="primary" size="sm">
-                {CTA.label}
-              </Button>
+              <WhatsAppCTA variant="primary" size="sm" />
             </Magnetic>
           </div>
         </div>
@@ -202,21 +196,11 @@ export default function Navbar() {
                   }
                 >
                   <WhatsAppCTA
-                    variant="outline"
-                    size="md"
-                    label="WhatsApp"
-                    onClick={closeMenu}
-                    className="w-full border-sand/40 !px-6 !py-3.5 !text-[13px] tracking-[0.14em]"
-                  />
-                  <Button
-                    href={CTA.href}
-                    onClick={closeMenu}
                     variant="primary"
                     size="md"
-                    className="w-full border border-sand/40 !px-6 !py-3.5 !text-[13px] tracking-[0.14em] transition-[colors,transform,filter] duration-300 hover:border-offwhite hover:brightness-105 active:scale-[0.98] active:brightness-95"
-                  >
-                    {CTA.label}
-                  </Button>
+                    onClick={closeMenu}
+                    className="w-full !px-6 !py-3.5 !text-[13px] tracking-[0.14em]"
+                  />
                 </motion.div>
               </div>
             </div>

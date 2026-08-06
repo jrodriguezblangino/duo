@@ -1,21 +1,82 @@
 "use client";
 
 import { useId, useState } from "react";
+import Image from "next/image";
 import {
   AnimatePresence,
   motion,
   useReducedMotion,
 } from "framer-motion";
 import Reveal from "@/components/ui/Reveal";
-import { FAQ_ITEMS } from "@/lib/faq";
+import { HOME_FAQ } from "@/lib/faq";
+import { assetPath } from "@/lib/assetPath";
 import { precision } from "@/lib/motion";
 
-function FaqItemRow({
+const PANEL_IMG = assetPath("/assets/images/macro_zoom_quality.webp");
+
+/**
+ * FAQ home — numbered rows + left bleed image (comp 10).
+ */
+export default function FaqAccordion() {
+  const [openId, setOpenId] = useState<string | null>(HOME_FAQ[0]?.id ?? null);
+
+  return (
+    <div className="mx-auto grid max-w-site gap-12 lg:grid-cols-12 lg:gap-16">
+      <Reveal className="flex flex-col lg:col-span-5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-sand">
+          FAQ
+        </p>
+        <h2
+          id="faq-heading"
+          className="mt-4 font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
+        >
+          Preguntas frecuentes
+        </h2>
+        <div aria-hidden="true" className="mt-5 h-px w-14 bg-sand" />
+        <p className="mt-5 max-w-[36ch] text-base leading-relaxed text-offwhite/60 lg:text-lg">
+          Resolvemos las dudas más comunes sobre nuestros paneles, aplicaciones
+          e instalación.
+        </p>
+        <div className="relative mt-10 hidden aspect-[4/3] w-full max-w-sm overflow-hidden bg-slate lg:mt-auto lg:block">
+          <Image
+            src={PANEL_IMG}
+            alt=""
+            fill
+            sizes="320px"
+            className="object-cover"
+          />
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.08} className="lg:col-span-7">
+        <div className="border-t border-border">
+          {HOME_FAQ.map((item, i) => (
+            <FaqRow
+              key={item.id}
+              index={String(i + 1).padStart(2, "0")}
+              item={item}
+              open={openId === item.id}
+              onToggle={() =>
+                setOpenId((current) =>
+                  current === item.id ? null : item.id,
+                )
+              }
+            />
+          ))}
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
+function FaqRow({
+  index,
   item,
   open,
   onToggle,
 }: {
-  item: (typeof FAQ_ITEMS)[number];
+  index: string;
+  item: (typeof HOME_FAQ)[number];
   open: boolean;
   onToggle: () => void;
 }) {
@@ -24,7 +85,7 @@ function FaqItemRow({
   const buttonId = useId();
 
   return (
-    <div className="border-b border-offwhite/10">
+    <div className="border-b border-border">
       <h3 className="m-0">
         <button
           type="button"
@@ -32,18 +93,21 @@ function FaqItemRow({
           aria-expanded={open}
           aria-controls={panelId}
           onClick={onToggle}
-          className="flex w-full items-start justify-between gap-6 py-5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand lg:py-6"
+          className="flex w-full items-center gap-5 py-6 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand lg:gap-8 lg:py-7"
         >
-          <span className="font-mono text-xs font-normal tracking-[0.02em] text-offwhite lg:text-[13px]">
+          <span className="shrink-0 font-headline text-xl text-sand lg:text-2xl">
+            {index}
+          </span>
+          <span className="flex-1 font-headline text-lg font-normal tracking-[-0.01em] text-offwhite lg:text-2xl">
             {item.question}
           </span>
           <span
             aria-hidden="true"
-            className={`mt-0.5 shrink-0 font-mono text-sm leading-none text-sand transition-transform duration-200 ${
-              open ? "rotate-45" : "rotate-0"
+            className={`shrink-0 font-mono text-sand transition-transform duration-200 ${
+              open ? "rotate-90" : ""
             }`}
           >
-            +
+            →
           </span>
         </button>
       </h3>
@@ -64,50 +128,12 @@ function FaqItemRow({
             }
             className="overflow-hidden"
           >
-            <p className="max-w-measure pb-5 text-sm leading-[1.65] text-offwhite/70 lg:pb-6 lg:text-[15px]">
+            <p className="max-w-measure pb-6 pl-12 text-sm leading-[1.65] text-offwhite/65 lg:pl-16 lg:text-[15px]">
               {item.answer}
             </p>
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
-  );
-}
-
-/** Client accordion UI — JSON-LD lives in the server FaqSection wrapper. */
-export default function FaqAccordion() {
-  const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0]?.id ?? null);
-
-  return (
-    <div className="mx-auto grid max-w-site gap-12 lg:grid-cols-12 lg:gap-16">
-      <Reveal className="lg:col-span-4">
-        <h2
-          id="faq-heading"
-          className="font-headline text-[2.5rem] font-normal leading-[1.05] tracking-[-0.02em] text-offwhite lg:text-6xl"
-        >
-          Preguntas frecuentes.
-        </h2>
-        <p className="mt-5 max-w-measure text-base leading-relaxed text-offwhite/65 lg:text-lg">
-          PIR, fuego, instalación, BIM y plazos.
-        </p>
-      </Reveal>
-
-      <Reveal delay={0.08} className="lg:col-span-8">
-        <div className="border-t border-offwhite/10">
-          {FAQ_ITEMS.map((item) => (
-            <FaqItemRow
-              key={item.id}
-              item={item}
-              open={openId === item.id}
-              onToggle={() =>
-                setOpenId((current) =>
-                  current === item.id ? null : item.id,
-                )
-              }
-            />
-          ))}
-        </div>
-      </Reveal>
     </div>
   );
 }

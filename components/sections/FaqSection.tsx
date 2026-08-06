@@ -1,17 +1,13 @@
 import FaqAccordion from "@/components/sections/FaqAccordion";
-import { buildFaqPageJsonLd } from "@/lib/faq";
+import { buildFaqPageJsonLd, HOME_FAQ } from "@/lib/faq";
 
-/**
- * Server wrapper: FAQPage JSON-LD in the HTML source + client accordion.
- * Do not move the script into a client component — it must SSR.
- */
 export default function FaqSection() {
-  const jsonLd = buildFaqPageJsonLd();
+  const jsonLd = buildFaqPageJsonLd(HOME_FAQ);
 
   return (
     <section
       aria-labelledby="faq-heading"
-      className="bg-slate px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
+      className="bg-carbon px-6 py-section-mobile text-offwhite lg:px-20 lg:py-section"
     >
       <script
         type="application/ld+json"

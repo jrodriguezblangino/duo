@@ -2,7 +2,7 @@ import Hero from "@/components/ui/Hero";
 import ProductSystemSection from "@/components/sections/ProductSystemSection";
 import ProductLinesSection from "@/components/sections/ProductLinesSection";
 import ApplicationsSection from "@/components/sections/ApplicationsSection";
-import AnatomySection from "@/components/sections/AnatomySection";
+import CapasSection from "@/components/sections/CapasSection";
 import BimSection from "@/components/sections/BimSection";
 import StatsBand from "@/components/sections/StatsBand";
 import BrandValuesSection from "@/components/sections/BrandValuesSection";
@@ -32,7 +32,7 @@ export default function HomePage() {
       <ProductSystemSection />
       <ProductLinesSection />
       <ApplicationsSection />
-      <AnatomySection />
+      <CapasSection />
       <BimSection />
       <StatsBand />
       <BrandValuesSection />
